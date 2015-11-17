@@ -15,19 +15,23 @@
  */
 
 /**
- * @fileoverview Nodejs plugins and build tools for Google Closure Compiler
+ * @fileoverview Gulp task for closure-compiler
  *
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
 
 'use strict';
 
-var grunt_plugin = require('./src/grunt');
-var gulp_plugin = require('./src/gulp');
-var Compiler = require('./src/node/closure-compiler');
+var filesToJson = require('./concat-to-json');
+var closureCompiler = require('./closure-compiler');
+var jsonToVinyl = require('./json-to-vinyl');
 
-module.exports = {
-  grunt: grunt_plugin,
-  compiler: Compiler,
-  gulp: gulp_plugin
+/**
+ * @param {Object<string,string>|Array<string>} options
+ * @return {Object}
+ */
+module.exports = function(opt) {
+  return filesToJson()
+      .pipe(closureCompiler(options))
+      .pipe(jsonToVinyl());
 };

@@ -1,6 +1,6 @@
 {
-  "name": "@google/closure-compiler",
-  "version": "20151015.0.1",
+  "name": "@banno/google-closure-compiler",
+  "version": "20151015.0.2",
   "description": "A JavaScript checker and optimizer",
   "repository": {
     "type": "git",
@@ -11,16 +11,25 @@
     "compiler",
     "optimizer",
     "minifier",
-    "closure"
+    "closure",
+    "gulpplugin",
+    "gruntplugin"
   ],
   "main": "index.js",
   "author": "The Closure Compiler Authors",
+  "contributors": [
+    {
+      "name": "Chad Killingsworth",
+      "email": "chadkillingsworth@gmail.com"
+    }
+  ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/google/closure-compiler/issues"
   },
   "homepage": "https://developers.google.com/closure/compiler/",
   "dependencies": {
-    "chalk": "^1.0.0"
+    "chalk": "^1.0.0",
+    "gulp-util": "^3.0.7"
   }
 }

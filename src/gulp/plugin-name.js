@@ -15,19 +15,9 @@
  */
 
 /**
- * @fileoverview Nodejs plugins and build tools for Google Closure Compiler
+ * @fileoverview Gulp plugin name
  *
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
 
-'use strict';
-
-var grunt_plugin = require('./src/grunt');
-var gulp_plugin = require('./src/gulp');
-var Compiler = require('./src/node/closure-compiler');
-
-module.exports = {
-  grunt: grunt_plugin,
-  compiler: Compiler,
-  gulp: gulp_plugin
-};
+module.exports = 'gulp-google-closure-compiler';

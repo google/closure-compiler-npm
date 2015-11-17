@@ -23,7 +23,7 @@
 'use strict';
 
 var chalk = require('chalk');
-var compiler = require('./compiler');
+var Compiler = require('../node/closure-compiler');
 
 module.exports = function(grunt) {
   function compilationPromise(options) {
@@ -52,7 +52,9 @@ module.exports = function(grunt) {
         }
       }
 
-      compiler(options, compilationCompleted, undefined, grunt.verbose.write);
+      var compiler = new Compiler(options, compilationCompleted);
+      compiler.logger = grunt.verbose.write;
+      compiler.run();
     });
   }
 
@@ -83,7 +85,7 @@ module.exports = function(grunt) {
     }
 
     taskObject.files.forEach(function (f) {
-      var options = getCompilerOptions();// Merge task-specific and/or target-specific options with these defaults.
+      var options = getCompilerOptions();
 
       var src = f.src.filter(function (filepath) {
         if (!grunt.file.exists(filepath)) {

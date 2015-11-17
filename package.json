@@ -1,11 +1,12 @@
 {
-  "name": "@banno/google-closure-compiler",
+  "name": "google-closure-compiler",
   "version": "20151015.0.2",
   "description": "A JavaScript checker and optimizer",
   "repository": {
     "type": "git",
     "url": "https://github.com/chadkillingsworth/closure-compiler-npm.git"
   },
+  "private": true,
   "keywords": [
     "javascript",
     "compiler",
@@ -23,6 +24,13 @@
       "email": "chadkillingsworth@gmail.com"
     }
   ],
+  "files": [
+    "src/",
+    "compiler.jar",
+    "index.js",
+    "package.json",
+    "contrib/"
+  ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/google/closure-compiler/issues"
@@ -30,6 +38,7 @@
   "homepage": "https://developers.google.com/closure/compiler/",
   "dependencies": {
     "chalk": "^1.0.0",
-    "gulp-util": "^3.0.7"
+    "gulp-util": "^3.0.7",
+    "through2": "^2.0.0"
   }
 }

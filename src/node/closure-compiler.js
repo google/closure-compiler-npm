@@ -32,6 +32,7 @@ var compiler_path = require.resolve('../../compiler.jar');
  * @param {function(number, string, string)} callback
  */
 function Compiler(args, callback) {
+  this.command_arguments = [];
   if (Array.isArray(args)) {
     this.command_arguments = args.slice();
   } else {
@@ -64,9 +65,6 @@ Compiler.jar_path = compiler_path;
  * @type {string}
  */
 Compiler.prototype.java_path = 'java';
-
-/** @type {Array<string>} */
-Compiler.prototype.command_arguments = [];
 
 /** @type {function(...*)|null} */
 Compiler.prototype.logger = null;

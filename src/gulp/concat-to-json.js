@@ -15,20 +15,13 @@
  */
 
 /**
- * @fileoverview Gulp help task to convert multiple vinyl file buffers to
- * a single JSON encoded buffer to pass to closure-compiler
+ * @fileoverview Convert an array of vinyl files to
+ * a single JSON encoded string to pass to closure-compiler
  *
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
 
 'use strict';
-
-/** @const */
-var PLUGIN_NAME = require('./plugin-name');
-var gutil = require('gulp-util');
-var PluginError = gutil.PluginError;
-var through = require('through2');
-var File = gutil.File;
 
 function json_file(src, path, source_map) {
   var filejson = {
@@ -46,42 +39,18 @@ function json_file(src, path, source_map) {
   return filejson;
 }
 
-// file is a vinyl file object
-module.exports = function() {
-
-  var fileList = [];
-
-  function bufferContents(file, enc, cb) {
-    // ignore empty files
-    if (file.isNull()) {
-      cb();
-      return;
-    }
-
-    if (file.isStream()) {
-      this.emit('error', new PluginError(PLUGIN_NAME, 'Streaming not supported'));
-      cb();
-      return;
-    }
-
-    fileList.push(json_file(file.contents, file.relative,
-        file.sourceMap ? JSON.stringify(file.sourceMap) : undefined));
-
-    cb();
+/**
+ * @param {Array<Object>} files
+ * @return {string}
+ */
+module.exports = function(files) {
+  var jsonFiles = [];
+  for (var i = 0; i < files.length; i++) {
+    jsonFiles.push(
+        json_file(files[i].contents.toString(),
+            files[i].relative,
+            files[i].sourceMap ? JSON.stringify(files[i].sourceMap) : undefined));
   }
 
-  function endStream(cb) {
-    if (fileList.length === 0) {
-      cb();
-      return;
-    }
-
-    var jsonFileList = new File('stdin');
-    jsonFileList.contents = JSON.stringify(fileList);
-
-    this.push(jsonFileList);
-    cb();
-  }
-
-  return through.obj(bufferContents, endStream);
+  return JSON.stringify(jsonFiles);
 };

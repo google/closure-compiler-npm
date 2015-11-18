@@ -15,81 +15,37 @@
  */
 
 /**
- * @fileoverview Gulp helper task to convert an array of JSON encoded files
- * back to multiple vinyl files
+ * @fileoverview Convert a string of JSON encoded files
+ * back to an array of vinyl files
  *
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
 
 'use strict';
 
-/** @const */
-var PLUGIN_NAME = require('./plugin-name');
 var gutil = require('gulp-util');
-var PluginError = gutil.PluginError;
-var through = require('through2');
 var File = gutil.File;
 
-// file is a vinyl file object
-module.exports = function() {
+/**
+ * @param {string} input string of json encoded files
+ * @return {Array<Object>}
+ */
+module.exports = function(input) {
+  var fileList, outputFiles = [];
 
-  var incomingFile;
+  fileList = JSON.parse(input);
 
-  function bufferContents(file, enc, cb) {
-    if (incomingFile) {
-      this.emit('error', new PluginError(PLUGIN_NAME, 'Only a single input file is supported'));
-      cb();
-      return;
+  for (var i = 0; i < fileList.length; i++) {
+    let file = new File({
+      path: fileList[i].path === 'stdout' ? process.cwd() + '/compiled' + i + '.js' :
+          fileList[i].path,
+      contents: new Buffer(fileList[i].src)
+    });
+    if (fileList[i].source_map) {
+      file.sourceMap = JSON.parse(fileList[i].source_map);
     }
-
-    // ignore empty files
-    if (file.isNull()) {
-      incomingFile = {};
-      cb();
-      return;
-    }
-
-    if (file.isStream()) {
-      incomingFile = {};
-      this.emit('error', new PluginError(PLUGIN_NAME, 'Streaming not supported'));
-      cb();
-      return;
-    }
-
-    incomingFile = file;
-    cb();
+    outputFiles.push(file);
   }
 
-  function endStream(cb) {
-    if (!(incomingFile && incomingFile.contents)) {
-      cb();
-      return;
-    }
-
-    var fileList;
-    try {
-      fileList = JSON.parse(incomingFile.contents);
-    } catch (e) {
-      this.emit('error', new PluginError(PLUGIN_NAME, 'Error parsing json encoded files'));
-      cb();
-      return;
-    }
-
-    for (var i = 0; i < fileList.length; i++) {
-      let file = new File(fileList[i].path || 'compiled' + i + '.js');
-      file.contents = fileList[i].src;
-      if (fileList[i].source_map) {
-        try {
-          file.sourceMap = JSON.parse(fileList[i].source_map);
-        } catch (e) {
-          this.emit('error', new PluginError(PLUGIN_NAME, 'Error parsing json encoded sourcemap'));
-        }
-      }
-      this.push(file);
-    }
-
-    cb();
-  }
-
-  return through.obj(bufferContents, endStream);
+  return outputFiles;
 };

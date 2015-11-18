@@ -28,133 +28,137 @@
 
 'use strict';
 
-var filesToJson = require('./concat-to-json');
-var jsonToVinyl = require('./json-to-vinyl');
-var Compiler = require('../node/closure-compiler');
-var gutil = require('gulp-util');
-var PluginError = gutil.PluginError;
-var through = require('through2');
-/** @const */
-var PLUGIN_NAME = 'gulp-google-closure-compiler';
-
-var streamBuffers = require("stream-buffers");
 
 /**
- * @param {Object<string,string>|Array<string>} options
- * @return {Object}
+ * @return {function(Object<string,string>|Array<string>):Object}
  */
-module.exports = function(options) {
+module.exports = function() {
+  var filesToJson = require('./concat-to-json');
+  var jsonToVinyl = require('./json-to-vinyl');
+  var Compiler = require('../node/closure-compiler');
+  var gutil = require('gulp-util');
+  var PluginError = gutil.PluginError;
+  var through = require('through2');
+  /** @const */
+  var PLUGIN_NAME = 'gulp-google-closure-compiler';
 
-  var fileList = [];
+  var streamBuffers = require("stream-buffers");
 
-  function bufferContents(file, enc, cb) {
-    // ignore empty files
-    if (file.isNull()) {
+
+  return function (options) {
+
+    var fileList = [];
+
+    function bufferContents(file, enc, cb) {
+      // ignore empty files
+      if (file.isNull()) {
+        cb();
+        return;
+      }
+
+      if (file.isStream()) {
+        this.emit('error', new PluginError(PLUGIN_NAME, 'Streaming not supported'));
+        cb();
+        return;
+      }
+
+      fileList.push(file);
+
       cb();
-      return;
     }
 
-    if (file.isStream()) {
-      this.emit('error', new PluginError(PLUGIN_NAME, 'Streaming not supported'));
-      cb();
-      return;
-    }
+    function endStream(cb) {
+      var stdInData, logger = gutil.log.warn ? gutil.log.warn : gutil.log;
+      if (fileList.length > 0) {
+        stdInData = filesToJson(fileList);
+      } else {
+        // The compiler will always expect something on standard-in. So pass it an empty
+        // list if no files were piped into this plugin.
+        stdInData = "[]";
+      }
 
-    fileList.push(file);
+      var compiler = new Compiler(options);
 
-    cb();
-  }
+      // Add the gulp-specific argument so the compiler will understand the JSON encoded input
+      compiler.command_arguments.splice(2, 0, '--json_streams');
 
-  function endStream(cb) {
-    var stdInData, logger = gutil.log.warn ? gutil.log.warn : gutil.log;
-    if (fileList.length > 0) {
-      stdInData = filesToJson(fileList);
-    } else {
-      // The compiler will always expect something on standard-in. So pass it an empty
-      // list if no files were piped into this plugin.
-      stdInData = "[]";
-    }
+      var compiler_process = compiler.run();
+      var gulpStream = this;
+      var stdOutData = '', stdErrData = '';
+      compiler_process.stdout.on('data', function (data) {
+        stdOutData += data;
+      });
+      compiler_process.stderr.on('data', function (data) {
+        stdErrData += data;
+      });
+      compiler_process.on('close', function (code) {
+        // non-zero exit means a compilation error
+        if (code !== 0) {
+          gulpStream.emit('error', new PluginError(PLUGIN_NAME,
+              'Compilation error: \n\n' + compiler.prependFullCommand(stdErrData)));
+        }
 
-    var compiler = new Compiler(options);
+        // standard error will contain compilation warnings, log those
+        if (stdErrData.trim().length > 0) {
+          logger(gutil.colors.yellow(PLUGIN_NAME) + ': ' + stdErrData);
+        }
 
-    // Add the gulp-specific argument so the compiler will understand the JSON encoded input
-    compiler.command_arguments.splice(2, 0, '--json_streams');
+        // Standard output will be a string of JSON encoded files.
+        // Convert these back to vinyle
+        if (stdOutData.trim().length > 0) {
+          let outputFiles;
+          try {
+            outputFiles = jsonToVinyl(stdOutData);
+          } catch (e) {
+            this.emit('error', new PluginError(PLUGIN_NAME, 'Error parsing json encoded files'));
+            cb();
+            return;
+          }
+          for (var i = 0; i < outputFiles.length; i++) {
+            gulpStream.push(outputFiles[i]);
+          }
+        }
+        cb();
+      });
 
-    var compiler_process = compiler.run();
-    var gulpStream = this;
-    var stdOutData = '', stdErrData = '';
-    compiler_process.stdout.on('data', function (data) {
-      stdOutData += data;
-    });
-    compiler_process.stderr.on('data', function (data) {
-      stdErrData += data;
-    });
-    compiler_process.on('close', function (code) {
-      // non-zero exit means a compilation error
-      if (code !== 0) {
+      // Error events occur when there was a problem spawning the compiler process
+      compiler_process.on('error', function (err) {
         gulpStream.emit('error', new PluginError(PLUGIN_NAME,
-            'Compilation error: \n\n' + compiler.prependFullCommand(stdErrData)));
+            'Process spawn error. Is java in the path?\n' + err.message));
+        cb();
+      });
+
+      if (fileList.length === 0) {
+        stdInData = "[]";
       }
 
-      // standard error will contain compilation warnings, log those
-      if (stdErrData.trim().length > 0) {
-        logger(gutil.colors.yellow(PLUGIN_NAME) + ': ' + stdErrData);
-      }
+      var CHUNK_SIZE = 1024, i = 0;
+      var num_chunks = Math.ceil(stdInData / CHUNK_SIZE);
 
-      // Standard output will be a string of JSON encoded files.
-      // Convert these back to vinyle
-      if (stdOutData.trim().length > 0) {
-        let outputFiles;
-        try {
-          outputFiles = jsonToVinyl(stdOutData);
-        } catch (e) {
-          this.emit('error', new PluginError(PLUGIN_NAME, 'Error parsing json encoded files'));
-          cb();
-          return;
+      // Write the data to the stdin stream
+      // Be attentive to back-pressure.
+      (function write_buffer_in_chunks(callback) {
+        var ok = true;
+        do {
+          i++;
+
+          if (i < num_chunks) {
+            ok = compiler_process.stdin.write(stdInData.substr((i - 1) * chunk_size, CHUNK_SIZE),
+                "UTF-8");
+          } else {
+            compiler_process.stdin.write(stdInData.substr((i - 1) * CHUNK_SIZE), "UTF-8", callback);
+          }
+        } while (i < num_chunks && ok);
+        if (i < num_chunks) {
+          // had to stop early!
+          // write some more once it drains
+          compiler_process.stdin.once('drain', write_buffer_in_chunks);
         }
-        for (var i = 0; i < outputFiles.length; i++) {
-          gulpStream.push(outputFiles[i]);
-        }
-      }
-      cb();
-    });
-
-    // Error events occur when there was a problem spawning the compiler process
-    compiler_process.on('error', function (err) {
-      gulpStream.emit('error', new PluginError(PLUGIN_NAME,
-          'Process spawn error. Is java in the path?\n' + err.message));
-      cb();
-    });
-
-    if (fileList.length === 0) {
-      stdInData = "[]";
+      })(function () {
+        compiler_process.stdin.end();
+      });
     }
 
-    var CHUNK_SIZE = 1024, i = 0;
-    var num_chunks = Math.ceil(stdInData / CHUNK_SIZE);
-
-    // Write the data to the stdin stream
-    // Be attentive to back-pressure.
-    (function write_buffer_in_chunks(callback) {
-      var ok = true;
-      do {
-        i++;
-
-        if (i < num_chunks) {
-          ok = compiler_process.stdin.write(stdInData.substr((i - 1) * chunk_size, CHUNK_SIZE), "UTF-8");
-        } else {
-          compiler_process.stdin.write(stdInData.substr((i - 1) * CHUNK_SIZE), "UTF-8", callback);
-        }
-      } while (i < num_chunks && ok);
-      if (i < num_chunks) {
-        // had to stop early!
-        // write some more once it drains
-        compiler_process.stdin.once('drain', write_buffer_in_chunks);
-      }
-    })(function() {
-      compiler_process.stdin.end();
-    });
-  }
-
-  return through.obj(bufferContents, endStream);
-};
+    return through.obj(bufferContents, endStream);
+  };
+}

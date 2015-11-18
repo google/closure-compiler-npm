@@ -22,10 +22,10 @@
 
 'use strict';
 
-var chalk = require('chalk');
-var Compiler = require('../node/closure-compiler');
-
 module.exports = function(grunt) {
+  var chalk = require('chalk');
+  var Compiler = require('../node/closure-compiler');
+
   function compilationPromise(options) {
     var destFilename = options.js_output_file;
     if (destFilename) {

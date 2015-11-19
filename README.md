@@ -220,6 +220,7 @@ gulp.task('js-compile', function () {
       ])
       .pipe(gulp.dest('./dist/js'));
 });
+```
 
 ### Gulp Sourcemaps
 The gulp plugin supports gulp sourcemaps.

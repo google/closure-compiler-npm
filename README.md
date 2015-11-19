@@ -63,13 +63,39 @@ rather as compilation flags directly.
 
 ### Windows Path Length Limitations
 Windows command shells have a maximum length for a command. This is surprisingly easy to hit when
-you allows the build tools to expand large source paths for the compiler.
+you allow the build tools to expand globs for large sets of source files for the compiler.
 
-This can be avoided by specifying the input globs to the compiler and letting it expand the
-files. You can mix these techniques. Files specified via `js` options will specified first.
-See examples below.
+This can be avoided by specifying the input globs as compiler arguments via the `--js` flag and
+let it expand the files. You can even mix these techniques. Files specified via `js` options will
+specified first.
 
 A flagfile can also be used to workaround this issue.
+
+#### Grunt Example
+```js
+  'closure-compiler': {
+    my_target: {
+      files: {
+        'dest/out.min.js': ['src/**/*.js']
+      },
+      options: {
+        js: 'node_modules/google-closure-library/**.js'
+        // other options here
+      }
+    }
+  }
+```
+
+#### Gulp Example
+```js
+var closureCompiler = require('google-closure-compiler').gulp();
+gulp.src('src/**/*.js')
+    .pipe(closureCompiler({
+      js: 'node_modules/google-closure-library/**.js'
+      // other options here
+    })
+    .pipe(gulp.dest('dist/out.min.js'));
+```
 
 ### Using the Grunt Task
 
@@ -136,11 +162,11 @@ Options are a direct match to the compiler flags without the leading "--".
 #### Basic Configuration Example:
 
 ```js
-var compiler = require('google-closure-compiler').gulp();
+var closureCompiler = require('google-closure-compiler').gulp();
 
 gulp.task('js-compile', function () {
     return gulp.src('./src/js/**/*.js', {base: './'})
-        .pipe(compiler({
+        .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE',
             language_in: 'ECMASCRIPT6_STRICT',
@@ -159,10 +185,10 @@ compiler. With large source sets this can lead to performance issues.
 Closure-compiler can natively expand file globs which will greatly alleviate this issue.
 
 ```js
-var compiler = require('google-closure-compiler').gulp();
+var closureCompiler = require('google-closure-compiler').gulp();
 
 gulp.task('js-compile', function () {
-    return compiler({
+    return closureCompiler({
             js: './src/js/**.js',
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE',
@@ -179,6 +205,29 @@ gulp.task('js-compile', function () {
 Gulp attempts to set the base of a glob from the point of the first wildcard. This isn't always
 what is desired. Users can specify the { base: 'path' } option to `gulp.src` calls to override
 this behavior.
+
+### Gulp Sourcemaps
+The gulp plugin supports gulp sourcemaps.
+
+```js
+var closureCompiler = require('google-closure-compiler').gulp();
+var sourcemaps = require('gulp-sourcemaps');
+
+gulp.task('js-compile', function () {
+    return gulp.src('./src/js/**/*.js', {base: './'})
+        .pipe(sourcemaps.init())
+        .pipe(closureCompiler({
+            compilation_level: 'SIMPLE',
+            warning_level: 'VERBOSE',
+            language_in: 'ECMASCRIPT6_STRICT',
+            language_out: 'ECMASCRIPT5_STRICT',
+            output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
+            js_output_file: 'output.min.js'
+          }))
+        .pipe(souremaps.write('/'))
+        .pipe(gulp.dest('./dist/js'));
+  });
+```
 
 ## Version History
 Closure Compiler release notes can be found on the

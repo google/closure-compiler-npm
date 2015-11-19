@@ -1,12 +1,14 @@
 {
   "name": "google-closure-compiler",
-  "version": "20151015.0.2",
-  "description": "A JavaScript checker and optimizer",
+  "version": "20151015.1.0",
+  "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",
   "repository": {
     "type": "git",
     "url": "https://github.com/chadkillingsworth/closure-compiler-npm.git"
   },
-  "private": true,
+  "publishConfig": {
+    "tag": "beta"
+  },
   "keywords": [
     "javascript",
     "compiler",
@@ -17,7 +19,6 @@
     "gruntplugin"
   ],
   "main": "index.js",
-  "author": "The Closure Compiler Authors",
   "contributors": [
     {
       "name": "Chad Killingsworth",
@@ -29,7 +30,8 @@
     "compiler.jar",
     "index.js",
     "package.json",
-    "contrib/"
+    "contrib/",
+    "README.md"
   ],
   "license": "Apache-2.0",
   "bugs": {

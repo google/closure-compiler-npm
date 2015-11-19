@@ -52,9 +52,9 @@ module.exports = function(grunt) {
         }
       }
 
-      var compiler = new Compiler(options, compilationCompleted);
+      var compiler = new Compiler(options);
       compiler.logger = grunt.verbose.write;
-      compiler.run();
+      compiler.run(compilationCompleted);
     });
   }
 

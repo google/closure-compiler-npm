@@ -29,9 +29,8 @@ var compiler_path = require.resolve('../../compiler.jar');
 /**
  * @constructor
  * @param {Object<string,string>|Array<string>} args
- * @param {function(number, string, string)} callback
  */
-function Compiler(args, callback) {
+function Compiler(args) {
   this.command_arguments = [];
   if (Array.isArray(args)) {
     this.command_arguments = args.slice();
@@ -51,8 +50,6 @@ function Compiler(args, callback) {
   }
 
   this.command_arguments.unshift('-jar', Compiler.jar_path);
-
-  this.completed_callback = callback;
 }
 
 /**
@@ -72,8 +69,11 @@ Compiler.prototype.logger = null;
 /** @type {Object<string, string>} */
 Compiler.prototype.spawn_options = undefined;
 
-/** @return {child_process.ChildProcess} */
-Compiler.prototype.run = function() {
+/**
+ * @param {function(number, string, string)=} callback
+ * @return {child_process.ChildProcess}
+ */
+Compiler.prototype.run = function(callback) {
   if (this.logger) {
     this.logger(this.getFullCommand() + '\n');
   }
@@ -81,7 +81,7 @@ Compiler.prototype.run = function() {
   var compileProcess = spawn(this.java_path, this.command_arguments, this.spawn_options);
 
   var stdOutData = '', stdErrData = '';
-  if (this.completed_callback) {
+  if (callback) {
     compileProcess.stdout.on('data', function (data) {
       stdOutData += data;
     });
@@ -95,11 +95,11 @@ Compiler.prototype.run = function() {
         stdErrData = this.prependFullCommand(stdErrData);
       }
 
-      this.completed_callback(code, stdOutData, stdErrData);
+      callback(code, stdOutData, stdErrData);
     }).bind(this));
 
     compileProcess.on('error', (function (err) {
-      this.completed_callback(1, stdOutData,
+      callback(1, stdOutData,
           this.prependFullCommand('Process spawn error. Is java in the path?\n' + err.message));
     }).bind(this));
   }

@@ -1,6 +1,10 @@
 # google-closure-compiler
 Check, compile, optimize and compress Javascript with Closure-Compiler
 
+This repository tracks issues related to the node publication and associated plugins.
+Any bugs not related to the plugins themselves should be reported to the
+[main repository](https://github.com/google/closure-compiler/).
+
 ## Getting Started
 Closure-compiler requires java to be installed and in the path.
 
@@ -8,6 +12,15 @@ If you are new to [Closure-Compiler](https://developers.google.com/closure/compi
 sure to read and understand the
 [compilation levels](https://developers.google.com/closure/compiler/docs/compilation_levels) as
 the compiler works very differently depending on the compilation level selected.
+
+For help or questions with the compiler, the best resource is
+[Stack Overflow](http://stackoverflow.com/questions/tagged/google-closure-compiler). Posts there
+are monitored by multiple Closure Compiler team members.
+
+You may also post in the
+[Closure Compiler Discuss Google Group](https://groups.google.com/forum/#!forum/closure-compiler-discuss).
+
+Please don't cross post to both Stackoverflow and Closure Compiler Discuss.
 
 ## Usage
 The compiler package now includes build tool plugins for [Grunt](http://gruntjs.com/) and
@@ -101,9 +114,9 @@ gulp.src('src/**/*.js')
 
 Include the plugin in your Gruntfile.js:
 
-```JavaScript
-// The load-grunt-tasks plugin won't automatically load closure-compiler
+```js
 require('google-closure-compiler').grunt(grunt);
+// The load-grunt-tasks plugin won't automatically load closure-compiler
 ```
 
 Task targets, files and options may be specified according to the grunt
@@ -227,6 +240,25 @@ gulp.task('js-compile', function () {
         .pipe(souremaps.write('/'))
         .pipe(gulp.dest('./dist/js'));
   });
+```
+
+## Plugin Authors and Native Node Usage
+A low-level node class is included to facilitate spawning the compiler jar as a process from Node.
+In addition, it exposes a static property with the path to the compiler jar file.
+
+```js
+var ClosureCompiler = require('google-closure-compiler').compiler;
+
+console.log(ClosureCompiler.jar_path); // absolute path the compiler jar
+
+var closureCompiler = new ClosureCompiler({
+  js: 'file-one.js',
+  compilation_level: 'ADVANCED'
+});
+
+var compilerProcess = closureCompiler.run(function(exitCode, stdOut, stdErr) {
+  //compilation complete
+});
 ```
 
 ## Version History

@@ -42,9 +42,6 @@ module.exports = function() {
   /** @const */
   var PLUGIN_NAME = 'gulp-google-closure-compiler';
 
-  var streamBuffers = require("stream-buffers");
-
-
   return function (options) {
 
     var fileList = [];
@@ -104,7 +101,7 @@ module.exports = function() {
         }
 
         // Standard output will be a string of JSON encoded files.
-        // Convert these back to vinyle
+        // Convert these back to vinyl
         if (stdOutData.trim().length > 0) {
           let outputFiles;
           try {

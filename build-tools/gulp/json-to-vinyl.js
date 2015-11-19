@@ -25,6 +25,7 @@
 
 var gutil = require('gulp-util');
 var File = gutil.File;
+var applySourceMap = require('vinyl-sourcemaps-apply');
 
 /**
  * @param {string} input string of json encoded files
@@ -42,7 +43,7 @@ module.exports = function(input) {
       contents: new Buffer(fileList[i].src)
     });
     if (fileList[i].source_map) {
-      file.sourceMap = JSON.parse(fileList[i].source_map);
+      applySourceMap(file, fileList[i].source_map);
     }
     outputFiles.push(file);
   }

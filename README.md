@@ -164,17 +164,17 @@ Options are a direct match to the compiler flags without the leading "--".
 var closureCompiler = require('google-closure-compiler').gulp();
 
 gulp.task('js-compile', function () {
-    return gulp.src('./src/js/**/*.js', {base: './'})
-        .pipe(closureCompiler({
-            compilation_level: 'SIMPLE',
-            warning_level: 'VERBOSE',
-            language_in: 'ECMASCRIPT6_STRICT',
-            language_out: 'ECMASCRIPT5_STRICT',
-            output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
-            js_output_file: 'output.min.js'
-          }))
-        .pipe(gulp.dest('./dist/js'));
-  });
+  return gulp.src('./src/js/**/*.js', {base: './'})
+      .pipe(closureCompiler({
+          compilation_level: 'SIMPLE',
+          warning_level: 'VERBOSE',
+          language_in: 'ECMASCRIPT6_STRICT',
+          language_out: 'ECMASCRIPT5_STRICT',
+          output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
+          js_output_file: 'output.min.js'
+        }))
+      .pipe(gulp.dest('./dist/js'));
+});
 ```
 
 ### Use without gulp.src
@@ -187,17 +187,17 @@ Closure-compiler can natively expand file globs which will greatly alleviate thi
 var closureCompiler = require('google-closure-compiler').gulp();
 
 gulp.task('js-compile', function () {
-    return closureCompiler({
-            js: './src/js/**.js',
-            compilation_level: 'SIMPLE',
-            warning_level: 'VERBOSE',
-            language_in: 'ECMASCRIPT6_STRICT',
-            language_out: 'ECMASCRIPT5_STRICT',
-            output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
-            js_output_file: 'output.min.js'
-          })
-        .pipe(gulp.dest('./dist/js'));
-  });
+  return closureCompiler({
+        js: './src/js/**.js',
+        compilation_level: 'SIMPLE',
+        warning_level: 'VERBOSE',
+        language_in: 'ECMASCRIPT6_STRICT',
+        language_out: 'ECMASCRIPT5_STRICT',
+        output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
+        js_output_file: 'output.min.js'
+      })
+      .pipe(gulp.dest('./dist/js'));
+});
 ```
 
 ##### gulp.src base option
@@ -229,19 +229,19 @@ var closureCompiler = require('google-closure-compiler').gulp();
 var sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('js-compile', function () {
-    return gulp.src('./src/js/**/*.js', {base: './'})
-        .pipe(sourcemaps.init())
-        .pipe(closureCompiler({
-            compilation_level: 'SIMPLE',
-            warning_level: 'VERBOSE',
-            language_in: 'ECMASCRIPT6_STRICT',
-            language_out: 'ECMASCRIPT5_STRICT',
-            output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
-            js_output_file: 'output.min.js'
-          }))
-        .pipe(souremaps.write('/'))
-        .pipe(gulp.dest('./dist/js'));
-  });
+  return gulp.src('./src/js/**/*.js', {base: './'})
+      .pipe(sourcemaps.init())
+      .pipe(closureCompiler({
+          compilation_level: 'SIMPLE',
+          warning_level: 'VERBOSE',
+          language_in: 'ECMASCRIPT6_STRICT',
+          language_out: 'ECMASCRIPT5_STRICT',
+          output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
+          js_output_file: 'output.min.js'
+        }))
+      .pipe(souremaps.write('/'))
+      .pipe(gulp.dest('./dist/js'));
+});
 ```
 
 ## Windows Path Length Limitations

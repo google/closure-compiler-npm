@@ -32,7 +32,7 @@ java -jar compiler.jar --help
 ### Specifying Options
 
 Both the grunt and gulp tasks take options objects. The option parameters map directly to the
-compiler flags with the leading '--' characters.
+compiler flags without the leading '--' characters.
 
 Values are either strings or booleans. Options which have multiple values can be arrays.
 
@@ -69,6 +69,8 @@ This can be avoided by specifying the input globs to the compiler and letting it
 files. You can mix these techniques. Files specified via `js` options will specified first.
 See examples below.
 
+A flagfile can also be used to workaround this issue.
+
 ### Using the Grunt Task
 
 Include the plugin in your Gruntfile.js:
@@ -80,8 +82,6 @@ require('google-closure-compiler').grunt(grunt);
 
 Task targets, files and options may be specified according to the grunt
 [Configuring tasks](http://gruntjs.com/configuring-tasks) guide.
-
-Options are a direct match to the compiler flags without the leading "--".
 
 #### Basic Configuration Example:
 

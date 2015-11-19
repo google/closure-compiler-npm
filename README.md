@@ -130,6 +130,28 @@ grunt.initConfig({
 });
 ```
 
+#### Advanced Usage with Arguments Array:
+
+```js
+// Project configuration.
+grunt.initConfig({
+  'closure-compiler': {
+    my_target: {
+      options: {
+        // When args is present, all other options are ignored
+        args: [
+          '--js', '/file-one.js',
+          '--js', '/file-two.js',
+          '--compilation_level', 'ADVANCED',
+          '--js_output_file', 'out.js',
+          '--debug'
+        ]
+      }
+    }
+  }
+});
+```
+
 ### Using the Gulp Plugin
 
 The gulp plugin supports piping multiple files through the compiler.
@@ -182,6 +204,22 @@ gulp.task('js-compile', function () {
 Gulp attempts to set the base of a glob from the point of the first wildcard. This isn't always
 what is desired. Users can specify the { base: 'path' } option to `gulp.src` calls to override
 this behavior.
+
+#### Advanced Usage with Arguments Array:
+
+```js
+var closureCompiler = require('google-closure-compiler').gulp();
+
+gulp.task('js-compile', function () {
+  return closureCompiler([
+        '--js', '/file-one.js',
+        '--js', '/file-two.js',
+        '--compilation_level', 'ADVANCED',
+        '--js_output_file', 'out.js',
+        '--debug'
+      ])
+      .pipe(gulp.dest('./dist/js'));
+});
 
 ### Gulp Sourcemaps
 The gulp plugin supports gulp sourcemaps.

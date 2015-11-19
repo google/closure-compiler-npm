@@ -67,18 +67,14 @@ module.exports = function(grunt) {
 
     function getCompilerOptions() {
       var opts = taskObject.options({
-        requireInputFiles: true,
         args: undefined
       });
 
-      var requireInputFiles = opts.requireInputFiles;
       var args = opts.args;
 
-      delete opts.requireInputFiles;
       delete opts.args;
 
       return {
-        requireIntputFiles: requireInputFiles,
         args: args,
         compilerOpts: opts
       }
@@ -112,8 +108,8 @@ module.exports = function(grunt) {
     // If an args array was provided as an option, invoke the compiler
     // with those arguments - but only if no src file sets were specified
     var options = getCompilerOptions();
-    if (taskObject.files.length === 0 && options.args) {
-      compileTasks.push(compilationPromise(options.args));
+    if (taskObject.files.length === 0) {
+      compileTasks.push(compilationPromise(options.args || options.compilerOpts));
     }
 
     Promise.all(compileTasks).then(function () {

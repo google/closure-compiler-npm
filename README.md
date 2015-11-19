@@ -74,42 +74,6 @@ the "--" characters and are directly passed to the compiler in the order specifi
 When an array of flags is passed, the input files should not be specified via the build tools, but
 rather as compilation flags directly.
 
-### Windows Path Length Limitations
-Windows command shells have a maximum length for a command. This is surprisingly easy to hit when
-you allow the build tools to expand globs for large sets of source files for the compiler.
-
-This can be avoided by specifying the input globs as compiler arguments via the `--js` flag and
-let it expand the files. You can even mix these techniques. Files specified via `js` options will
-specified first.
-
-A flagfile can also be used to workaround this issue.
-
-#### Grunt Example
-```js
-  'closure-compiler': {
-    my_target: {
-      files: {
-        'dest/out.min.js': ['src/**/*.js']
-      },
-      options: {
-        js: 'node_modules/google-closure-library/**.js'
-        // other options here
-      }
-    }
-  }
-```
-
-#### Gulp Example
-```js
-var closureCompiler = require('google-closure-compiler').gulp();
-gulp.src('src/**/*.js')
-    .pipe(closureCompiler({
-      js: 'node_modules/google-closure-library/**.js'
-      // other options here
-    })
-    .pipe(gulp.dest('dist/out.min.js'));
-```
-
 ### Using the Grunt Task
 
 Include the plugin in your Gruntfile.js:
@@ -240,6 +204,42 @@ gulp.task('js-compile', function () {
         .pipe(souremaps.write('/'))
         .pipe(gulp.dest('./dist/js'));
   });
+```
+
+## Windows Path Length Limitations
+Windows command shells have a maximum length for a command. This is surprisingly easy to hit when
+you allow the build tools to expand globs for large sets of source files for the compiler.
+
+This can be avoided by specifying the input globs as compiler arguments via the `--js` flag and
+let it expand the files. You can even mix these techniques. Files specified via `js` options will
+specified first.
+
+A flagfile can also be used to workaround this issue.
+
+### Grunt Example
+```js
+  'closure-compiler': {
+    my_target: {
+      files: {
+        'dest/out.min.js': ['src/**/*.js']
+      },
+      options: {
+        js: 'node_modules/google-closure-library/**.js'
+        // other options here
+      }
+    }
+  }
+```
+
+### Gulp Example
+```js
+var closureCompiler = require('google-closure-compiler').gulp();
+gulp.src('src/**/*.js')
+    .pipe(closureCompiler({
+      js: 'node_modules/google-closure-library/**.js'
+      // other options here
+    })
+    .pipe(gulp.dest('dist/out.min.js'));
 ```
 
 ## Plugin Authors and Native Node Usage

@@ -89,6 +89,8 @@ Task targets, files and options may be specified according to the grunt
 #### Basic Configuration Example:
 
 ```js
+require('google-closure-compiler').grunt(grunt);
+
 // Project configuration.
 grunt.initConfig({
   'closure-compiler': {
@@ -110,6 +112,10 @@ grunt.initConfig({
 #### Closure Library Example:
 
 ```js
+
+var compilerPackage = require('google-closure-compiler');
+compilerPackage.grunt(grunt);
+
 // Project configuration.
 grunt.initConfig({
   'closure-compiler': {
@@ -119,6 +125,7 @@ grunt.initConfig({
       },
       options: {
         js: '/node_modules/google-closure-library/**.js'
+        externs: compilerPackage.compiler.CONTRIB_PATH + '/externs/jquery-1.9.js',
         compilation_level: 'SIMPLE',
         manage_closure_dependencies: true,
         language_in: 'ECMASCRIPT5_STRICT',
@@ -170,7 +177,7 @@ gulp.task('js-compile', function () {
           warning_level: 'VERBOSE',
           language_in: 'ECMASCRIPT6_STRICT',
           language_out: 'ECMASCRIPT5_STRICT',
-          output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
+          output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map',
           js_output_file: 'output.min.js'
         }))
       .pipe(gulp.dest('./dist/js'));
@@ -179,21 +186,23 @@ gulp.task('js-compile', function () {
 
 ### Use without gulp.src
 Gulp files are all read into memory, transformed into a JSON stream, and piped through the
-compiler. With large source sets this can lead to performance issues.
+compiler. With large source sets this may require a large amount of memory.
 
 Closure-compiler can natively expand file globs which will greatly alleviate this issue.
 
 ```js
-var closureCompiler = require('google-closure-compiler').gulp();
+var compilerPackage = require('google-closure-compiler');
+var closureCompiler = compilerPackage.gulp();
 
 gulp.task('js-compile', function () {
   return closureCompiler({
         js: './src/js/**.js',
+        externs: compilerPackage.compiler.CONTRIB_PATH + '/externs/jquery-1.9.js',
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE',
         language_in: 'ECMASCRIPT6_STRICT',
         language_out: 'ECMASCRIPT5_STRICT',
-        output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
+        output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map',
         js_output_file: 'output.min.js'
       })
       .pipe(gulp.dest('./dist/js'));
@@ -237,7 +246,7 @@ gulp.task('js-compile', function () {
           warning_level: 'VERBOSE',
           language_in: 'ECMASCRIPT6_STRICT',
           language_out: 'ECMASCRIPT5_STRICT',
-          output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
+          output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map',
           js_output_file: 'output.min.js'
         }))
       .pipe(souremaps.write('/'))
@@ -250,8 +259,8 @@ Windows command shells have a maximum length for a command. This is surprisingly
 you allow the build tools to expand globs for large sets of source files for the compiler.
 
 This can be avoided by specifying the input globs as compiler arguments via the `--js` flag and
-let it expand the files. You can even mix these techniques. Files specified via `js` options will
-specified first.
+let it expand the files. You can even mix these techniques. Files specified via `js` option will
+be included first.
 
 A flagfile can also be used to workaround this issue.
 
@@ -288,7 +297,8 @@ In addition, it exposes a static property with the path to the compiler jar file
 ```js
 var ClosureCompiler = require('google-closure-compiler').compiler;
 
-console.log(ClosureCompiler.jar_path); // absolute path the compiler jar
+console.log(ClosureCompiler.COMPILER_PATH); // absolute path the compiler jar
+console.log(ClosureCompiler.CONTRIB_PATH); // absolute path the contrib folder which contains
 
 var closureCompiler = new ClosureCompiler({
   js: 'file-one.js',

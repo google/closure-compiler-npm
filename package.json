@@ -1,6 +1,6 @@
 {
   "name": "google-closure-compiler",
-  "version": "20151015.3.0",
+  "version": "20151015.4.0",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",
   "repository": {
     "type": "git",

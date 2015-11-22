@@ -8,7 +8,7 @@ Any bugs not related to the plugins themselves should be reported to the
 [main repository](https://github.com/google/closure-compiler/).
 
 ## Getting Started
-Closure-compiler requires java to be installed and in the path.
+*Closure-compiler requires java to be installed and in the path.*
 
 If you are new to [Closure-Compiler](https://developers.google.com/closure/compiler/), make
 sure to read and understand the
@@ -22,7 +22,7 @@ are monitored by multiple Closure Compiler team members.
 You may also post in the
 [Closure Compiler Discuss Google Group](https://groups.google.com/forum/#!forum/closure-compiler-discuss).
 
-Please don't cross post to both Stackoverflow and Closure Compiler Discuss.
+*Please don't cross post to both Stackoverflow and Closure Compiler Discuss.*
 
 ## Usage
 The compiler package now includes build tool plugins for [Grunt](http://gruntjs.com/) and
@@ -76,7 +76,7 @@ the "--" characters and are directly passed to the compiler in the order specifi
 When an array of flags is passed, the input files should not be specified via the build tools, but
 rather as compilation flags directly.
 
-### Using the Grunt Task
+## Using the Grunt Task
 
 Include the plugin in your Gruntfile.js:
 
@@ -88,7 +88,7 @@ require('google-closure-compiler').grunt(grunt);
 Task targets, files and options may be specified according to the grunt
 [Configuring tasks](http://gruntjs.com/configuring-tasks) guide.
 
-#### Basic Configuration Example:
+### Basic Configuration Example:
 
 ```js
 require('google-closure-compiler').grunt(grunt);
@@ -111,7 +111,7 @@ grunt.initConfig({
 });
 ```
 
-#### Closure Library Example:
+### Closure Library Example:
 
 ```js
 
@@ -139,7 +139,7 @@ grunt.initConfig({
 });
 ```
 
-#### Advanced Usage with Arguments Array:
+### Advanced Usage with Arguments Array:
 
 ```js
 // Project configuration.
@@ -161,13 +161,38 @@ grunt.initConfig({
 });
 ```
 
-### Using the Gulp Plugin
+### Windows Path Length Limitations
+Windows command shells have a maximum length for a command. This is surprisingly easy to hit when
+you allow the build tools to expand globs for large sets of source files for the compiler.
+
+This can be avoided by specifying the input globs as compiler arguments via the `--js` flag and
+let it expand the files. You can even mix these techniques. Files specified via `js` option will
+be included first.
+
+```js
+  'closure-compiler': {
+    my_target: {
+      files: {
+        'dest/out.min.js': ['src/**/*.js']
+      },
+      options: {
+        js: 'node_modules/google-closure-library/**.js'
+        // other options here
+      }
+    }
+  }
+```
+*Note the globbing syntax used by the compiler is slightly different than the standard node syntax.*
+
+A flagfile can also be used to workaround this issue.
+
+## Using the Gulp Plugin
 
 The gulp plugin supports piping multiple files through the compiler.
 
 Options are a direct match to the compiler flags without the leading "--".
 
-#### Basic Configuration Example:
+### Basic Configuration Example:
 
 ```js
 var closureCompiler = require('google-closure-compiler').gulp();
@@ -179,7 +204,7 @@ gulp.task('js-compile', function () {
           warning_level: 'VERBOSE',
           language_in: 'ECMASCRIPT6_STRICT',
           language_out: 'ECMASCRIPT5_STRICT',
-          output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map',
+          output_wrapper: '(function(){\n%output%\n}).call(this)',
           js_output_file: 'output.min.js'
         }))
       .pipe(gulp.dest('./dist/js'));
@@ -204,19 +229,19 @@ gulp.task('js-compile', function () {
         warning_level: 'VERBOSE',
         language_in: 'ECMASCRIPT6_STRICT',
         language_out: 'ECMASCRIPT5_STRICT',
-        output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map',
+        output_wrapper: '(function(){\n%output%\n}).call(this)',
         js_output_file: 'output.min.js'
       })
       .pipe(gulp.dest('./dist/js'));
 });
 ```
 
-##### gulp.src base option
+### gulp.src base option
 Gulp attempts to set the base of a glob from the point of the first wildcard. This isn't always
 what is desired. Users can specify the { base: 'path' } option to `gulp.src` calls to override
 this behavior.
 
-#### Advanced Usage with Arguments Array:
+### Advanced Usage with Arguments Array:
 
 ```js
 var closureCompiler = require('google-closure-compiler').gulp();
@@ -248,48 +273,12 @@ gulp.task('js-compile', function () {
           warning_level: 'VERBOSE',
           language_in: 'ECMASCRIPT6_STRICT',
           language_out: 'ECMASCRIPT5_STRICT',
-          output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map',
+          output_wrapper: '(function(){\n%output%\n}).call(this)',
           js_output_file: 'output.min.js'
         }))
-      .pipe(souremaps.write('/'))
+      .pipe(souremaps.write('/')) // gulp-sourcemaps automatically adds the sourcemap url comment
       .pipe(gulp.dest('./dist/js'));
 });
-```
-
-## Windows Path Length Limitations
-Windows command shells have a maximum length for a command. This is surprisingly easy to hit when
-you allow the build tools to expand globs for large sets of source files for the compiler.
-
-This can be avoided by specifying the input globs as compiler arguments via the `--js` flag and
-let it expand the files. You can even mix these techniques. Files specified via `js` option will
-be included first.
-
-A flagfile can also be used to workaround this issue.
-
-### Grunt Example
-```js
-  'closure-compiler': {
-    my_target: {
-      files: {
-        'dest/out.min.js': ['src/**/*.js']
-      },
-      options: {
-        js: 'node_modules/google-closure-library/**.js'
-        // other options here
-      }
-    }
-  }
-```
-
-### Gulp Example
-```js
-var closureCompiler = require('google-closure-compiler').gulp();
-gulp.src('src/**/*.js')
-    .pipe(closureCompiler({
-      js: 'node_modules/google-closure-library/**.js'
-      // other options here
-    })
-    .pipe(gulp.dest('dist/out.min.js'));
 ```
 
 ## Plugin Authors and Native Node Usage

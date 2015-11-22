@@ -3,10 +3,10 @@ node_js:
 - '5.1'
 - '0.12'
 after_success:
- - git config user.name "Travis CI"
- - git config user.email "chadkillingsworth@gmail.com"
- - gulp release-if-changed
- - git push "https://chadkillingsworth:${GH_TOKEN}@github.com/ChadKillingsworth/closure-compiler-npm.git" master
+- git config user.name "Travis CI"
+- git config user.email "chadkillingsworth@gmail.com"
+- gulp release-if-changed
+- git push "https://chadkillingsworth:${GH_TOKEN}@github.com/ChadKillingsworth/closure-compiler-npm.git" master
 deploy:
   skip_cleanup: true
   provider: npm
@@ -19,4 +19,4 @@ deploy:
 env:
   global:
     GH_TOKEN:
-      secure: lFRNFNKpiP/S14mnTrl3RzH/q9SYf/8GP7dgiH8wlAgnd1XnkZbKFG978VtJCNTOioNPLpwgOTib5I7DAJnBalWszjDAj1hXC3oUa1/EPRST2KDX/04187cj4C/HgbIm8Glrj0m/e0+G5vAKsd0C644JQ07wZQNaMuCPLrSZILjW8Z9Wwaa51zzUDmSsYpX7UHuIWZxTtmCULHAK34rHzXb/ltnYwzJdyT+yt6Ji4pD6X3dZIPU5Y3WwubiqC6O7NO9uYm5gNPPhrxYseYG0pH2t3I9UB4/5kZRG3ejvgbyfkmvy+3a38cXoB0+GoupcVZgRfWTR8rMj7z2FNjhmpUXEHxpK0vdgX72gAHma81OVJF1g1VRctkvEyMsr4IosifruzbJXAAEQ+n07ZGAgOF9QxzBfZYezlMVDF9vx3+WbHKsNSqc4583Jrivjn3SE+uBgffSzeMWeLtl/eVvZl93XYGio+WERSFuu3gniS/zkuVyRo3Ouiy/zEEb6WNdsm94/u2ToRTkPJ9VebOELu8sThYqMsWx7Ai/3CKPm8Kj+Hu6Zctmwibtt4gS+ttQKQZssrGx9/yspS5hU8GKphpFaNDwP9zjhQtJVhlydHOrS7dwy1hfKlx/t2Q6R/RaRax+3l+uYBSBPk2Vwe63i2cIhNUuOMDCEiyURQnZScU0=
+      secure: IZ/Fiz+KbXCdv/iTXf22BR0bfuAGE4/8ITbpzixMr5XfwJC5YyHVr2IpeAiCOEnMXxsyYcnfUZ6YZMKp0Damj7qj9YzVNK0OuW9oOCBCtSQ+wvC+/Q18lDo2kGNF+CHot1bpyLa39p1eJAU5paFyN+Oh7pzfXiTTufyZ+79Qf39CU4p3wtD3iO4nquoqFjbk3liPJuq1sG3KFMYsHjsUaldsdBxWMCXcQQbnWHQYU7MadV/o++GyiCsYwPZBunVKXdEj0TQdlJEAWOdXfsWajycx3onSfYbxHgr013vERgDuTFUEVMSdRqOUJK4++vf+ZsutherVCzvp+26QCD7IBHvwYNXC99F9x3lVryyGBF5xS+ucxgFw3FtteyRTgMhgT+V+ZY2Oq9sSUSQEN2EYKSZoPlfsAjYHwBXPOLmNvYNwURp6PMBZX/E47oIlgU2HPh0b4ARQGH5AY8dYsaksiEeRiOdBKCaN6aLAJPfPXG7vg04LY6STD/mCxzinoYsZ7S1ug7acOGs9x5I86vm9Sm/iarn+Ca7eumwoYj5EDTsYiJjYr36SPGmCV+GdBSZs6XtonJCoF/xW0i9nbs7sK2nV86oGWscszXLd46UwIVR+kurpeRp2TMytQ+LIpO5tmqa/+DsrdU8RJdmayuGBEQcsV1ggORBTBKFq3R4+v2A=

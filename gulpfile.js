@@ -41,6 +41,12 @@ gulp.task('test', function() {
 });
 gulp.task('default', ['test']);
 
+
+/**
+ * Check the git diff for package.json to return whether it included
+ * a change to the version number.
+ * @return {Promise<boolean>}
+ */
 var didLastCommitChangeVersionNumber = function() {
   return new Promise(function (resolve, reject) {
     git.diff(['HEAD^', 'HEAD', 'package.json'], function(err, data) {
@@ -55,6 +61,13 @@ var didLastCommitChangeVersionNumber = function() {
   });
 };
 
+/**
+ * If the previous commit didn't include a version number change,
+ * calculate what the new version should be.
+ *
+ * @param {boolean} alreadyChanged
+ * @returns {Promise<Semver>}
+ */
 var getNextVersionNumber = function(alreadyChanged) {
   return new Promise(function(resolve, reject) {
     if (alreadyChanged) {
@@ -88,6 +101,13 @@ var getNextVersionNumber = function(alreadyChanged) {
   });
 };
 
+/**
+ * Given a semver object, update package.json (if needed) to the
+ * new version number. If changed, add and commit package.json.
+ *
+ * @param {Semver} newVersion
+ * @returns {Promise<boolean>}
+ */
 var updatePackageToNewVersion = function(newVersion) {
   return new Promise(function(resolve, reject) {
     if (currentVer.compare(newVersion) >= 0) {
@@ -105,6 +125,11 @@ var updatePackageToNewVersion = function(newVersion) {
   });
 };
 
+/**
+ * Task to determine whether a bump in the version number is needed.
+ * This task is intended to be called a continuous integration system
+ * that will auto-push any changes back to the main repository.
+ */
 gulp.task('release-if-changed', ['test'], function(callback) {
   didLastCommitChangeVersionNumber()
       .then(getNextVersionNumber)
@@ -112,56 +137,4 @@ gulp.task('release-if-changed', ['test'], function(callback) {
       .catch(function(err) {
         throw err;
       });
-});
-
-/**
- * Task to see if a the current package version is newer than
- * the latest published version on npm
- */
-gulp.task('is-release-needed', function(callback) {
-  var nodeVersion = new Semver(process.version);
-  if (nodeVersion.compare(new Semver('5.0.0')) < 0) {
-    fs.writeFile('./.releaseNeeded', 'false', function() {
-      callback();
-    });
-    return;
-  }
-
-  var https = require('https');
-
-  // Check the npm registry for the newest version
-  https.get('https://registry.npmjs.org/google-closure-compiler',
-      function(res) {
-     var respData = '';
-    res.on('data', function (data) {
-      respData += data;
-    });
-    res.on('end', function() {
-      var verData = JSON.parse(respData);
-
-      var versions = [];
-      for(var version in verData.versions) {
-        versions.push(verData.versions[version]);
-      }
-      versions.sort(function(a, b) {
-        var verA = new Semver(a.version);
-        var verB = new Semver(b.version);
-        return verA.compare(verB);
-      });
-
-      var latestPublishedVersion = new Semver(versions[version.length - 1].version);
-
-      if (currentVer.compare(latestPublishedVersion) > 0) {
-        fs.writeFile('./.releaseNeeded', 'true', function() {
-          callback();
-        });
-        return;
-      } else {
-        fs.writeFile('./.releaseNeeded', 'false', function() {
-          callback();
-        });
-        callback();
-      }
-    });
-  });
 });

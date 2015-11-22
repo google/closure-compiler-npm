@@ -130,7 +130,12 @@ var updatePackageToNewVersion = function(newVersion) {
  * This task is intended to be called a continuous integration system
  * that will auto-push any changes back to the main repository.
  */
-gulp.task('release-if-changed', ['test'], function(callback) {
+gulp.task('release-if-changed', function(callback) {
+  var nodeVersion = new Semver(process.version);
+  if (nodeVersion.compare(new Semver('5.0.0')) < 0) {
+    return callback();
+  }
+
   didLastCommitChangeVersionNumber()
       .then(getNextVersionNumber)
       .then(updatePackageToNewVersion)

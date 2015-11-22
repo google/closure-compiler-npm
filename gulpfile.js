@@ -32,7 +32,6 @@ var mocha = require('gulp-mocha');
 var git = require('simple-git')(__dirname);
 var Semver = require('semver');
 var fs = require('fs');
-var process = require('child_process');
 var packageInfo = require('./package.json');
 var currentVer = new Semver(packageInfo.version);
 
@@ -40,7 +39,7 @@ gulp.task('test', function() {
   return gulp.src('./test/**.js', {read: false})
       .pipe(mocha());
 });
-gulp('default', ['test']);
+gulp.task('default', ['test']);
 
 var didLastCommitChangeVersionNumber = function() {
   return new Promise(function (resolve, reject) {

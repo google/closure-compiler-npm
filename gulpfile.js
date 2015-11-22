@@ -71,7 +71,7 @@ var didLastCommitChangeVersionNumber = function() {
 var getNextVersionNumber = function(alreadyChanged) {
   return new Promise(function(resolve, reject) {
     if (alreadyChanged) {
-      gutil.log('Previous commit incremented version number. No changes needed.');
+      gutil.log('Most recent commit incremented version number. No changes needed.');
       return resolve(currentVer);
     }
 

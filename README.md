@@ -1,4 +1,6 @@
 # google-closure-compiler
+[![Build Status](https://travis-ci.org/ChadKillingsworth/closure-compiler-npm.svg?branch=master)](https://travis-ci.org/ChadKillingsworth/closure-compiler-npm)
+
 Check, compile, optimize and compress Javascript with Closure-Compiler
 
 This repository tracks issues related to the publication to npmjs.org and associated plugins.

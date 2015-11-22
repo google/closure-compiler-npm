@@ -9,6 +9,7 @@ script:
   - export NEEDS_RELEASE=$(cat .releaseNeeded)
 deploy:
   provider: npm
+  email: chadkillingsworth@gmail.com
   on:
     node: '5.1'
     branch: master

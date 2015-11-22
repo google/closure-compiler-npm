@@ -120,6 +120,14 @@ gulp.task('release-if-changed', ['test'], function(callback) {
  * the latest published version on npm
  */
 gulp.task('is-release-needed', function(callback) {
+  var nodeVersion = new Semver(process.version);
+  if (nodeVersion.compare(new Semver('5.0.0')) < 0) {
+    fs.writeFile('./.releaseNeeded', 'false', function() {
+      callback();
+    });
+    return;
+  }
+
   var https = require('https');
 
   // Check the npm registry for the newest version
@@ -145,8 +153,14 @@ gulp.task('is-release-needed', function(callback) {
       var latestPublishedVersion = new Semver(versions[version.length - 1].version);
 
       if (currentVer.compare(latestPublishedVersion) > 0) {
-        callback('Release needed');
+        fs.writeFile('./.releaseNeeded', 'true', function() {
+          callback();
+        });
+        return;
       } else {
+        fs.writeFile('./.releaseNeeded', 'false', function() {
+          callback();
+        });
         callback();
       }
     });

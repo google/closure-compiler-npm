@@ -6,7 +6,7 @@ after_success:
 - git config user.name "Travis CI"
 - git config user.email "chadkillingsworth@gmail.com"
 - gulp release-if-changed
-- git push "https://chadkillingsworth:${GH_TOKEN}@github.com/ChadKillingsworth/closure-compiler-npm.git" master
+- git push "https://chadkillingsworth:${GH_TOKEN}@github.com/ChadKillingsworth/closure-compiler-npm.git" HEAD:master
 deploy:
   skip_cleanup: true
   provider: npm

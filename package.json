@@ -47,10 +47,10 @@
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-util": "^3.0.7",
     "mocha": "^2.3.4",
     "should": "^7.1.1",
-    "stream-assert": "^2.0.3"
+    "stream-assert": "^2.0.3",
+    "vinyl": "^1.1.0"
   },
   "scripts": {
     "test": "mocha"

@@ -34,6 +34,7 @@ require('mocha');
 describe('gulp-google-closure-compiler', function() {
   describe('in buffer mode', function() {
     this.timeout(15000);
+    this.slow(5000);
 
     var fakeFile1 = new File({
       path: '/foo.js',

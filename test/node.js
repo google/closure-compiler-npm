@@ -23,11 +23,11 @@
 'use strict';
 
 var should = require('should');
-var gruntMock = require('gruntmock');
-var gruntClosureCompiler = require('../').grunt;
+var compilerPackage = require('../');
+var Compiler = compilerPackage.compiler;
 require('mocha');
 
-describe('grunt-google-closure-compiler plugin', function() {
+describe('closure-compiler node bindings', function() {
   this.timeout(15000);
   this.slow(5000);
 

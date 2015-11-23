@@ -37,6 +37,7 @@ describe('compiler.jar', function() {
     var compiler = new Compiler({ version: true});
     compiler.run(function(exitCode, stdout, stderr) {
       var versionInfo = (stdout || '').match(compilerVersionExpr);
+      should(versionInfo).not.be.eql(null);
       versionInfo.length.should.be.eql(2);
       versionInfo[1].indexOf('SNAPSHOT').should.be.below(0);
       done();
@@ -49,6 +50,7 @@ describe('compiler.jar', function() {
     var packageVer = new Semver(packageInfo.version);
     compiler.run(function(exitCode, stdout, stderr) {
       var versionInfo = (stdout || '').match(compilerVersionExpr);
+      should(versionInfo).not.be.eql(null);
       versionInfo.length.should.be.eql(2);
 
       var compilerVersion = new Semver(versionInfo[1] + '.0.0');

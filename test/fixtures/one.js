@@ -1,1 +1,2 @@
-console.log('one.js');
+function log(a){console.log(a)}
+log('one.js');

@@ -173,7 +173,7 @@ describe('gulp-google-closure-compiler', function() {
             warning_level: 'VERBOSE',
             module: [
               'one:1',
-              'two:1'
+              'two:1:one'
             ]
           }))
           .pipe(assert.length(2))
@@ -196,11 +196,25 @@ describe('gulp-google-closure-compiler', function() {
           })
           .pipe(assert.length(1))
           .pipe(assert.first(function(f) {
-            f.contents.toString().should.eq('console.log("one.js");console.log("two.js");\n');
+            f.contents.toString().should.eql('function log(a){console.log(a)}log("one.js");log("two.js");\n');
           }))
           .pipe(assert.end(done));
 
       stream.end();
+    });
+
+    it('should include js options before gulp.src files', function(done) {
+      gulp.src(__dirname + '/fixtures/two.js')
+          .pipe(closureCompiler({
+            js: __dirname + '/fixtures/one.js',
+            compilation_level: 'SIMPLE',
+            warning_level: 'VERBOSE'
+          }))
+          .pipe(assert.length(1))
+          .pipe(assert.first(function(f) {
+            f.contents.toString().should.eql('function log(a){console.log(a)}log("one.js");log("two.js");\n');
+          }))
+          .pipe(assert.end(done));
     });
 
     it('should support calling the compiler with an arguments array', function(done) {
@@ -211,7 +225,7 @@ describe('gulp-google-closure-compiler', function() {
           ])
           .pipe(assert.length(1))
           .pipe(assert.first(function(f) {
-            f.contents.toString().should.eq('console.log("one.js");console.log("two.js");\n');
+            f.contents.toString().should.eql('console.log("one.js");console.log("two.js");\n');
           }))
           .pipe(assert.end(done));
 

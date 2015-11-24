@@ -76,6 +76,18 @@ the "--" characters and are directly passed to the compiler in the order specifi
 When an array of flags is passed, the input files should not be specified via the build tools, but
 rather as compilation flags directly.
 
+Some shells (particularly windows) try to do expansion on globs rather than passing the string on
+to the compiler. To prevent this it is necessary to quote certain arguments:
+
+```js
+  {
+    js: '"my/quoted/glob/**.js"',
+    compilation_level: 'ADVANCED',
+    js_output_file: 'out.js',
+    debug: true
+  }
+```
+
 ## Using the Grunt Task
 
 Include the plugin in your Gruntfile.js:

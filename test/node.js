@@ -56,8 +56,8 @@ describe('closure-compiler node bindings', function() {
       three: ['one', 'two', 'three']
     });
 
-    var expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two="two"',
-        '--three="one"', '--three="two"', '--three="three"'];
+    var expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+        '--three=one', '--three=two', '--three=three'];
     compiler.command_arguments.length.should.eql(expectedArray.length);
     compiler.command_arguments.forEach(function(item, index) {
       expectedArray[index].should.eql(item);
@@ -65,8 +65,8 @@ describe('closure-compiler node bindings', function() {
   });
 
   it('should prepend the -jar argument and compiler path when configured by array', function() {
-    var expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two="two"',
-      '--three="one"', '--three="two"', '--three="three"'];
+    var expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+      '--three=one', '--three=two', '--three=three'];
 
     var compiler = new Compiler(expectedArray.slice(2));
 

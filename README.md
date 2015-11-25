@@ -173,31 +173,6 @@ grunt.initConfig({
 });
 ```
 
-### Windows Path Length Limitations
-Windows command shells have a maximum length for a command. This is surprisingly easy to hit when
-you allow the build tools to expand globs for large sets of source files for the compiler.
-
-This can be avoided by specifying the input globs as compiler arguments via the `--js` flag and
-let it expand the files. You can even mix these techniques. Files specified via `js` option will
-be included first.
-
-```js
-  'closure-compiler': {
-    my_target: {
-      files: {
-        'dest/out.min.js': ['src/**/*.js']
-      },
-      options: {
-        js: 'node_modules/google-closure-library/**.js'
-        // other options here
-      }
-    }
-  }
-```
-*Note the globbing syntax used by the compiler is slightly different than the standard node syntax.*
-
-A flagfile can also be used to workaround this issue.
-
 ## Using the Gulp Plugin
 
 The gulp plugin supports piping multiple files through the compiler.

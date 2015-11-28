@@ -89,13 +89,13 @@ var getNextVersionNumber = function(alreadyChanged) {
       var compilerVer = new Semver(versionNum[1] + '.0.0');
 
       if (compilerVer.compare(currentVer) > 0) {
-        gutil.log('New compiler version detected. Increment major release.');
+        gutil.log('New compiler version detected. Increment major version.');
         return resolve(compilerVer);
       }
 
       var nextVersion = new Semver(packageInfo.version);
       nextVersion.inc('minor');
-      gutil.log('Changes detected. Increment minor release.');
+      gutil.log('Changes detected. Increment minor version.');
       return resolve(nextVersion);
     });
   });
@@ -127,7 +127,7 @@ var updatePackageToNewVersion = function(newVersion) {
 
 /**
  * Task to determine whether a bump in the version number is needed.
- * This task is intended to be called a continuous integration system
+ * This task is intended to be called by a continuous integration system
  * that will auto-push any changes back to the main repository.
  */
 gulp.task('release-if-changed', function(callback) {

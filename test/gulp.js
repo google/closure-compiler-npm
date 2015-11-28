@@ -32,10 +32,9 @@ var closureCompiler = compilerPackage.gulp();
 require('mocha');
 
 describe('gulp-google-closure-compiler', function() {
-  describe('in buffer mode', function() {
-    this.timeout(15000);
-    this.slow(5000);
+  this.slow(1000);
 
+  describe('in buffer mode', function() {
     var fakeFile1 = new File({
       path: '/foo.js',
       contents: new Buffer('console.log("foo");')
@@ -60,6 +59,9 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should compile a single file', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
       var stream = closureCompiler({
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE'
@@ -76,6 +78,9 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should name the output file when no js_output_file option is provided', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
       var stream = closureCompiler({
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE'
@@ -91,6 +96,9 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should name the output file from the js_output_file option', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
       var stream = closureCompiler({
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE',
@@ -107,6 +115,9 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should compile multiple input files into a single output', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
       var stream = closureCompiler({
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE'
@@ -125,6 +136,9 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should compile multiple inputs into multiple outputs with module options', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
       var stream = closureCompiler({
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE',
@@ -151,6 +165,9 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should generate a sourcemap for a single output file', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
       gulp.src(__dirname + '/fixtures/**/*.js')
           .pipe(sourcemaps.init())
           .pipe(closureCompiler({
@@ -166,6 +183,9 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should generate a sourcemap for each output file with modules', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
       gulp.src(__dirname + '/fixtures/**/*.js')
           .pipe(sourcemaps.init())
           .pipe(closureCompiler({
@@ -189,6 +209,9 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should support passing input globs directly to the compiler', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
       var stream = closureCompiler({
             js: __dirname + '/fixtures/**.js',
             compilation_level: 'SIMPLE',
@@ -204,6 +227,9 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should include js options before gulp.src files', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
       gulp.src(__dirname + '/fixtures/two.js')
           .pipe(closureCompiler({
             js: __dirname + '/fixtures/one.js',
@@ -218,6 +244,9 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should support calling the compiler with an arguments array', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
       var stream = closureCompiler([
             '--js="' + __dirname + '/fixtures/**.js"',
             '--compilation_level=SIMPLE',

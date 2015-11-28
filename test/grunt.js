@@ -92,8 +92,7 @@ function getGruntTaskObject(fileObj, options, asyncDone) {
 
 
 describe('grunt-google-closure-compiler', function() {
-  this.timeout(300000);
-  this.slow(5000);
+  this.slow(1000);
 
   it('should emit an error for invalid options', function(done) {
     var taskObj = getGruntTaskObject([{
@@ -150,6 +149,9 @@ describe('grunt-google-closure-compiler', function() {
   });
 
   it('should run once for each destination', function(done) {
+    this.timeout(30000);
+    this.slow(10000);
+
     var fileOneDest = 'test/out/one.js';
     var fileTwoDest = 'test/out/two.js';
 
@@ -189,6 +191,9 @@ describe('grunt-google-closure-compiler', function() {
   });
 
   it('should run when grunt provides no files', function(done) {
+    this.timeout(30000);
+    this.slow(10000);
+
     var fileOneDest = 'test/out/one.js';
 
     function taskDone() {
@@ -222,6 +227,9 @@ describe('grunt-google-closure-compiler', function() {
   });
 
   it('should support an arguments array', function(done) {
+    this.timeout(30000);
+    this.slow(10000);
+
     var fileOneDest = 'test/out/one.js';
 
     function taskDone() {

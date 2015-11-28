@@ -28,9 +28,6 @@ var Compiler = compilerPackage.compiler;
 require('mocha');
 
 describe('closure-compiler node bindings', function() {
-  this.timeout(15000);
-  this.slow(5000);
-
   it('should have a static property for the jar path', function() {
     Compiler.COMPILER_PATH.should.endWith('/compiler.jar');
   });
@@ -40,6 +37,8 @@ describe('closure-compiler node bindings', function() {
   });
 
   it('should error when java is not in the path', function(done) {
+    this.slow(1000);
+
     var compiler = new Compiler({ version: true});
     compiler.java_path = 'DOES_NOT_EXIST';
     compiler.run(function(exitCode, stdout, stderr) {

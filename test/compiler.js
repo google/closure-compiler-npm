@@ -30,8 +30,7 @@ var compilerVersionExpr = /^Version:\sv(.*)$/m;
 require('mocha');
 
 describe('compiler.jar', function() {
-  this.timeout(15000);
-  this.slow(5000);
+  this.slow(1000);
 
   it('should not be a snapshot build', function(done) {
     var compiler = new Compiler({ version: true});

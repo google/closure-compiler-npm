@@ -42,6 +42,10 @@ assertNoWarning.params = {
   operator: 'should not log a warning',
 };
 
+/**
+ * Grunt plugins are very hard to test. In this case we're passing a mock grunt object
+ * that defines the properties we need in order to test the actual task.
+ */
 var mockGrunt = {
   log: {
     ok: function () {},
@@ -58,10 +62,11 @@ var mockGrunt = {
   },
   fail: {
     warn: function() {}
-  }
+  },
+  registerMultiTask: function() {}
 };
 
-var closureCompiler = require('../lib/grunt/task')(mockGrunt);
+var closureCompiler = require('../').grunt(mockGrunt);
 
 
 function gruntTaskOptions(options) {

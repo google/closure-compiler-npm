@@ -119,7 +119,7 @@ var updatePackageToNewVersion = function(newVersion) {
 
     git.add('package.json', function(err, data) {})
         .commit('Increment version number to ' + newVersion.version, function(err, data) {})
-        .addTag(newVersion.version, function() {
+        ._run(['tag', '-a', '-m', newVersion.version, newVersion.version], function() {
           gutil.log('New version committed: ' + newVersion.version);
           return resolve(true);
         });

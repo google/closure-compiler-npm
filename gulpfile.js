@@ -117,9 +117,9 @@ var updatePackageToNewVersion = function(newVersion) {
     packageInfo.version = newVersion.version;
     fs.writeFileSync('./package.json', JSON.stringify(packageInfo, null, 2) + '\n');
 
-    git.add('package.json', function(err, data) {})
-        .commit('Increment version number to ' + newVersion.version, function(err, data) {})
-        ._run(['tag', '-a', '-m', newVersion.version, newVersion.version], function() {
+    git.add('package.json')
+        .commit('Increment version number to ' + newVersion.version)
+        .addAnnotatedTag(newVersion.version, newVersion.version, function() {
           gutil.log('New version committed: ' + newVersion.version);
           return resolve(true);
         });

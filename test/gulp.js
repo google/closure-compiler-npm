@@ -260,6 +260,40 @@ describe('gulp-google-closure-compiler', function() {
 
       stream.end();
     });
+
+    it('should compile gulp.src files when stream input is required', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
+      var streamRequiredCompiler = compilerPackage.gulp({
+        requireStreamInput: true
+      });
+
+      gulp.src(__dirname + '/fixtures/**.js')
+          .pipe(streamRequiredCompiler({
+            compilation_level: 'SIMPLE',
+            warning_level: 'VERBOSE'
+          }))
+          .pipe(assert.length(1))
+          .pipe(assert.first(function(f) {
+            f.contents.toString().should.eql('function log(a){console.log(a)}log("one.js");log("two.js");\n');
+          }))
+          .pipe(assert.end(done));
+    });
+
+    it('should generate no output without gulp.src files when stream input is required', function(done) {
+      var streamRequiredCompiler = compilerPackage.gulp({
+        requireStreamInput: true
+      });
+
+      gulp.src([])
+          .pipe(streamRequiredCompiler({
+            compilation_level: 'SIMPLE',
+            warning_level: 'VERBOSE'
+          }))
+          .pipe(assert.length(0))
+          .pipe(assert.end(done));
+    });
   });
 
   describe('in streaming mode', function() {

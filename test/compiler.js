@@ -29,6 +29,11 @@ var Semver = require('semver');
 var compilerVersionExpr = /^Version:\sv(.*)$/m;
 require('mocha');
 
+var assertError = new should.Assertion('compiler version');
+assertError.params = {
+  operator: 'should be a semver parseabe',
+};
+
 describe('compiler.jar', function() {
   this.slow(1000);
 
@@ -37,6 +42,7 @@ describe('compiler.jar', function() {
     compiler.run(function(exitCode, stdout, stderr) {
       var versionInfo = (stdout || '').match(compilerVersionExpr);
       should(versionInfo).not.be.eql(null);
+      versionInfo = versionInfo || [];
       versionInfo.length.should.be.eql(2);
       versionInfo[1].indexOf('SNAPSHOT').should.be.below(0);
       done();
@@ -50,10 +56,15 @@ describe('compiler.jar', function() {
     compiler.run(function(exitCode, stdout, stderr) {
       var versionInfo = (stdout || '').match(compilerVersionExpr);
       should(versionInfo).not.be.eql(null);
+      versionInfo = versionInfo || [];
       versionInfo.length.should.be.eql(2);
 
-      var compilerVersion = new Semver(versionInfo[1] + '.0.0');
-      compilerVersion.major.should.be.aboveOrEqual(packageVer.major);
+      try {
+        var compilerVersion = new Semver(versionInfo[1] + '.0.0');
+        compilerVersion.major.should.be.aboveOrEqual(packageVer.major);
+      } catch (e) {
+        assertError.fail();
+      }
       done();
     });
   });

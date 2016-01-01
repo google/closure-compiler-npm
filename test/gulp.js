@@ -29,6 +29,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var File = require('vinyl');
 var compilerPackage = require('../');
 var closureCompiler = compilerPackage.gulp();
+var fs = require('fs');
 require('mocha');
 
 describe('gulp-google-closure-compiler', function() {
@@ -177,6 +178,7 @@ describe('gulp-google-closure-compiler', function() {
           .pipe(assert.length(1))
           .pipe(assert.first(function (f) {
             f.sourceMap.sources.should.have.length(2);
+            f.sourceMap.sources.should.matchEach(fs.existsSync);
             f.sourceMap.file.should.eql('compiled.js');
           }))
           .pipe(assert.end(done));

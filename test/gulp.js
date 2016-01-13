@@ -45,6 +45,11 @@ describe('gulp-google-closure-compiler', function() {
       contents: new Buffer('console.log("bar");')
     });
 
+    var fixturesCompiled = 'function log(a){console.log(a)}log("one.js");' +
+        'var WindowInfo=function(){this.props=[]};WindowInfo.prototype.propList=function(){' +
+        'for(var a in window)this.props.push(a)};WindowInfo.prototype.list=function(){' +
+        'log(this.props.join(", "))};(new WindowInfo).list();\n';
+
 
     it('should emit an error for invalid options', function(done) {
       var stream = closureCompiler({
@@ -169,7 +174,7 @@ describe('gulp-google-closure-compiler', function() {
       this.timeout(30000);
       this.slow(10000);
 
-      gulp.src(__dirname + '/fixtures/**/*.js')
+      gulp.src('test/fixtures/**/*.js', {base: './'})
           .pipe(sourcemaps.init())
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
@@ -240,7 +245,7 @@ describe('gulp-google-closure-compiler', function() {
           }))
           .pipe(assert.length(1))
           .pipe(assert.first(function(f) {
-            f.contents.toString().should.eql('function log(a){console.log(a)}log("one.js");log("two.js");\n');
+            f.contents.toString().should.eql(fixturesCompiled);
           }))
           .pipe(assert.end(done));
     });
@@ -256,7 +261,7 @@ describe('gulp-google-closure-compiler', function() {
           ])
           .pipe(assert.length(1))
           .pipe(assert.first(function(f) {
-            f.contents.toString().should.eql('console.log("one.js");console.log("two.js");\n');
+            f.contents.toString().should.eql(fixturesCompiled);
           }))
           .pipe(assert.end(done));
 
@@ -278,7 +283,7 @@ describe('gulp-google-closure-compiler', function() {
           }))
           .pipe(assert.length(1))
           .pipe(assert.first(function(f) {
-            f.contents.toString().should.eql('function log(a){console.log(a)}log("one.js");log("two.js");\n');
+            f.contents.toString().should.eql(fixturesCompiled);
           }))
           .pipe(assert.end(done));
     });
@@ -294,6 +299,35 @@ describe('gulp-google-closure-compiler', function() {
             warning_level: 'VERBOSE'
           }))
           .pipe(assert.length(0))
+          .pipe(assert.end(done));
+    });
+
+    it('should properly compose sourcemaps when multiple transformations are chained', function(done) {
+      this.timeout(30000);
+      this.slow(10000);
+
+      gulp.src(['test/fixtures/one.js', 'test/fixtures/two.js'], {base: './'})
+          .pipe(sourcemaps.init())
+          .pipe(closureCompiler({
+            compilation_level: 'WHITESPACE_ONLY',
+            warning_level: 'VERBOSE',
+            formatting: 'PRETTY_PRINT',
+            module: [
+                'three:1',
+                'four:1:three'
+            ],
+            module_output_path_prefix: 'build/'
+          }))
+          .pipe(closureCompiler({
+            compilation_level: 'SIMPLE',
+            warning_level: 'QUIET',
+            formatting: 'PRETTY_PRINT',
+            js_output_file: 'final.js'
+          }))
+          .pipe(assert.first(function (f) {
+            f.sourceMap.sources.should.containEql('test/fixtures/one.js');
+            f.sourceMap.sources.should.containEql('test/fixtures/two.js');
+          }))
           .pipe(assert.end(done));
     });
   });

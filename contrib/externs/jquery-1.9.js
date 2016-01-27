@@ -40,43 +40,109 @@ var jQuerySelector;
 /** @typedef {function(...)|Array<function(...)>} */
 var jQueryCallback;
 
-/** @typedef {
-              {
-               accepts: (Object<string, string>|undefined),
-               async: (?boolean|undefined),
-               beforeSend: (function(jQuery.jqXHR, (jQueryAjaxSettings|Object<string, *>))|undefined),
-               cache: (?boolean|undefined),
-               complete: (function(jQuery.jqXHR, string)|undefined),
-               contents: (Object<string, RegExp>|undefined),
-               contentType: (?string|undefined),
-               context: (Object<?, ?>|jQueryAjaxSettings|undefined),
-               converters: (Object<string, Function>|undefined),
-               crossDomain: (?boolean|undefined),
-               data: (Object<?, ?>|?string|Array<?>|undefined),
-               dataFilter: (function(string, string):?|undefined),
-               dataType: (?string|undefined),
-               error: (function(jQuery.jqXHR, string, string)|undefined),
-               global: (?boolean|undefined),
-               headers: (Object<?, ?>|undefined),
-               ifModified: (?boolean|undefined),
-               isLocal: (?boolean|undefined),
-               jsonp: (?string|undefined),
-               jsonpCallback: (?string|function()|undefined),
-               mimeType: (?string|undefined),
-               password: (?string|undefined),
-               processData: (?boolean|undefined),
-               scriptCharset: (?string|undefined),
-               statusCode: (Object<number, function()>|undefined),
-               success: (function(?, string, jQuery.jqXHR)|undefined),
-               timeout: (?number|undefined),
-               traditional: (?boolean|undefined),
-               type: (?string|undefined),
-               url: (?string|undefined),
-               username: (?string|undefined),
-               xhr: (function():(ActiveXObject|XMLHttpRequest)|undefined),
-               xhrFields: (Object<?, ?>|undefined)
-              }} */
-var jQueryAjaxSettings;
+/**
+ * @record
+ */
+function jQueryAjaxSettings() {};
+
+/** @type {(Object<string, string>|undefined)} */
+jQueryAjaxSettings.prototype.accepts;
+
+/** @type {(?boolean|undefined)} */
+jQueryAjaxSettings.prototype.async;
+
+/** @type {(function(jQuery.jqXHR, (jQueryAjaxSettings|Object<string, *>))|undefined)} */
+jQueryAjaxSettings.prototype.beforeSend;
+
+/** @type {(?boolean|undefined)} */
+jQueryAjaxSettings.prototype.cache;
+
+/** @type {(function(jQuery.jqXHR, string)|undefined)} */
+jQueryAjaxSettings.prototype.complete;
+
+/** @type {(Object<string, RegExp>|undefined)} */
+jQueryAjaxSettings.prototype.contents;
+
+/** @type {(?string|undefined)} */
+jQueryAjaxSettings.prototype.contentType;
+
+/** @type {(Object<?, ?>|jQueryAjaxSettings|undefined)} */
+jQueryAjaxSettings.prototype.context;
+
+/** @type {(Object<string, Function>|undefined)} */
+jQueryAjaxSettings.prototype.converters;
+
+/** @type {(?boolean|undefined)} */
+jQueryAjaxSettings.prototype.crossDomain;
+
+/** @type {(Object<?, ?>|?string|Array<?>|undefined)} */
+jQueryAjaxSettings.prototype.data;
+
+/** @type {(function(string, string):?|undefined)} */
+jQueryAjaxSettings.prototype.dataFilter;
+
+/** @type {(?string|undefined)} */
+jQueryAjaxSettings.prototype.dataType;
+
+/** @type {(function(jQuery.jqXHR, string, string)|undefined)} */
+jQueryAjaxSettings.prototype.error;
+
+/** @type {(?boolean|undefined)} */
+jQueryAjaxSettings.prototype.global;
+
+/** @type {(Object<?, ?>|undefined)} */
+jQueryAjaxSettings.prototype.headers;
+
+/** @type {(?boolean|undefined)} */
+jQueryAjaxSettings.prototype.ifModified;
+
+/** @type {(?boolean|undefined)} */
+jQueryAjaxSettings.prototype.isLocal;
+
+/** @type {(?string|undefined)} */
+jQueryAjaxSettings.prototype.jsonp;
+
+/** @type {(?string|function()|undefined)} */
+jQueryAjaxSettings.prototype.jsonpCallback;
+
+/** @type {(?string|undefined)} */
+jQueryAjaxSettings.prototype.mimeType;
+
+/** @type {(?string|undefined)} */
+jQueryAjaxSettings.prototype.password;
+
+/** @type {(?boolean|undefined)} */
+jQueryAjaxSettings.prototype.processData;
+
+/** @type {(?string|undefined)} */
+jQueryAjaxSettings.prototype.scriptCharset;
+
+/** @type {(Object<number, function()>|undefined)} */
+jQueryAjaxSettings.prototype.statusCode;
+
+/** @type {(function(?, string, jQuery.jqXHR)|undefined)} */
+jQueryAjaxSettings.prototype.success;
+
+/** @type {(?number|undefined)} */
+jQueryAjaxSettings.prototype.timeout;
+
+/** @type {(?boolean|undefined)} */
+jQueryAjaxSettings.prototype.traditional;
+
+/** @type {(?string|undefined)} */
+jQueryAjaxSettings.prototype.type;
+
+/** @type {(?string|undefined)} */
+jQueryAjaxSettings.prototype.url;
+
+/** @type {(?string|undefined)} */
+jQueryAjaxSettings.prototype.username;
+
+/** @type {(function():(ActiveXObject|XMLHttpRequest)|undefined)} */
+jQueryAjaxSettings.prototype.xhr;
+
+/** @type {(Object<?, ?>|undefined)} */
+jQueryAjaxSettings.prototype.xhrFields;
 
 /**
  * @constructor
@@ -267,7 +333,10 @@ jQuery.callbacks.prototype.empty = function() {};
 /** @param {...*} var_args */
 jQuery.callbacks.prototype.fire = function(var_args) {};
 
-/** @return {boolean} */
+/**
+ * @return {boolean}
+ * @nosideeffects
+ */
 jQuery.callbacks.prototype.fired = function() {};
 
 /** @param {...*} var_args */
@@ -283,7 +352,10 @@ jQuery.callbacks.prototype.has = function(callback) {};
 /** @return {undefined} */
 jQuery.callbacks.prototype.lock = function() {};
 
-/** @return {boolean} */
+/**
+ * @return {boolean}
+ * @nosideeffects
+ */
 jQuery.callbacks.prototype.locked = function() {};
 
 /** @param {function()} callbacks */
@@ -336,6 +408,7 @@ jQuery.prototype.closest = function(arg1, context) {};
  * @param {Element} container
  * @param {Element} contained
  * @return {boolean}
+ * @nosideeffects
  */
 jQuery.contains = function(container, contained) {};
 
@@ -556,10 +629,14 @@ jQuery.prototype.end = function() {};
 /**
  * @param {number} arg1
  * @return {!jQuery}
+ * @nosideeffects
  */
 jQuery.prototype.eq = function(arg1) {};
 
-/** @param {string} message */
+/**
+ * @param {string} message
+ * @throws {Error}
+ */
 jQuery.error = function(message) {};
 
 /**
@@ -780,7 +857,10 @@ jQuery.prototype.filter = function(arg1) {};
  */
 jQuery.prototype.find = function(arg1) {};
 
-/** @return {!jQuery} */
+/**
+ * @return {!jQuery}
+ * @nosideeffects
+ */
 jQuery.prototype.first = function() {};
 
 /** @see http://docs.jquery.com/Plugins/Authoring */
@@ -925,6 +1005,7 @@ jQuery.inArray = function(value, arr, fromIndex) {};
 /**
  * @param {(jQuerySelector|Element|jQuery)=} arg1
  * @return {number}
+ * @nosideeffects
  */
 jQuery.prototype.index = function(arg1) {};
 
@@ -1110,7 +1191,10 @@ jQuery.prototype.keypress = function(arg1, handler) {};
  */
 jQuery.prototype.keyup = function(arg1, handler) {};
 
-/** @return {!jQuery} */
+/**
+ * @return {!jQuery}
+ * @nosideeffects
+ */
 jQuery.prototype.last = function() {};
 
 /** @type {number} */
@@ -1130,6 +1214,7 @@ jQuery.prototype.load = function(arg1, arg2, complete) {};
 /**
  * @param {*} obj
  * @return {Array<*>}
+ * @nosideeffects
  */
 jQuery.makeArray = function(obj) {};
 
@@ -1614,6 +1699,7 @@ jQuery.prototype.size = function() {};
  * @param {number} start
  * @param {number=} end
  * @return {!jQuery}
+ * @nosideeffects
  */
 jQuery.prototype.slice = function(start, end) {};
 

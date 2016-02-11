@@ -286,7 +286,7 @@ gulp.task('js-compile', function () {
           output_wrapper: '(function(){\n%output%\n}).call(this)',
           js_output_file: 'output.min.js'
         }))
-      .pipe(souremaps.write('/')) // gulp-sourcemaps automatically adds the sourcemap url comment
+      .pipe(sourcemaps.write('/')) // gulp-sourcemaps automatically adds the sourcemap url comment
       .pipe(gulp.dest('./dist/js'));
 });
 ```

@@ -46,10 +46,10 @@
     "gulp": "^3.9.0",
     "gulp-mocha": "^2.2.0",
     "gulp-sourcemaps": "^1.6.0",
-    "lodash": "^3.10.1",
+    "lodash": "^4.6.1",
     "mocha": "^2.3.4",
     "semver": "^5.1.0",
-    "should": "^7.1.1",
+    "should": "^8.2.2",
     "simple-git": "^1.15.0",
     "stream-assert": "^2.0.3",
     "vinyl": "^1.1.0"

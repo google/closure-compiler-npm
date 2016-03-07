@@ -40,7 +40,7 @@ describe('closure-compiler node bindings', function() {
     this.slow(1000);
 
     var compiler = new Compiler({ version: true});
-    compiler.java_path = 'DOES_NOT_EXIST';
+    compiler.javaPath = 'DOES_NOT_EXIST';
     compiler.run(function(exitCode, stdout, stderr) {
       exitCode.should.not.eql(0);
       stderr.indexOf('Is java in the path?').should.be.aboveOrEqual(0);
@@ -57,8 +57,8 @@ describe('closure-compiler node bindings', function() {
 
     var expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
         '--three=one', '--three=two', '--three=three'];
-    compiler.command_arguments.length.should.eql(expectedArray.length);
-    compiler.command_arguments.forEach(function(item, index) {
+    compiler.commandArguments.length.should.eql(expectedArray.length);
+    compiler.commandArguments.forEach(function(item, index) {
       expectedArray[index].should.eql(item);
     });
   });
@@ -69,8 +69,8 @@ describe('closure-compiler node bindings', function() {
 
     var compiler = new Compiler(expectedArray.slice(2));
 
-    compiler.command_arguments.length.should.eql(expectedArray.length);
-    compiler.command_arguments.forEach(function(item, index) {
+    compiler.commandArguments.length.should.eql(expectedArray.length);
+    compiler.commandArguments.forEach(function(item, index) {
       expectedArray[index].should.eql(item);
     });
   });

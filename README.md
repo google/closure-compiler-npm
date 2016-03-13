@@ -326,7 +326,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-
 ## Version History
 Closure Compiler release notes can be found on the
 [main repository wiki](https://github.com/google/closure-compiler/wiki/Binary-Downloads).

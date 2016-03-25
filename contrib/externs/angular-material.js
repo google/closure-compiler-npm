@@ -47,7 +47,8 @@ md.$bottomSheet = function() {};
  *   resolve: (!Object|undefined),
  *   controllerAs: (string|undefined),
  *   parent: (!Element|undefined),
- *   disableParentScroll: (boolean|undefined)
+ *   disableParentScroll: (boolean|undefined),
+ *   bindToController: (boolean|undefined),
  * }}
  */
 md.$bottomSheet.options;
@@ -498,39 +499,49 @@ md.$mdThemingProvider.Theme.prototype.colors;
 
 /**
  * @param {string} primaryPalette
- * @param {Object<string,string>=} opt_colors
+ * @param {Object<string,string>=} opt_hues
  * @return {!md.$mdThemingProvider.Theme}
  */
 md.$mdThemingProvider.Theme.prototype.primaryPalette =
-    function(primaryPalette, opt_colors) {};
+    function(primaryPalette, opt_hues) {};
 
 /**
  * @param {string} accentPalette
- * @param {Object<string,string>=} opt_colors
+ * @param {Object<string,string>=} opt_hues
  * @return {!md.$mdThemingProvider.Theme}
  */
 md.$mdThemingProvider.Theme.prototype.accentPalette =
-    function(accentPalette, opt_colors) {};
+    function(accentPalette, opt_hues) {};
 
 /**
  * @param {string} backgroundPalette
- * @param {Object<string,string>=} opt_colors
+ * @param {Object<string,string>=} opt_hues
  * @return {!md.$mdThemingProvider.Theme}
  */
 md.$mdThemingProvider.Theme.prototype.backgroundPalette =
-    function(backgroundPalette, opt_colors) {};
+    function(backgroundPalette, opt_hues) {};
 
 /**
  * @param {string} warnPalette
+ * @param {Object<string,string>=} opt_hues
  * @return {!md.$mdThemingProvider.Theme}
  */
-md.$mdThemingProvider.Theme.prototype.warnPalette = function(warnPalette) {};
+md.$mdThemingProvider.Theme.prototype.warnPalette =
+     function(warnPalette, opt_hues) {};
 
 /**
  * @param {boolean=} opt_isDark
  * @return {!md.$mdThemingProvider.Theme}
  */
 md.$mdThemingProvider.Theme.prototype.dark = function(opt_isDark) {};
+
+
+/******************************************************************************
+ * $mdIcon Service
+ *****************************************************************************/
+
+/** @typedef {function(string): !angular.$q.Promise<!Element>} */
+md.$mdIcon;
 
 
 /******************************************************************************
@@ -575,6 +586,28 @@ md.$mdIconProvider.prototype.defaultIconSize = function(iconSize) {};
  */
 md.$mdIconProvider.prototype.defaultFontSet = function(name) {};
 
+/******************************************************************************
+ * $mdMedia Service
+ *****************************************************************************/
+
+/**
+ * @typedef {function(string): boolean}
+ */
+md.$mdMedia;
+
+/******************************************************************************
+ * $mdMenu Service
+ *****************************************************************************/
+
+/** @constructor */
+md.$mdMenu = function() {};
+
+/**
+ * @param {*=} opt_reason Data to resolve the promise with.
+ * @param {*=} opt_options
+ * @return {!angular.$q.Promise}
+ */
+md.$mdMenu.prototype.hide = function(opt_reason, opt_options) {};
 
 /******************************************************************************
  * $mdDateLocaleProvider

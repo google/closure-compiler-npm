@@ -15,7 +15,7 @@
  */
 
 /**
- * @fileoverview Externs for the Google Maps v3.23 API.
+ * @fileoverview Externs for the Google Maps v3.24 API.
  * @see http://code.google.com/apis/maps/documentation/javascript/reference.html
  * @externs
  */
@@ -3190,16 +3190,6 @@ google.maps.MapOptions.prototype.noClear;
 /**
  * @type {boolean}
  */
-google.maps.MapOptions.prototype.overviewMapControl;
-
-/**
- * @type {google.maps.OverviewMapControlOptions|Object.<string>}
- */
-google.maps.MapOptions.prototype.overviewMapControlOptions;
-
-/**
- * @type {boolean}
- */
 google.maps.MapOptions.prototype.panControl;
 
 /**
@@ -3942,16 +3932,6 @@ google.maps.OverlayView.prototype.onRemove = function() {};
  * @return {undefined}
  */
 google.maps.OverlayView.prototype.setMap = function(map) {};
-
-/**
- * @interface
- */
-google.maps.OverviewMapControlOptions = function() {};
-
-/**
- * @type {boolean}
- */
-google.maps.OverviewMapControlOptions.prototype.opened;
 
 /**
  * @interface
@@ -5230,10 +5210,11 @@ google.maps.Time.prototype.time_zone;
 google.maps.Time.prototype.value;
 
 /**
+ * @param {(google.maps.TrafficLayerOptions|Object.<string>)=} opt_opts
  * @extends {google.maps.MVCObject}
  * @constructor
  */
-google.maps.TrafficLayer = function() {};
+google.maps.TrafficLayer = function(opt_opts) {};
 
 /**
  * @nosideeffects
@@ -5246,6 +5227,22 @@ google.maps.TrafficLayer.prototype.getMap = function() {};
  * @return {undefined}
  */
 google.maps.TrafficLayer.prototype.setMap = function(map) {};
+
+/**
+ * @param {google.maps.TrafficLayerOptions|Object.<string>} options
+ * @return {undefined}
+ */
+google.maps.TrafficLayer.prototype.setOptions = function(options) {};
+
+/**
+ * @interface
+ */
+google.maps.TrafficLayerOptions = function() {};
+
+/**
+ * @type {google.maps.Map}
+ */
+google.maps.TrafficLayerOptions.prototype.map;
 
 /**
  * @enum {string}
@@ -5501,20 +5498,6 @@ google.maps.ZoomControlOptions = function() {};
  */
 google.maps.ZoomControlOptions.prototype.position;
 
-/**
- * @type {google.maps.ZoomControlStyle}
- */
-google.maps.ZoomControlOptions.prototype.style;
-
-/**
- * @enum {number}
- */
-google.maps.ZoomControlStyle = {
-  DEFAULT: 0,
-  LARGE: 1,
-  SMALL: 2
-};
-
 /** @const */
 google.maps.drawing = {};
 
@@ -5652,7 +5635,7 @@ google.maps.event = {};
 /**
  * @param {Object} instance
  * @param {string} eventName
- * @param {?function(?)} handler
+ * @param {!Function} handler
  * @param {boolean=} opt_capture
  * @return {google.maps.MapsEventListener}
  */
@@ -5661,7 +5644,7 @@ google.maps.event.addDomListener = function(instance, eventName, handler, opt_ca
 /**
  * @param {Object} instance
  * @param {string} eventName
- * @param {function(?)} handler
+ * @param {!Function} handler
  * @param {boolean=} opt_capture
  * @return {google.maps.MapsEventListener}
  */
@@ -5670,7 +5653,7 @@ google.maps.event.addDomListenerOnce = function(instance, eventName, handler, op
 /**
  * @param {Object} instance
  * @param {string} eventName
- * @param {?function(?)} handler
+ * @param {!Function} handler
  * @return {google.maps.MapsEventListener}
  */
 google.maps.event.addListener = function(instance, eventName, handler) {};
@@ -5678,7 +5661,7 @@ google.maps.event.addListener = function(instance, eventName, handler) {};
 /**
  * @param {Object} instance
  * @param {string} eventName
- * @param {?function(?)} handler
+ * @param {!Function} handler
  * @return {google.maps.MapsEventListener}
  */
 google.maps.event.addListenerOnce = function(instance, eventName, handler) {};

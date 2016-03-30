@@ -74,4 +74,30 @@ describe('closure-compiler node bindings', function() {
       expectedArray[index].should.eql(item);
     });
   });
+
+  describe('extra command arguments', function() {
+    it('should include initial command arguments when configured by an options object', function() {
+      var expectedArray = ['-Xms2048m', '-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+        '--three=one', '--three=two', '--three=three'];
+
+      var compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
+
+      compiler.commandArguments.length.should.eql(expectedArray.length);
+      compiler.commandArguments.forEach(function(item, index) {
+        expectedArray[index].should.eql(item);
+      });
+    });
+
+    it('should include initial command arguments when configured by array', function() {
+      var expectedArray = ['-Xms2048m', '-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+        '--three=one', '--three=two', '--three=three'];
+
+      var compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
+
+      compiler.commandArguments.length.should.eql(expectedArray.length);
+      compiler.commandArguments.forEach(function(item, index) {
+        expectedArray[index].should.eql(item);
+      });
+    });
+  });
 });

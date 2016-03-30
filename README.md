@@ -291,6 +291,22 @@ gulp.task('js-compile', function () {
 });
 ```
 
+## Specifying Extra Java Arguments
+Some users may wish to pass the java vm extra arguments - such as to specify the amount of memory the compiler should
+be allocated. Both the grunt and gulp plugins support this.
+
+### Grunt
+```js
+require('google-closure-compiler').grunt(grunt, ['-Xms2048m']);
+```
+
+### Gulp
+```js
+var closureCompiler = require('google-closure-compiler').gulp({
+  extraArguments: ['-Xms2048m']
+});
+```
+
 ## Plugin Authors and Native Node Usage
 A low-level node class is included to facilitate spawning the compiler jar as a process from Node.
 In addition, it exposes a static property with the path to the compiler jar file.

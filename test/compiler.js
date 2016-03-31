@@ -35,7 +35,7 @@ assertError.params = {
 };
 
 describe('compiler.jar', function() {
-  this.slow(2000);
+  this.slow(5000);
 
   it('should not be a snapshot build', function(done) {
     var compiler = new Compiler({ version: true});

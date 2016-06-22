@@ -49,7 +49,7 @@ describe('compiler.jar', function() {
     });
   });
 
-  it('version should not be less than the package major version', function(done) {
+  it('version should not equal to the package major version', function(done) {
     var compiler = new Compiler({ version: true});
     var packageInfo = require('../package.json');
     var packageVer = new Semver(packageInfo.version);
@@ -61,7 +61,7 @@ describe('compiler.jar', function() {
 
       try {
         var compilerVersion = new Semver(versionInfo[1] + '.0.0');
-        compilerVersion.major.should.be.aboveOrEqual(packageVer.major);
+        compilerVersion.major.should.be.equal(packageVer.major);
       } catch (e) {
         assertError.fail();
       }

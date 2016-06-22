@@ -1,0 +1,3 @@
+[submodule "compiler"]
+	path = compiler
+	url = git@github.com:google/closure-compiler.git

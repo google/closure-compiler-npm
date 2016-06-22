@@ -49,7 +49,7 @@ describe('compiler.jar', function() {
     });
   });
 
-  it('version should not equal to the package major version', function(done) {
+  it('version should be equal to the package major version', function(done) {
     var compiler = new Compiler({ version: true});
     var packageInfo = require('../package.json');
     var packageVer = new Semver(packageInfo.version);

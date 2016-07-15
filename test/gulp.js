@@ -45,11 +45,7 @@ describe('gulp-google-closure-compiler', function() {
       contents: new Buffer('console.log("bar");')
     });
 
-    var fixturesCompiled = 'function log(a){console.log(a)}log("one.js");' +
-        'var WindowInfo=function(){this.props=[]};WindowInfo.prototype.propList=function(){' +
-        'for(var a in window)this.props.push(a)};WindowInfo.prototype.list=function(){' +
-        'log(this.props.join(", "))};(new WindowInfo).list();\n';
-
+    var fixturesCompiled = 'function log(a){console.log(a)}log("one.js");var WindowInfo=function(){this.props=[]};WindowInfo.prototype.propList=function(){for(var a in window)this.props.push(a)};WindowInfo.prototype.WindowInfo_prototype$list=function(){log(this.props.join(", "))};(new WindowInfo).WindowInfo_prototype$list();\n';
 
     it('should emit an error for invalid options', function(done) {
       var stream = closureCompiler({

@@ -53,7 +53,7 @@ describe('gulp-google-closure-compiler', function() {
       });
 
       stream.on('error', function (err) {
-        err.message.should.startWith('Compilation error:');
+        err.message.should.startWith('Compilation error');
         done();
       });
       stream.write(fakeFile1);

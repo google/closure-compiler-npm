@@ -219,6 +219,7 @@ gulp.task('js-compile', function () {
         output_wrapper: '(function(){\n%output%\n}).call(this)',
         js_output_file: 'output.min.js'
       })
+      .src() // needed to force the plugin to run without gulp.src
       .pipe(gulp.dest('./dist/js'));
 });
 ```
@@ -241,30 +242,8 @@ gulp.task('js-compile', function () {
         '--js_output_file', 'out.js',
         '--debug'
       ])
+      .src() // needed to force the plugin to run without gulp.src
       .pipe(gulp.dest('./dist/js'));
-});
-```
-
-### Requiring gulp.src files for compilation
-By default, the gulp plugin will run the compiler even if no input is streamed in via `gulp.src`.
-To disable this behavior, users can specify a { requireStreamInput: true } argument to skip
-compilation if no files are streamed in. This allows interoperation with gulp plugins that signal
-through empty streams.
-
-```js
-var closureCompiler = require('google-closure-compiler').gulp({
-  requireStreamInput: true
-});
-var newer = require('gulp-newer');
-
-gulp.task('js-compile', function () {
-  return gulp.src('./src/js/**/*.js', {base: './'})
-      .pipe(newer('./dist/output.min.js'))
-      .pipe(closureCompiler({
-          compilation_level: 'ADVANCED',
-          js_output_file: 'output.min.js'
-        }))
-      .pipe(gulp.dest('./dist'));
 });
 ```
 

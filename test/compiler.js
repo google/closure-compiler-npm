@@ -25,8 +25,10 @@
 var should = require('should');
 var compilerPackage = require('../');
 var Compiler = compilerPackage.compiler;
+var packageInfo = require('../package.json');
 var Semver = require('semver');
 var compilerVersionExpr = /^Version:\sv(.*)$/m;
+var spawn = require('child_process').spawnSync;
 require('mocha');
 
 var assertError = new should.Assertion('compiler version');
@@ -51,7 +53,6 @@ describe('compiler.jar', function() {
 
   it('version should be equal to the package major version', function(done) {
     var compiler = new Compiler({ version: true});
-    var packageInfo = require('../package.json');
     var packageVer = new Semver(packageInfo.version);
     compiler.run(function(exitCode, stdout, stderr) {
       var versionInfo = (stdout || '').match(compilerVersionExpr);
@@ -67,5 +68,18 @@ describe('compiler.jar', function() {
       }
       done();
     });
+  });
+});
+
+describe('compiler submodule', function() {
+  it('should be synced to the tagged commit', function() {
+    var gitCmd = spawn('git', ['tag', '--points-at', 'HEAD'], {
+      cwd: './compiler'
+    });
+    should(gitCmd.status).eql(0)
+    var currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
+    var packageVer = new Semver(packageInfo.version);
+    var mvnVersion = 'v' + packageVer.major;
+    should(currentTag).eql(mvnVersion)
   });
 });

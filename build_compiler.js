@@ -3,24 +3,23 @@
 
 var spawn = require('child_process').spawnSync;
 var ncp = require('ncp');
+var version = require('./package.json').version
 
-var compilerBuild = spawn('ant', ['jar'], {
-  cwd: './compiler',
+var mavenVersion = 'v' + version.split('.')[0];
+var url =
+    'https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/'
+    + mavenVersion + '/closure-compiler-' + mavenVersion + '.jar';
+
+var compilerBuild = spawn('wget', ['-O', './compiler.jar', url], {
   stdio: 'inherit'
 });
 
 if (compilerBuild.status !== 0) {
-  throw new Error('compiler build failed');
+  throw new Error('Downloading compiler jar from Maven Central failed');
 }
 
-ncp('./compiler/build/compiler.jar', './compiler.jar', function (err) {
+ncp('./compiler/contrib', './contrib', function(err) {
   if (err) {
     throw new Error(err);
   }
-
-  ncp('./compiler/contrib', './contrib', function(err) {
-    if (err) {
-      throw new Error(err);
-    }
-  });
 });

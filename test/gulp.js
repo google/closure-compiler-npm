@@ -306,8 +306,7 @@ describe('gulp-google-closure-compiler', function() {
             module: [
                 'three:1',
                 'four:1:three'
-            ],
-            module_output_path_prefix: 'build/'
+            ]
           }))
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',

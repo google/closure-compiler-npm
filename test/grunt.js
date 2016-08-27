@@ -93,6 +93,7 @@ function getGruntTaskObject(fileObj, options, asyncDone) {
 
 describe('grunt-google-closure-compiler', function() {
   this.slow(1000);
+  this.timeout(10000);
 
   it('should emit an error for invalid options', function(done) {
     var taskObj = getGruntTaskObject([{

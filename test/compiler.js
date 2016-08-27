@@ -37,6 +37,7 @@ assertError.params = {
 };
 
 describe('compiler.jar', function() {
+  this.timeout(10000);
   this.slow(5000);
 
   it('should not be a snapshot build', function(done) {
@@ -72,6 +73,8 @@ describe('compiler.jar', function() {
 });
 
 describe('compiler submodule', function() {
+  this.timeout(10000);
+  this.slow(5000);
   it('should be synced to the tagged commit', function() {
     var gitCmd = spawn('git', ['tag', '--points-at', 'HEAD'], {
       cwd: './compiler'

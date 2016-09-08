@@ -57,5 +57,8 @@
   "scripts": {
     "test": "mocha",
     "pretest": "./build_compiler.js"
+  },
+  "engines": {
+    "node" : ">=0.12.0"
   }
 }

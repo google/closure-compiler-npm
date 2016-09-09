@@ -8,7 +8,8 @@ Any bugs not related to the plugins themselves should be reported to the
 [main repository](https://github.com/google/closure-compiler/).
 
 ## Getting Started
-*Closure-compiler requires java to be installed and in the path.*
+*This package requires java to be installed and in the path.* Looking for a version that
+does not require java? See [google-closure-compiler-js](https://github.com/google/closure-compiler-js).
 
 If you are new to [Closure-Compiler](https://developers.google.com/closure/compiler/), make
 sure to read and understand the

@@ -22,6 +22,10 @@
 
 'use strict';
 
+process.on('unhandledRejection', reason => {
+  throw reason;
+});
+
 var should = require('should');
 var fs = require('fs');
 var _ = require('lodash');
@@ -262,6 +266,59 @@ describe('grunt-google-closure-compiler', function() {
       taskDone();
     });
 
+    closureCompiler.call(taskObj);
+  });
+
+  it('should locate dependencies in node_modules', function(done) {
+    this.timeout(30000);
+    this.slow(10000);
+
+    var entryPoint = 'test/fixtures/module-deps.js';
+    var fileOneDest = 'test/out/one.js';
+
+    function taskDone() {
+      var fileOne = fs.statSync(fileOneDest);
+      should(fileOne.isFile()).be.eql(true);
+      fs.unlinkSync(fileOneDest);
+
+      var fileOneSourceMap = fileOneDest + '.map';
+      fileOne = fs.statSync(fileOneSourceMap);
+      should(fileOne.isFile()).be.eql(true);
+      var sourceMap = JSON.parse(fs.readFileSync(fileOneSourceMap, 'utf8'));
+      should(sourceMap.sources).containEql('/test/fixtures/one.js');
+      should(sourceMap.sources).containEql('/node_modules/page/index.js');
+      should(sourceMap.sources).containEql('/node_modules/isarray/index.js');
+      should(sourceMap.sources).containEql('/node_modules/path-to-regexp/index.js');
+      fs.unlinkSync(fileOneSourceMap);
+
+      fs.rmdirSync('test/out');
+      done();
+    }
+
+    mockGrunt.log.warn = function (msg) {
+      console.log(msg);
+      assertNoWarning.fail();
+    };
+
+    mockGrunt.fail.warn = function (err, code) {
+      assertNoError.fail();
+      taskDone();
+    };
+
+    var taskObj = getGruntTaskObject([{
+      src: [entryPoint],
+      dest: fileOneDest
+    }], {
+      compilation_level: 'SIMPLE',
+      process_common_js_modules: true,
+      dependency_mode: 'STRICT',
+      entry_point: '/' + entryPoint,
+      create_source_map: '%outname%.map'
+    }, function () {
+      taskDone();
+    });
+
+    closureCompiler.updateOptions({includeDependencies: true});
     closureCompiler.call(taskObj);
   });
 });

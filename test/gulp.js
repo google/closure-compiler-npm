@@ -157,7 +157,7 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should generate a sourcemap for a single output file', function(done) {
-      gulp.src('test/fixtures/**/*.js', {base: './'})
+      gulp.src(['test/fixtures/one.js', 'test/fixtures/two.js'], {base: './'})
           .pipe(sourcemaps.init())
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
@@ -173,7 +173,7 @@ describe('gulp-google-closure-compiler', function() {
     });
 
     it('should generate a sourcemap for each output file with modules', function(done) {
-      gulp.src(__dirname + '/fixtures/**/*.js')
+      gulp.src(['test/fixtures/one.js', 'test/fixtures/two.js'])
           .pipe(sourcemaps.init())
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
@@ -197,7 +197,10 @@ describe('gulp-google-closure-compiler', function() {
 
     it('should support passing input globs directly to the compiler', function(done) {
       var stream = closureCompiler({
-            js: __dirname + '/fixtures/**.js',
+            js: [
+              __dirname + '/fixtures/one.js',
+              __dirname + '/fixtures/two.js',
+            ],
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE'
           })
@@ -225,7 +228,8 @@ describe('gulp-google-closure-compiler', function() {
 
     it('should support calling the compiler with an arguments array', function(done) {
       var stream = closureCompiler([
-            '--js="' + __dirname + '/fixtures/**.js"',
+            '--js="' + __dirname + '/fixtures/one.js"',
+            '--js="' + __dirname + '/fixtures/two.js"',
             '--compilation_level=SIMPLE',
             '--warning_level=VERBOSE'
           ])
@@ -251,7 +255,10 @@ describe('gulp-google-closure-compiler', function() {
       closureCompiler({
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE',
-            js: __dirname + '/fixtures/**.js'
+            js: [
+              __dirname + '/fixtures/one.js',
+              __dirname + '/fixtures/two.js',
+            ]
           })
           .src()
           .pipe(assert.length(1))
@@ -282,6 +289,27 @@ describe('gulp-google-closure-compiler', function() {
           .pipe(assert.first(function (f) {
             f.sourceMap.sources.should.containEql('test/fixtures/one.js');
             f.sourceMap.sources.should.containEql('test/fixtures/two.js');
+          }))
+          .pipe(assert.end(done));
+    });
+
+    it('should locate dependencies in node_modules', function(done) {
+      var entryPoint = 'test/fixtures/module-deps.js';
+      gulp.src(entryPoint, {base: './'})
+          .pipe(sourcemaps.init())
+          .pipe(closureCompiler({
+            compilation_level: 'SIMPLE',
+            process_common_js_modules: true,
+            dependency_mode: 'STRICT',
+            entry_point: '/' + entryPoint
+          }, {
+            includeDependencies: true
+          }))
+          .pipe(assert.first(function (f) {
+            f.sourceMap.sources.should.containEql('test/fixtures/one.js');
+            f.sourceMap.sources.should.containEql('node_modules/page/index.js');
+            f.sourceMap.sources.should.containEql('node_modules/isarray/index.js');
+            f.sourceMap.sources.should.containEql('node_modules/path-to-regexp/index.js');
           }))
           .pipe(assert.end(done));
     });

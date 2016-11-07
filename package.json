@@ -1,6 +1,6 @@
 {
   "name": "google-closure-compiler",
-  "version": "20161024.1.0",
+  "version": "20161024.2.0",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",
   "repository": {
     "type": "git",
@@ -37,8 +37,7 @@
   "homepage": "https://developers.google.com/closure/compiler/",
   "dependencies": {
     "chalk": "^1.0.0",
-    "gulp-util": "^3.0.7",
-    "vinyl-fs": "^2.2.1",
+    "vinyl": "^1.2.0",
     "vinyl-sourcemaps-apply": "^0.2.0"
   },
   "devDependencies": {
@@ -58,6 +57,6 @@
     "pretest": "./build_compiler.js"
   },
   "engines": {
-    "node" : ">=0.12.0"
+    "node": ">=0.12.0"
   }
 }

@@ -1,5 +1,5 @@
 # google-closure-compiler
-[![Build Status](https://travis-ci.org/ChadKillingsworth/closure-compiler-npm.svg?branch=master)](https://travis-ci.org/ChadKillingsworth/closure-compiler-npm) [![npm version](https://badge.fury.io/js/google-closure-compiler.svg)](https://badge.fury.io/js/google-closure-compiler)
+[![Build Status](https://travis-ci.org/google/closure-compiler-npm.svg?branch=master)](https://travis-ci.org/google/closure-compiler-npm) [![npm version](https://badge.fury.io/js/google-closure-compiler.svg)](https://badge.fury.io/js/google-closure-compiler)
 
 Check, compile, optimize and compress Javascript with Closure-Compiler
 

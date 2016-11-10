@@ -5,4 +5,13 @@ node_js:
 - '0.12'
 branches:
   only:
-    - master
+  - master
+deploy:
+  skip_cleanup: true
+  provider: npm
+  email: chadkillingsworth@gmail.com
+  on:
+    node: '6'
+    branch: master
+  api_key:
+    secure: qTQ7g2adD5v20vIy3HkWHDWeHObjiLoKImsmjPyZnM2NCQvJTYMQ/gUyWabns+4iSnaJTN3kRCSkKCI9NL6pdiH4+mr1oRMqwZhGlq9KIgznyhHqsiTw/MR7bSXeIcWFHO1061yfUQxwpxXfwmHH7WPAd2j5rH1kghDe62gK6nnP2QQge1yhfPD477b8DHCKvqP6Dj0Gxg7vjUazKxX0e/hgcJuGJOqOt1QVkLjhfsEsNmESeiqjKsEDl71/w49Sh+hshYdclCE2Sx3Hf5ST1/Vb6KcRAwHWHGaJN4+nk9xpjtZLFW2gdEntLTrLS/nIlGlIXiKJU4p91VR7EktOb7V7gi8pZRt1mVnZFXM02RFcnRqc7R4zLap8GT+BwhpamPYcXoaMZj0w2xhJvTYXu9xKl2wuNM/mS2VcFtv/IuFnp1Q3xoWALuaNlIAVJe93M2YMQy+kg8H6ZtqfGURGthB400LO/bKr08SZtLUIKKVzv/oy9jpXjEMaYJS/RjmOhKc9ZhgivKtqHrL313xQnJvumztVBQhmZyrFWmcFkLAQ1sKRzQIVzT80KSUISQ7H3RJCZlpSkdDvyuz230y9DuyAcw0lFjetBKGwYjOoovKEOxQlHiTzlCU2QFVDmvjt2KiWMgXkmjHeZOI7YPwW7FjjUdEO0GVg8KV0AXqT2FU=

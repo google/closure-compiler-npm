@@ -142,11 +142,11 @@ describe('gulp-google-closure-compiler', function() {
       stream.pipe(assert.length(2))
           .pipe(assert.first(function (f) {
             f.contents.toString().trim().should.eql(fakeFile1.contents.toString());
-            f.path.should.eql('./one.js');
+            f.path.should.eql('one.js');
           }))
           .pipe(assert.second(function (f) {
             f.contents.toString().trim().should.eql(fakeFile2.contents.toString());
-            f.path.should.eql('./two.js');
+            f.path.should.eql('two.js');
           }))
           .pipe(assert.end(done));
 

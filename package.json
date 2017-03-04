@@ -37,26 +37,25 @@
   "homepage": "https://developers.google.com/closure/compiler/",
   "dependencies": {
     "chalk": "^1.0.0",
-    "vinyl": "^1.2.0",
+    "vinyl": "^2.0.1",
     "vinyl-sourcemaps-apply": "^0.2.0"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
-    "gulp-mocha": "^2.2.0",
-    "gulp-sourcemaps": "^1.6.0",
+    "gulp-mocha": "^4.0.1",
+    "gulp-sourcemaps": "^2.4.1",
     "lodash": "^4.6.1",
-    "mocha": "^2.3.4",
+    "mocha": "^3.2.0",
     "ncp": "^2.0.0",
     "semver": "^5.1.0",
-    "should": "^8.2.2",
-    "stream-assert": "^2.0.3",
-    "vinyl": "^1.1.0"
+    "should": "^11.2.0",
+    "stream-assert": "^2.0.3"
   },
   "scripts": {
     "test": "mocha",
     "pretest": "./build_compiler.js"
   },
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=4"
   }
 }

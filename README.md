@@ -1,32 +1,28 @@
 # google-closure-compiler
 [![Build Status](https://travis-ci.org/google/closure-compiler-npm.svg?branch=master)](https://travis-ci.org/google/closure-compiler-npm) [![npm version](https://badge.fury.io/js/google-closure-compiler.svg)](https://badge.fury.io/js/google-closure-compiler)
 
-Check, compile, optimize and compress Javascript with Closure-Compiler
+Check, compile, optimize and compress JavaScript with Closure-Compiler.
 
-This repository tracks issues related to the publication to npmjs.org and associated plugins.
+This repository tracks issues related to the publication of the npmjs.com package and associated plugins.
 Any bugs not related to the plugins themselves should be reported to the
 [main repository](https://github.com/google/closure-compiler/).
 
 ## Getting Started
-*This package requires java to be installed and in the path.* Looking for a version that
-does not require java? See [google-closure-compiler-js](https://github.com/google/closure-compiler-js).
+*This package requires Java to be installed and in the path.*
+Looking for a version that does not require Java? Take a look at the JavaScript port: [google-closure-compiler-js](https://github.com/google/closure-compiler-js).
 
-If you are new to [Closure-Compiler](https://developers.google.com/closure/compiler/), make
-sure to read and understand the
-[compilation levels](https://developers.google.com/closure/compiler/docs/compilation_levels) as
-the compiler works very differently depending on the compilation level selected.
+If you are new to [Closure-Compiler](https://developers.google.com/closure/compiler/), make sure to read and understand the [compilation levels](https://developers.google.com/closure/compiler/docs/compilation_levels), as the compiler works very differently depending on selected level.
 
-For help or questions with the compiler, the best resource is
-[Stack Overflow](http://stackoverflow.com/questions/tagged/google-closure-compiler). Posts there
+If you need help or have questions about the compiler, your best resource will be [Stack Overflow](http://stackoverflow.com/questions/tagged/google-closure-compiler). Posts there
 are monitored by multiple Closure Compiler team members.
 
 You may also post in the
 [Closure Compiler Discuss Google Group](https://groups.google.com/forum/#!forum/closure-compiler-discuss).
 
-*Please don't cross post to both Stackoverflow and Closure Compiler Discuss.*
+*Please avoid cross-posting to Stack Overflow and Closure Compiler Discuss Google Group at the same time.*
 
 ## Usage
-The compiler package now includes build tool plugins for [Grunt](http://gruntjs.com/) and
+The compiler package now includes building tool plugins for both [Grunt](http://gruntjs.com/) and
 [Gulp](http://gulpjs.com/).
 
 ### Installation
@@ -37,9 +33,7 @@ npm install --save google-closure-compiler
 
 ### Configuration
 
-The compiler has a large number of flags. The best documentation for the flags can be found by
-running the `--help` command of the compiler.jar found inside the
-`node_modules/google-closure-compiler` folder:
+The compiler has a large number of flags, all of which you can see by running the compiler.jar file (inside `node_modules/google-closure-compiler` folder) with the `--help` command, like so:
 
 ```
 java -jar compiler.jar --help
@@ -47,10 +41,10 @@ java -jar compiler.jar --help
 
 ### Specifying Options
 
-Both the grunt and gulp tasks take options objects. The option parameters map directly to the
-compiler flags without the leading '--' characters.
-
-Values are either strings or booleans. Options which have multiple values can be arrays.
+- Both Grunt and Gulp tasks take options objects.
+- Options parameters without the preceding `--` characters map directly to the compiler flags.
+- Values must be either strings or booleans.
+- Arrays can be used for options having multiple values.
 
 ```js
   {
@@ -61,8 +55,8 @@ Values are either strings or booleans. Options which have multiple values can be
   }
 ```
 
-For advanced usages, the options may be specified as an array of strings. These values _include_
-the "--" characters and are directly passed to the compiler in the order specified:
+An array of strings can be used to specify your options if advanced usage is needed.
+In this case, options keys *must* be preceded by `--`, and the compiler processes them in the specified order (left to right, top to bottom).
 
 ```js
   [
@@ -74,11 +68,9 @@ the "--" characters and are directly passed to the compiler in the order specifi
   ]
 ```
 
-When an array of flags is passed, the input files should not be specified via the build tools, but
-rather as compilation flags directly.
+- Input files should not be specified via build tools when passing an array of option flags. Instead, you should use compilation flags as you would, directly.
 
-Some shells (particularly windows) try to do expansion on globs rather than passing the string on
-to the compiler. To prevent this it is necessary to quote certain arguments:
+Some shells (Windows, in particular) try to do an expansion on globs rather than passing the string on to the compiler. To prevent this, you should quote certain arguments like so:
 
 ```js
   {
@@ -98,8 +90,7 @@ require('google-closure-compiler').grunt(grunt);
 // The load-grunt-tasks plugin won't automatically load closure-compiler
 ```
 
-Task targets, files and options may be specified according to the grunt
-[Configuring tasks](http://gruntjs.com/configuring-tasks) guide.
+* Options, files, and task targets may be specified according to Grunt's [Configuring Tasks Guide](http://gruntjs.com/configuring-tasks).
 
 ### Basic Configuration Example:
 
@@ -176,9 +167,9 @@ grunt.initConfig({
 
 ## Using the Gulp Plugin
 
-The gulp plugin supports piping multiple files through the compiler.
+The Gulp plugin supports piping multiple files through the compiler.
 
-Options are a direct match to the compiler flags without the leading "--".
+Options without the preceding `--` are a direct match to compiler's flags.
 
 ### Basic Configuration Example:
 
@@ -200,10 +191,9 @@ gulp.task('js-compile', function () {
 ```
 
 ### Use without gulp.src
-Gulp files are all read into memory, transformed into a JSON stream, and piped through the
-compiler. With large source sets this may require a large amount of memory.
+Gulp files are all read into memory, transformed into a JSON stream, and piped through the compiler. With large source sets, this might end demanding a significant amount of it [memory].
 
-Closure-compiler can natively expand file globs which will greatly alleviate this issue.
+To mitigate this issue considerably, Closure-Compiler can natively expand file globs like so:
 
 ```js
 var compilerPackage = require('google-closure-compiler');
@@ -226,9 +216,7 @@ gulp.task('js-compile', function () {
 ```
 
 ### gulp.src base option
-Gulp attempts to set the base of a glob from the point of the first wildcard. This isn't always
-what is desired. Users can specify the { base: 'path' } option to `gulp.src` calls to override
-this behavior.
+Gulp attempts to set the base of a glob from the point of the first wildcard, but this is not always what you desire. To override this behavior, you can set a specific base path to `gulp.src` using the `{base: 'path'}` option.
 
 ### Advanced Usage with Arguments Array:
 
@@ -248,8 +236,8 @@ gulp.task('js-compile', function () {
 });
 ```
 
-### Gulp Sourcemaps
-The gulp plugin supports gulp sourcemaps.
+### Gulp Source Maps
+The Gulp plugin also gives support to gulp-sourcemaps.
 
 ```js
 var closureCompiler = require('google-closure-compiler').gulp();
@@ -271,9 +259,9 @@ gulp.task('js-compile', function () {
 });
 ```
 
-## Specifying Extra Java Arguments
-Some users may wish to pass the java vm extra arguments - such as to specify the amount of memory the compiler should
-be allocated. Both the grunt and gulp plugins support this.
+## Specifying Additional Java Arguments
+Some users may wish to pass additional arguments to the Java VM, such as to specify the amount of memory the compiler should be allocating.
+Both the Grunt and Gulp plugins support this:
 
 ### Grunt
 ```js
@@ -288,8 +276,8 @@ var closureCompiler = require('google-closure-compiler').gulp({
 ```
 
 ## Plugin Authors and Native Node Usage
-A low-level node class is included to facilitate spawning the compiler jar as a process from Node.
-In addition, it exposes a static property with the path to the compiler jar file.
+We include a low-level node class to facilitate spawning compiler jar as a process from Node.
+Along with that, there's also a static property that exposes the path to the compiler jar file.
 
 ```js
 var ClosureCompiler = require('google-closure-compiler').compiler;
@@ -307,8 +295,11 @@ var compilerProcess = closureCompiler.run(function(exitCode, stdOut, stdErr) {
 });
 ```
 
+## Version History
+Closure Compiler release notes can be found on the [main repository wiki](https://github.com/google/closure-compiler/wiki/Binary-Downloads).
+
 ## License
-Copyright 2015 The Closure Compiler Authors
+Copyright © 2017 The Closure Compiler Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -321,7 +312,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-## Version History
-Closure Compiler release notes can be found on the
-[main repository wiki](https://github.com/google/closure-compiler/wiki/Binary-Downloads).

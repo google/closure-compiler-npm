@@ -56,6 +56,6 @@
     "pretest": "./build_compiler.js"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=4"
   }
 }

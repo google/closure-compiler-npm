@@ -32,7 +32,7 @@ if (compilerJarStats && compilerJarStats.isFile()) {
 }
 
 if (shouldDownloadCompiler) {
-   var compilerBuild = spawn('wget', ['-O', './compiler.jar', url], {
+   var compilerBuild = spawn('curl', ['-s', '-S', '-L', '-o', './compiler.jar', url], {
     stdio: 'inherit'
    });
 

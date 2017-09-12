@@ -287,7 +287,7 @@ var closureCompiler = require('google-closure-compiler').gulp({
 });
 ```
 
-## Plugin Authors and Native Node Usage
+## Native Node Usage (for Plugin Authors)
 A low-level node class is included to facilitate spawning the compiler jar as a process from Node.
 In addition, it exposes a static property with the path to the compiler jar file.
 

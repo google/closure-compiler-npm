@@ -51,7 +51,9 @@ assertNoWarning.params = {
 var mockGrunt = {
   log: {
     ok: function () {},
-    warn: function () {}
+    warn: function(x) {
+      console.warn(x);
+    },
   },
   file: {
     exists: function(path) {
@@ -171,11 +173,6 @@ describe('grunt-google-closure-compiler', function() {
       done();
     }
 
-    mockGrunt.log.warn = function (msg) {
-      console.log(msg);
-      assertNoWarning.fail();
-    };
-
     mockGrunt.fail.warn = function (err, code) {
       assertNoError.fail();
       taskDone();
@@ -208,11 +205,6 @@ describe('grunt-google-closure-compiler', function() {
       done();
     }
 
-    mockGrunt.log.warn = function (msg) {
-      console.log(msg);
-      assertNoWarning.fail();
-    };
-
     mockGrunt.fail.warn = function (err, code) {
       assertNoError.fail();
       taskDone();
@@ -243,11 +235,6 @@ describe('grunt-google-closure-compiler', function() {
       fs.rmdirSync('test/out');
       done();
     }
-
-    mockGrunt.log.warn = function (msg) {
-      console.log(msg);
-      assertNoWarning.fail();
-    };
 
     mockGrunt.fail.warn = function (err, code) {
       assertNoError.fail();

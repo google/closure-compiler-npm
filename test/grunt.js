@@ -27,6 +27,8 @@ var fs = require('fs');
 var _ = require('lodash');
 require('mocha');
 
+process.on('unhandledRejection', e => { throw e; });
+
 var assertNoError = new should.Assertion('grunt');
 assertNoError.params = {
   operator: 'should not fail with an error',

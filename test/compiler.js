@@ -31,6 +31,8 @@ var compilerVersionExpr = /^Version:\sv(.*)$/m;
 var spawn = require('child_process').spawnSync;
 require('mocha');
 
+process.on('unhandledRejection', e => { throw e; });
+
 var assertError = new should.Assertion('compiler version');
 assertError.params = {
   operator: 'should be a semver parseabe',

@@ -15,6 +15,9 @@
     "gulpplugin",
     "gruntplugin"
   ],
+  "bin": {
+    "google-closure-compiler": "cli.js"
+  },
   "main": "index.js",
   "contributors": [
     {
@@ -25,6 +28,7 @@
   "files": [
     "lib/",
     "compiler.jar",
+    "cli.js",
     "index.js",
     "package.json",
     "contrib/",

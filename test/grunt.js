@@ -27,6 +27,8 @@ var fs = require('fs');
 var _ = require('lodash');
 require('mocha');
 
+process.on('unhandledRejection', e => { throw e; });
+
 var assertNoError = new should.Assertion('grunt');
 assertNoError.params = {
   operator: 'should not fail with an error',
@@ -49,7 +51,9 @@ assertNoWarning.params = {
 var mockGrunt = {
   log: {
     ok: function () {},
-    warn: function () {}
+    warn: function(x) {
+      console.warn(x);
+    },
   },
   file: {
     exists: function(path) {
@@ -169,11 +173,6 @@ describe('grunt-google-closure-compiler', function() {
       done();
     }
 
-    mockGrunt.log.warn = function (msg) {
-      console.log(msg);
-      assertNoWarning.fail();
-    };
-
     mockGrunt.fail.warn = function (err, code) {
       assertNoError.fail();
       taskDone();
@@ -206,11 +205,6 @@ describe('grunt-google-closure-compiler', function() {
       done();
     }
 
-    mockGrunt.log.warn = function (msg) {
-      console.log(msg);
-      assertNoWarning.fail();
-    };
-
     mockGrunt.fail.warn = function (err, code) {
       assertNoError.fail();
       taskDone();
@@ -241,11 +235,6 @@ describe('grunt-google-closure-compiler', function() {
       fs.rmdirSync('test/out');
       done();
     }
-
-    mockGrunt.log.warn = function (msg) {
-      console.log(msg);
-      assertNoWarning.fail();
-    };
 
     mockGrunt.fail.warn = function (err, code) {
       assertNoError.fail();

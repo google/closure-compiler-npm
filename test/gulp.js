@@ -31,6 +31,8 @@ var compilerPackage = require('../');
 var closureCompiler = compilerPackage.gulp();
 require('mocha');
 
+process.on('unhandledRejection', e => { throw e; });
+
 describe('gulp-google-closure-compiler', function() {
   this.timeout(30000);
   this.slow(10000);

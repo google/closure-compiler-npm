@@ -27,6 +27,8 @@ var compilerPackage = require('../');
 var Compiler = compilerPackage.compiler;
 require('mocha');
 
+process.on('unhandledRejection', e => { throw e; });
+
 describe('closure-compiler node bindings', function() {
   it('should have a static property for the jar path', function() {
     Compiler.COMPILER_PATH.should.endWith('/compiler.jar');

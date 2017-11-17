@@ -275,6 +275,34 @@ gulp.task('js-compile', function () {
 });
 ```
 
+## Running the compiler using nailgun
+This gets around the long startup time of Google Closure Compiler using Nailgun, which runs a single java process in the background and keeps all of the classes loaded.
+
+First you need to install closure-gun by running the following command.
+```bash
+npm install closure-gun
+```
+
+### Gulp
+```js
+var compilerPackage = require('google-closure-compiler');
+var closureCompiler = compilerPackage.gulp();
+
+compilerPackage.compiler.JAR_PATH = undefined;
+compilerPackage.compiler.prototype.javaPath = './node_modules/.bin/closure-gun'
+```
+
+Note that when using gulp, Only without gulp.src works with nailgun.
+
+### Grunt
+```js
+var compilerPackage = require('google-closure-compiler');
+var closureCompiler = compilerPackage.grunt();
+
+compilerPackage.compiler.JAR_PATH = undefined;
+compilerPackage.compiler.prototype.javaPath = './node_modules/.bin/closure-gun'
+```
+
 ## Specifying Extra Java Arguments
 Some users may wish to pass the java vm extra arguments - such as to specify the amount of memory the compiler should
 be allocated. Both the grunt and gulp plugins support this.

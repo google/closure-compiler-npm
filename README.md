@@ -31,7 +31,7 @@ The simplest way to invoke the compiler (e.g. if you're just trying it out) is w
     npx google-closure-compiler --js=my_program.js --js_output_file=out.js
 
 The compiler package also includes build tool plugins for [Grunt](http://gruntjs.com/) and
-[Gulp](http://gulpjs.com/).
+[Gulp](http://gulpjs.com/). There is also an [official webpack plugin](https://www.npmjs.com/package/closure-webpack-plugin).
 
 ### Installation
 

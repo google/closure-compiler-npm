@@ -22,13 +22,12 @@
 
 'use strict';
 
-var assert = require('stream-assert');
-var should = require('should');
-var gulp = require('gulp');
-var sourcemaps = require('gulp-sourcemaps');
-var File = require('vinyl');
-var compilerPackage = require('../');
-var closureCompiler = compilerPackage.gulp();
+const assert = require('stream-assert');
+const gulp = require('gulp');
+const sourcemaps = require('gulp-sourcemaps');
+const File = require('vinyl');
+const compilerPackage = require('../');
+const closureCompiler = compilerPackage.gulp();
 require('mocha');
 
 process.on('unhandledRejection', e => { throw e; });
@@ -37,28 +36,28 @@ describe('gulp-google-closure-compiler', function() {
   this.timeout(30000);
   this.slow(10000);
 
-  describe('in buffer mode', function() {
-    var fakeFile1 = new File({
+  describe('in buffer mode', () => {
+    const fakeFile1 = new File({
       path: '/foo.js',
       contents: new Buffer('console.log("foo");')
     });
-    var fakeFile2 = new File({
+    const fakeFile2 = new File({
       path: '/bar.js',
       contents: new Buffer('console.log("bar");')
     });
 
-    var fixturesCompiled = 'function log(a){console.log(a)}log("one.js");' +
+    const fixturesCompiled = 'function log(a){console.log(a)}log("one.js");' +
         'var WindowInfo=function(){this.props=[]};WindowInfo.prototype.propList=function(){' +
         'for(var a in window)this.props.push(a)};WindowInfo.prototype.list=function(){' +
         'log(this.props.join(", "))};(new WindowInfo).list();\n';
 
 
-    it('should emit an error for invalid options', function(done) {
-      var stream = closureCompiler({
+    it('should emit an error for invalid options', done => {
+      const stream = closureCompiler({
         compilation_level: 'FOO'
       });
 
-      stream.on('error', function (err) {
+      stream.on('error', err => {
         err.message.should.startWith('Compilation error');
         done();
       });
@@ -66,14 +65,14 @@ describe('gulp-google-closure-compiler', function() {
       stream.end();
     });
 
-    it('should compile a single file', function(done) {
-      var stream = closureCompiler({
+    it('should compile a single file', done => {
+      const stream = closureCompiler({
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE'
       });
 
       stream.pipe(assert.length(1))
-          .pipe(assert.first(function (f) {
+          .pipe(assert.first(f => {
                 f.contents.toString().trim().should.eql(fakeFile1.contents.toString());
            }))
            .pipe(assert.end(done));
@@ -82,13 +81,13 @@ describe('gulp-google-closure-compiler', function() {
       stream.end();
     });
 
-    it('should name the output file when no js_output_file option is provided', function(done) {
-      var stream = closureCompiler({
+    it('should name the output file when no js_output_file option is provided', done => {
+      const stream = closureCompiler({
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE'
       });
       stream.pipe(assert.length(1))
-          .pipe(assert.first(function (f) {
+          .pipe(assert.first(f => {
             f.path.should.eql('compiled.js');
           }))
           .pipe(assert.end(done));
@@ -97,14 +96,14 @@ describe('gulp-google-closure-compiler', function() {
       stream.end();
     });
 
-    it('should name the output file from the js_output_file option', function(done) {
-      var stream = closureCompiler({
+    it('should name the output file from the js_output_file option', done => {
+      const stream = closureCompiler({
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE',
         js_output_file: 'out.js'
       });
       stream.pipe(assert.length(1))
-          .pipe(assert.first(function (f) {
+          .pipe(assert.first(f => {
             f.path.should.eql('out.js');
           }))
           .pipe(assert.end(done));
@@ -113,14 +112,14 @@ describe('gulp-google-closure-compiler', function() {
       stream.end();
     });
 
-    it('should compile multiple input files into a single output', function(done) {
-      var stream = closureCompiler({
+    it('should compile multiple input files into a single output', done => {
+      const stream = closureCompiler({
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE'
       });
 
       stream.pipe(assert.length(1))
-          .pipe(assert.first(function (f) {
+          .pipe(assert.first(f => {
             f.contents.toString().trim().should.eql(fakeFile1.contents.toString() +
                 fakeFile2.contents.toString());
           }))
@@ -131,8 +130,8 @@ describe('gulp-google-closure-compiler', function() {
       stream.end();
     });
 
-    it('should compile multiple inputs into multiple outputs with module options', function(done) {
-      var stream = closureCompiler({
+    it('should compile multiple inputs into multiple outputs with module options', done => {
+      const stream = closureCompiler({
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE',
         module: [
@@ -142,11 +141,11 @@ describe('gulp-google-closure-compiler', function() {
       });
 
       stream.pipe(assert.length(2))
-          .pipe(assert.first(function (f) {
+          .pipe(assert.first(f => {
             f.contents.toString().trim().should.eql(fakeFile1.contents.toString());
             f.path.should.eql('one.js');
           }))
-          .pipe(assert.second(function (f) {
+          .pipe(assert.second(f => {
             f.contents.toString().trim().should.eql(fakeFile2.contents.toString());
             f.path.should.eql('two.js');
           }))
@@ -157,7 +156,7 @@ describe('gulp-google-closure-compiler', function() {
       stream.end();
     });
 
-    it('should generate a sourcemap for a single output file', function(done) {
+    it('should generate a sourcemap for a single output file', done => {
       gulp.src('test/fixtures/**/*.js', {base: './'})
           .pipe(sourcemaps.init())
           .pipe(closureCompiler({
@@ -165,14 +164,14 @@ describe('gulp-google-closure-compiler', function() {
             warning_level: 'VERBOSE'
           }))
           .pipe(assert.length(1))
-          .pipe(assert.first(function (f) {
+          .pipe(assert.first(f => {
             f.sourceMap.sources.should.have.length(2);
             f.sourceMap.file.should.eql('compiled.js');
           }))
           .pipe(assert.end(done));
     });
 
-    it('should generate a sourcemap for each output file with modules', function(done) {
+    it('should generate a sourcemap for each output file with modules', done => {
       gulp.src(__dirname + '/fixtures/**/*.js')
           .pipe(sourcemaps.init())
           .pipe(closureCompiler({
@@ -184,32 +183,32 @@ describe('gulp-google-closure-compiler', function() {
             ]
           }))
           .pipe(assert.length(2))
-          .pipe(assert.first(function (f) {
+          .pipe(assert.first(f => {
             f.sourceMap.sources.should.have.length(1);
             f.sourceMap.file.should.eql('./one.js');
           }))
-          .pipe(assert.second(function (f) {
+          .pipe(assert.second(f => {
             f.sourceMap.sources.should.have.length(1);
             f.sourceMap.file.should.eql('./two.js');
           }))
           .pipe(assert.end(done));
     });
 
-    it('should support passing input globs directly to the compiler', function(done) {
-      var stream = closureCompiler({
+    it('should support passing input globs directly to the compiler', done => {
+      const stream = closureCompiler({
             js: __dirname + '/fixtures/**.js',
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE'
           })
           .src()
           .pipe(assert.length(1))
-          .pipe(assert.first(function(f) {
+          .pipe(assert.first(f => {
             f.contents.toString().should.eql(fixturesCompiled);
           }))
           .pipe(assert.end(done));
     });
 
-    it('should include js options before gulp.src files', function(done) {
+    it('should include js options before gulp.src files', done => {
       gulp.src(__dirname + '/fixtures/two.js')
           .pipe(closureCompiler({
             js: __dirname + '/fixtures/one.js',
@@ -217,27 +216,27 @@ describe('gulp-google-closure-compiler', function() {
             warning_level: 'VERBOSE'
           }))
           .pipe(assert.length(1))
-          .pipe(assert.first(function(f) {
+          .pipe(assert.first(f => {
             f.contents.toString().should.eql(fixturesCompiled);
           }))
           .pipe(assert.end(done));
     });
 
-    it('should support calling the compiler with an arguments array', function(done) {
-      var stream = closureCompiler([
+    it('should support calling the compiler with an arguments array', done => {
+      const stream = closureCompiler([
             '--js="' + __dirname + '/fixtures/**.js"',
             '--compilation_level=SIMPLE',
             '--warning_level=VERBOSE'
           ])
           .src()
           .pipe(assert.length(1))
-          .pipe(assert.first(function(f) {
+          .pipe(assert.first(f => {
             f.contents.toString().should.eql(fixturesCompiled);
           }))
           .pipe(assert.end(done));
     });
 
-    it('should generate no output without gulp.src files', function(done) {
+    it('should generate no output without gulp.src files', done => {
       gulp.src([])
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
@@ -247,7 +246,7 @@ describe('gulp-google-closure-compiler', function() {
           .pipe(assert.end(done));
     });
 
-    it('should compile without gulp.src files when .src() is called', function(done) {
+    it('should compile without gulp.src files when .src() is called', done => {
       closureCompiler({
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE',
@@ -255,13 +254,13 @@ describe('gulp-google-closure-compiler', function() {
           })
           .src()
           .pipe(assert.length(1))
-          .pipe(assert.first(function(f) {
+          .pipe(assert.first(f => {
             f.contents.toString().should.eql(fixturesCompiled);
           }))
           .pipe(assert.end(done));
     });
 
-    it('should properly compose sourcemaps when multiple transformations are chained', function(done) {
+    it('should properly compose sourcemaps when multiple transformations are chained', done => {
       gulp.src(['test/fixtures/one.js', 'test/fixtures/two.js'], {base: './'})
           .pipe(sourcemaps.init())
           .pipe(closureCompiler({
@@ -279,7 +278,7 @@ describe('gulp-google-closure-compiler', function() {
             formatting: 'PRETTY_PRINT',
             js_output_file: 'final.js'
           }))
-          .pipe(assert.first(function (f) {
+          .pipe(assert.first(f => {
             f.sourceMap.sources.should.containEql('test/fixtures/one.js');
             f.sourceMap.sources.should.containEql('test/fixtures/two.js');
           }))
@@ -287,14 +286,14 @@ describe('gulp-google-closure-compiler', function() {
     });
   });
 
-  describe('in streaming mode', function() {
-    it('should emit an error', function (done) {
+  describe('in streaming mode', () => {
+    it('should emit an error', done => {
       gulp.src(__dirname + '/fixtures/**/*.js', {buffer: false})
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE'
           }))
-          .on('error', function (err) {
+          .on('error', err => {
             err.message.should.eql('Streaming not supported');
             done();
           });

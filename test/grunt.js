@@ -22,24 +22,24 @@
 
 'use strict';
 
-var should = require('should');
-var fs = require('fs');
-var _ = require('lodash');
+const should = require('should');
+const fs = require('fs');
+const _ = require('lodash');
 require('mocha');
 
 process.on('unhandledRejection', e => { throw e; });
 
-var assertNoError = new should.Assertion('grunt');
+const assertNoError = new should.Assertion('grunt');
 assertNoError.params = {
   operator: 'should not fail with an error',
 };
 
-var assertError = new should.Assertion('grunt');
+const assertError = new should.Assertion('grunt');
 assertError.params = {
   operator: 'should have failed with an error',
 };
 
-var assertNoWarning = new should.Assertion('grunt');
+const assertNoWarning = new should.Assertion('grunt');
 assertNoWarning.params = {
   operator: 'should not log a warning',
 };
@@ -48,7 +48,7 @@ assertNoWarning.params = {
  * Grunt plugins are very hard to test. In this case we're passing a mock grunt object
  * that defines the properties we need in order to test the actual task.
  */
-var mockGrunt = {
+const mockGrunt = {
   log: {
     ok: function () {},
     warn: function(x) {
@@ -70,13 +70,13 @@ var mockGrunt = {
   registerMultiTask: function() {}
 };
 
-var closureCompiler = require('../').grunt(mockGrunt);
+const closureCompiler = require('../').grunt(mockGrunt);
 
 
 function gruntTaskOptions(options) {
   options = options || {};
   return function(defaults) {
-    var opts = _.cloneDeep(defaults || {});
+    const opts = _.cloneDeep(defaults || {});
     _.merge(opts, options);
     return opts;
   }
@@ -99,23 +99,23 @@ describe('grunt-google-closure-compiler', function() {
   this.slow(1000);
   this.timeout(10000);
 
-  it('should emit an error for invalid options', function(done) {
-    var taskObj = getGruntTaskObject([{
+  it('should emit an error for invalid options', done => {
+    const taskObj = getGruntTaskObject([{
       dest: 'unused.js',
       src: [__dirname + '/fixtures/one.js']
     }], {
       compilation_level: 'FOO'
-    }, function() {
+    }, () => {
       assertError.fail();
       done();
     });
 
-    var gruntWarning;
-    mockGrunt.log.warn = function(msg) {
+    let gruntWarning;
+    mockGrunt.log.warn = msg => {
       gruntWarning = msg;
     };
 
-    mockGrunt.fail.warn = function(err, code) {
+    mockGrunt.fail.warn = (err, code) => {
       should(err).startWith('Compilation error');
       should(gruntWarning).not.be.eql(undefined);
       done();
@@ -132,21 +132,21 @@ describe('grunt-google-closure-compiler', function() {
       done();
     }
 
-    var gruntWarnings = [];
-    mockGrunt.log.warn = function(msg) {
+    let gruntWarnings = [];
+    mockGrunt.log.warn = msg => {
       gruntWarnings.push(msg);
     };
 
-    mockGrunt.fail.warn = function(err, code) {
+    mockGrunt.fail.warn = (err, code) => {
       taskDone();
     };
 
-    var taskObj = getGruntTaskObject([{
+    let taskObj = getGruntTaskObject([{
       dest: 'unused.js',
       src: ['dne.js']
     }], {
       compilation_level: 'SIMPLE'
-    }, function() {
+    }, () => {
       taskDone();
     });
 
@@ -157,15 +157,15 @@ describe('grunt-google-closure-compiler', function() {
     this.timeout(30000);
     this.slow(10000);
 
-    var fileOneDest = 'test/out/one.js';
-    var fileTwoDest = 'test/out/two.js';
+    const fileOneDest = 'test/out/one.js';
+    const fileTwoDest = 'test/out/two.js';
 
     function taskDone() {
-      var fileOne = fs.statSync(fileOneDest);
+      const fileOne = fs.statSync(fileOneDest);
       should(fileOne.isFile()).be.eql(true);
       fs.unlinkSync(fileOneDest);
 
-      var fileTwo = fs.statSync(fileTwoDest);
+      const fileTwo = fs.statSync(fileTwoDest);
       should(fileTwo.isFile()).be.eql(true);
       fs.unlinkSync(fileTwoDest);
 
@@ -173,17 +173,17 @@ describe('grunt-google-closure-compiler', function() {
       done();
     }
 
-    mockGrunt.fail.warn = function (err, code) {
+    mockGrunt.fail.warn = (err, code) => {
       assertNoError.fail();
       taskDone();
     };
 
-    var taskObj = getGruntTaskObject([
+    const taskObj = getGruntTaskObject([
       {src: ['test/fixtures/one.js'], dest: fileOneDest},
       {src: ['test/fixtures/one.js', 'test/fixtures/two.js'], dest: fileTwoDest}
     ], {
       compilation_level: 'SIMPLE'
-    }, function () {
+    }, () => {
       taskDone();
     });
 
@@ -194,10 +194,10 @@ describe('grunt-google-closure-compiler', function() {
     this.timeout(30000);
     this.slow(10000);
 
-    var fileOneDest = 'test/out/one.js';
+    const fileOneDest = 'test/out/one.js';
 
     function taskDone() {
-      var fileOne = fs.statSync(fileOneDest);
+      const fileOne = fs.statSync(fileOneDest);
       should(fileOne.isFile()).be.eql(true);
       fs.unlinkSync(fileOneDest);
 
@@ -205,16 +205,16 @@ describe('grunt-google-closure-compiler', function() {
       done();
     }
 
-    mockGrunt.fail.warn = function (err, code) {
+    mockGrunt.fail.warn = (err, code) => {
       assertNoError.fail();
       taskDone();
     };
 
-    var taskObj = getGruntTaskObject([], {
+    const taskObj = getGruntTaskObject([], {
       compilation_level: 'SIMPLE',
       js: 'test/fixtures/one.js',
       js_output_file: fileOneDest
-    }, function () {
+    }, () => {
       taskDone();
     });
 
@@ -225,10 +225,10 @@ describe('grunt-google-closure-compiler', function() {
     this.timeout(30000);
     this.slow(10000);
 
-    var fileOneDest = 'test/out/one.js';
+    const fileOneDest = 'test/out/one.js';
 
     function taskDone() {
-      var fileOne = fs.statSync(fileOneDest);
+      const fileOne = fs.statSync(fileOneDest);
       should(fileOne.isFile()).be.eql(true);
       fs.unlinkSync(fileOneDest);
 
@@ -236,18 +236,18 @@ describe('grunt-google-closure-compiler', function() {
       done();
     }
 
-    mockGrunt.fail.warn = function (err, code) {
+    mockGrunt.fail.warn = (err, code) => {
       assertNoError.fail();
       taskDone();
     };
 
-    var taskObj = getGruntTaskObject([], {
+    const taskObj = getGruntTaskObject([], {
       args: [
         '--compilation_level=SIMPLE',
         '--js=test/fixtures/one.js',
         '--js_output_file=' + fileOneDest
       ]
-    }, function () {
+    }, () => {
       taskDone();
     });
 

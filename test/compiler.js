@@ -22,18 +22,18 @@
 
 'use strict';
 
-var should = require('should');
-var compilerPackage = require('../');
-var Compiler = compilerPackage.compiler;
-var packageInfo = require('../package.json');
-var Semver = require('semver');
-var compilerVersionExpr = /^Version:\sv(.*)$/m;
-var spawn = require('child_process').spawnSync;
+const should = require('should');
+const compilerPackage = require('../');
+const Compiler = compilerPackage.compiler;
+const packageInfo = require('../package.json');
+const Semver = require('semver');
+const compilerVersionExpr = /^Version:\sv(.*)$/m;
+const spawn = require('child_process').spawnSync;
 require('mocha');
 
 process.on('unhandledRejection', e => { throw e; });
 
-var assertError = new should.Assertion('compiler version');
+const assertError = new should.Assertion('compiler version');
 assertError.params = {
   operator: 'should be a semver parseabe',
 };
@@ -43,9 +43,9 @@ describe('compiler.jar', function() {
   this.slow(5000);
 
   it('should not be a snapshot build', function(done) {
-    var compiler = new Compiler({ version: true});
+    const compiler = new Compiler({ version: true});
     compiler.run(function(exitCode, stdout, stderr) {
-      var versionInfo = (stdout || '').match(compilerVersionExpr);
+      let versionInfo = (stdout || '').match(compilerVersionExpr);
       should(versionInfo).not.be.eql(null);
       versionInfo = versionInfo || [];
       versionInfo.length.should.be.eql(2);
@@ -55,16 +55,16 @@ describe('compiler.jar', function() {
   });
 
   it('version should be equal to the package major version', function(done) {
-    var compiler = new Compiler({ version: true});
-    var packageVer = new Semver(packageInfo.version);
+    const compiler = new Compiler({ version: true});
+    const packageVer = new Semver(packageInfo.version);
     compiler.run(function(exitCode, stdout, stderr) {
-      var versionInfo = (stdout || '').match(compilerVersionExpr);
+      let versionInfo = (stdout || '').match(compilerVersionExpr);
       should(versionInfo).not.be.eql(null);
       versionInfo = versionInfo || [];
       versionInfo.length.should.be.eql(2);
 
       try {
-        var compilerVersion = new Semver(versionInfo[1] + '.0.0');
+        const compilerVersion = new Semver(versionInfo[1] + '.0.0');
         compilerVersion.major.should.be.equal(packageVer.major);
       } catch (e) {
         assertError.fail();
@@ -78,13 +78,13 @@ describe('compiler submodule', function() {
   this.timeout(10000);
   this.slow(5000);
   it('should be synced to the tagged commit', function() {
-    var gitCmd = spawn('git', ['tag', '--points-at', 'HEAD'], {
+    const gitCmd = spawn('git', ['tag', '--points-at', 'HEAD'], {
       cwd: './compiler'
     });
     should(gitCmd.status).eql(0)
-    var currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
-    var packageVer = new Semver(packageInfo.version);
-    var mvnVersion = 'v' + packageVer.major;
+    const currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
+    const packageVer = new Semver(packageInfo.version);
+    const mvnVersion = 'v' + packageVer.major;
     should(currentTag).eql(mvnVersion)
   });
 });

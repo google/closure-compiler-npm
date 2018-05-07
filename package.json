@@ -60,6 +60,6 @@
     "pretest": "./build_compiler.js"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   }
 }

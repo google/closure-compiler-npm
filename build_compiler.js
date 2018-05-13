@@ -47,22 +47,24 @@ ncp('./compiler/contrib', './contrib', err => {
   }
 });
 
-const gwtBuild = spawn(
-    'mvn', ['-DskipTests', '-f', 'pom-gwt.xml', 'clean', 'install'], {
-      cwd: './compiler',
-      stdio: 'inherit',
-    });
-gwtBuild.on('error', err => {
-  throw err;
-});
-gwtBuild.on('close', exitCode => {
-  if (exitCode != 0) {
-    process.exit(1);
-    return;
-  }
-  ncp('./compiler/target/closure-compiler-gwt-1.0-SNAPSHOT/jscomp/jscomp.js', './jscomp.js', err => {
-    if (err) {
-      throw new Error(err);
-    }
+if (shouldDownloadCompiler) {
+  const gwtBuild = spawn(
+      'mvn', ['-DskipTests', '-f', 'pom-gwt.xml', 'clean', 'install'], {
+        cwd: './compiler',
+        stdio: 'inherit',
+      });
+  gwtBuild.on('error', err => {
+    throw err;
   });
-});
+  gwtBuild.on('close', exitCode => {
+    if (exitCode != 0) {
+      process.exit(1);
+      return;
+    }
+    ncp('./compiler/target/closure-compiler-gwt-1.0-SNAPSHOT/jscomp/jscomp.js', './jscomp.js', err => {
+      if (err) {
+        throw new Error(err);
+      }
+    });
+  });
+}

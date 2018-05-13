@@ -284,7 +284,10 @@ describe('gulp-google-closure-compiler', function() {
             f.sourceMap.sources.should.containEql('test/fixtures/one.js');
             f.sourceMap.sources.should.containEql('test/fixtures/two.js');
           }))
-          .pipe(assert.end(done));
+          .pipe(assert.end(done))
+          .on('error', err => {
+            console.error(err);
+          });
       });
 
       it('in streaming mode should emit an error', done => {

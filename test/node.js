@@ -24,82 +24,106 @@
 
 const should = require('should');
 const compilerPackage = require('../');
-const Compiler = compilerPackage.compiler;
+const {compiler: Compiler, jsCompiler} = compilerPackage;
 require('mocha');
 
 process.on('unhandledRejection', e => { throw e; });
 
 describe('closure-compiler node bindings', () => {
-  it('should have a static property for the jar path', () => {
-    Compiler.COMPILER_PATH.should.endWith('/compiler.jar');
-  });
-
-  it('should have a static property for the contrib folder', () => {
-    Compiler.CONTRIB_PATH.should.endWith('/contrib');
-  });
-
-  it('should error when java is not in the path', function(done) {
-    this.slow(1000);
-
-    const compiler = new Compiler({ version: true});
-    compiler.javaPath = 'DOES_NOT_EXIST';
-    compiler.run(function(exitCode, stdout, stderr) {
-      exitCode.should.not.eql(0);
-      stderr.indexOf('Is java in the path?').should.be.aboveOrEqual(0);
-      done();
-    });
-  });
-
-  it('should normalize an options object to an arguments array', () => {
-    const compiler = new Compiler({
-      one: true,
-      two: 'two',
-      three: ['one', 'two', 'three']
+  describe('java version', () => {
+    it('should have a static property for the jar path', () => {
+      Compiler.COMPILER_PATH.should.endWith('/compiler.jar');
     });
 
-    const expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+    it('should have a static property for the contrib folder', () => {
+      Compiler.CONTRIB_PATH.should.endWith('/contrib');
+    });
+
+    it('should error when java is not in the path', function (done) {
+      this.slow(1000);
+
+      const compiler = new Compiler({version: true});
+      compiler.javaPath = 'DOES_NOT_EXIST';
+      compiler.run(function (exitCode, stdout, stderr) {
+        exitCode.should.not.eql(0);
+        stderr.indexOf('Is java in the path?').should.be.aboveOrEqual(0);
+        done();
+      });
+    });
+
+    it('should normalize an options object to an arguments array', () => {
+      const compiler = new Compiler({
+        one: true,
+        two: 'two',
+        three: ['one', 'two', 'three']
+      });
+
+      const expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
         '--three=one', '--three=two', '--three=three'];
-    compiler.commandArguments.length.should.eql(expectedArray.length);
-    compiler.commandArguments.forEach((item, index) => {
-      expectedArray[index].should.eql(item);
-    });
-  });
-
-  it('should prepend the -jar argument and compiler path when configured by array', () => {
-    const expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
-      '--three=one', '--three=two', '--three=three'];
-
-    const compiler = new Compiler(expectedArray.slice(2));
-
-    compiler.commandArguments.length.should.eql(expectedArray.length);
-    compiler.commandArguments.forEach((item, index) => {
-      expectedArray[index].should.eql(item);
-    });
-  });
-
-  describe('extra command arguments', () => {
-    it('should include initial command arguments when configured by an options object', () => {
-      const expectedArray = ['-Xms2048m', '-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
-        '--three=one', '--three=two', '--three=three'];
-
-      const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
-
       compiler.commandArguments.length.should.eql(expectedArray.length);
-      compiler.commandArguments.forEach(function(item, index) {
+      compiler.commandArguments.forEach((item, index) => {
         expectedArray[index].should.eql(item);
       });
     });
 
-    it('should include initial command arguments when configured by array', () => {
-      const expectedArray = ['-Xms2048m', '-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+    it('should prepend the -jar argument and compiler path when configured by array', () => {
+      const expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
         '--three=one', '--three=two', '--three=three'];
 
-      const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
+      const compiler = new Compiler(expectedArray.slice(2));
 
       compiler.commandArguments.length.should.eql(expectedArray.length);
-      compiler.commandArguments.forEach(function(item, index) {
+      compiler.commandArguments.forEach((item, index) => {
         expectedArray[index].should.eql(item);
       });
+    });
+
+    describe('extra command arguments', () => {
+      it('should include initial command arguments when configured by an options object', () => {
+        const expectedArray = ['-Xms2048m', '-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+          '--three=one', '--three=two', '--three=three'];
+
+        const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
+
+        compiler.commandArguments.length.should.eql(expectedArray.length);
+        compiler.commandArguments.forEach(function (item, index) {
+          expectedArray[index].should.eql(item);
+        });
+      });
+
+      it('should include initial command arguments when configured by array', () => {
+        const expectedArray = ['-Xms2048m', '-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+          '--three=one', '--three=two', '--three=three'];
+
+        const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
+
+        compiler.commandArguments.length.should.eql(expectedArray.length);
+        compiler.commandArguments.forEach(function (item, index) {
+          expectedArray[index].should.eql(item);
+        });
+      });
+    });
+  });
+
+  describe('javascript version', () => {
+    it('should have a static property for the contrib folder', () => {
+      jsCompiler.CONTRIB_PATH.should.endWith('/contrib');
+    });
+
+    it('should normalize arguments to camel case', () => {
+      const compiler = new jsCompiler({
+        one_bar: true,
+        two_baz: 'two',
+        three_foo_bar_baz: ['one', 'two', 'three']
+      });
+
+      const expectedFlags = ['oneBar', 'twoBaz', 'threeFooBarBaz'];
+      Object.keys(compiler.flags).forEach(flag => {
+        const flagIndex = expectedFlags.indexOf(flag);
+        flagIndex.should.be.aboveOrEqual(0);
+        expectedFlags.splice(flagIndex, 1);
+      });
+      expectedFlags.length.should.eql(0);
     });
   });
 });

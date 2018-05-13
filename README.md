@@ -132,7 +132,7 @@ grunt.initConfig({
 
 ```js
 
-var compilerPackage = require('google-closure-compiler');
+const compilerPackage = require('google-closure-compiler');
 compilerPackage.grunt(grunt);
 
 // Project configuration.
@@ -187,7 +187,7 @@ Options are a direct match to the compiler flags without the leading "--".
 ### Basic Configuration Example:
 
 ```js
-var closureCompiler = require('google-closure-compiler').gulp();
+const closureCompiler = require('google-closure-compiler').gulp();
 
 gulp.task('js-compile', function () {
   return gulp.src('./src/js/**/*.js', {base: './'})
@@ -210,8 +210,8 @@ compiler. With large source sets this may require a large amount of memory.
 Closure-compiler can natively expand file globs which will greatly alleviate this issue.
 
 ```js
-var compilerPackage = require('google-closure-compiler');
-var closureCompiler = compilerPackage.gulp();
+const compilerPackage = require('google-closure-compiler');
+const closureCompiler = compilerPackage.gulp();
 
 gulp.task('js-compile', function () {
   return closureCompiler({
@@ -237,7 +237,7 @@ this behavior.
 ### Advanced Usage with Arguments Array:
 
 ```js
-var closureCompiler = require('google-closure-compiler').gulp();
+const closureCompiler = require('google-closure-compiler').gulp();
 
 gulp.task('js-compile', function () {
   return closureCompiler([
@@ -256,8 +256,8 @@ gulp.task('js-compile', function () {
 The gulp plugin supports gulp sourcemaps.
 
 ```js
-var closureCompiler = require('google-closure-compiler').gulp();
-var sourcemaps = require('gulp-sourcemaps');
+const closureCompiler = require('google-closure-compiler').gulp();
+const sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('js-compile', function () {
   return gulp.src('./src/js/**/*.js', {base: './'})
@@ -285,8 +285,8 @@ npm install closure-gun
 
 ### Gulp
 ```js
-var compilerPackage = require('google-closure-compiler');
-var closureCompiler = compilerPackage.gulp();
+const compilerPackage = require('google-closure-compiler');
+const closureCompiler = compilerPackage.gulp();
 
 compilerPackage.compiler.JAR_PATH = undefined;
 compilerPackage.compiler.prototype.javaPath = './node_modules/.bin/closure-gun'
@@ -296,8 +296,8 @@ Note that when using gulp, Only without gulp.src works with nailgun.
 
 ### Grunt
 ```js
-var compilerPackage = require('google-closure-compiler');
-var closureCompiler = compilerPackage.grunt();
+const compilerPackage = require('google-closure-compiler');
+const closureCompiler = compilerPackage.grunt();
 
 compilerPackage.compiler.JAR_PATH = undefined;
 compilerPackage.compiler.prototype.javaPath = './node_modules/.bin/closure-gun'
@@ -314,7 +314,7 @@ require('google-closure-compiler').grunt(grunt, ['-Xms2048m']);
 
 ### Gulp
 ```js
-var closureCompiler = require('google-closure-compiler').gulp({
+const closureCompiler = require('google-closure-compiler').gulp({
   extraArguments: ['-Xms2048m']
 });
 ```
@@ -324,17 +324,17 @@ A low-level node class is included to facilitate spawning the compiler jar as a 
 In addition, it exposes a static property with the path to the compiler jar file.
 
 ```js
-var ClosureCompiler = require('google-closure-compiler').compiler;
+const ClosureCompiler = require('google-closure-compiler').compiler;
 
 console.log(ClosureCompiler.COMPILER_PATH); // absolute path the compiler jar
 console.log(ClosureCompiler.CONTRIB_PATH); // absolute path the contrib folder which contains
 
-var closureCompiler = new ClosureCompiler({
+const closureCompiler = new ClosureCompiler({
   js: 'file-one.js',
   compilation_level: 'ADVANCED'
 });
 
-var compilerProcess = closureCompiler.run(function(exitCode, stdOut, stdErr) {
+const compilerProcess = closureCompiler.run(function(exitCode, stdOut, stdErr) {
   //compilation complete
 });
 ```

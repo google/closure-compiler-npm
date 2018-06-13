@@ -85,6 +85,10 @@ describe('compiler submodule', function() {
     const currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
     const packageVer = new Semver(packageInfo.version);
     const mvnVersion = 'v' + packageVer.major;
-    should(currentTag).eql(mvnVersion)
+    let normalizedTag = currentTag;
+    if (normalizedTag) {
+      normalizedTag = currentTag.replace(/^v\d{8}(-.*)$/, (match, g1) => match.substr(0, match.length - g1.length));
+    }
+    should(normalizedTag).eql(mvnVersion)
   });
 });

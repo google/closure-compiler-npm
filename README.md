@@ -8,9 +8,6 @@ Any bugs not related to the plugins themselves should be reported to the
 [main repository](https://github.com/google/closure-compiler/).
 
 ## Getting Started
-*This package requires java to be installed and in the path.* Looking for a version that
-does not require java? See [google-closure-compiler-js](https://github.com/google/closure-compiler-js).
-
 If you are new to [Closure-Compiler](https://developers.google.com/closure/compiler/), make
 sure to read and understand the
 [compilation levels](https://developers.google.com/closure/compiler/docs/compilation_levels) as
@@ -25,13 +22,21 @@ You may also post in the
 
 *Please don't cross post to both Stackoverflow and Closure Compiler Discuss.*
 
+The compiler is distributed as a Java jar or as a JavaScript library.
+
+### Java Version
+Requires java to be installed and in the path. Using the java version typically results in faster compilation times.
+
+### JavaScript Version
+This is a transpiled version of the Java source to native JavaScript. It can be used in environments without
+java installed and even in a browser.
+
+*Note: not all flags are available for the JavaScript version.*
+
 ## Usage
 The simplest way to invoke the compiler (e.g. if you're just trying it out) is with [`npx`](https://www.npmjs.com/package/npx):
 
     npx google-closure-compiler --js=my_program.js --js_output_file=out.js
-
-The compiler package also includes build tool plugins for [Grunt](http://gruntjs.com/) and
-[Gulp](http://gulpjs.com/). There is also an [official webpack plugin](https://www.npmjs.com/package/closure-webpack-plugin).
 
 ### Installation
 
@@ -49,10 +54,17 @@ running the `--help` command of the compiler.jar found inside the
 java -jar compiler.jar --help
 ```
 
-### Specifying Options
+## Build Tool Plugins
+The compiler package also includes build tool plugins for [Grunt](http://gruntjs.com/) and
+[Gulp](http://gulpjs.com/). There is also an [official webpack plugin](https://www.npmjs.com/package/closure-webpack-plugin).
 
-Both the grunt and gulp tasks take options objects. The option parameters map directly to the
-compiler flags without the leading '--' characters.
+ * [Grunt Plugin](https://github.com/google/closure-compiler-npm/blob/master/docs/grunt.md)
+ * [Gulp Plugin](https://github.com/google/closure-compiler-npm/blob/master/docs/gulp.md)
+ * [Webpack Plugin](https://github.com/webpack-contrib/closure-webpack-plugin)
+
+### Specifying Options
+The build tool plugins take options objects. The option parameters map directly to the
+compiler flags without the leading '--' characters. You may also use camelCase option names.
 
 Values are either strings or booleans. Options which have multiple values can be arrays.
 
@@ -65,24 +77,9 @@ Values are either strings or booleans. Options which have multiple values can be
   }
 ```
 
-For advanced usages, the options may be specified as an array of strings. These values _include_
-the "--" characters and are directly passed to the compiler in the order specified:
-
-```js
-  [
-    '--js', '/file-one.js',
-    '--js', '/file-two.js',
-    '--compilation_level', 'ADVANCED',
-    '--js_output_file', 'out.js',
-    '--debug'
-  ]
-```
-
-When an array of flags is passed, the input files should not be specified via the build tools, but
-rather as compilation flags directly.
-
-Some shells (particularly windows) try to do expansion on globs rather than passing the string on
-to the compiler. To prevent this it is necessary to quote certain arguments:
+For the java version, some shells (particularly windows) try to do expansion on globs rather
+than passing the string on to the compiler. To prevent this it is necessary to quote
+certain arguments:
 
 ```js
   {
@@ -93,250 +90,81 @@ to the compiler. To prevent this it is necessary to quote certain arguments:
   }
 ```
 
-## Using the Grunt Task
+## Advanced Java Version Usage
 
-Include the plugin in your Gruntfile.js:
+### Changing the Path to the Java SDK
 
-```js
-require('google-closure-compiler').grunt(grunt);
-// The load-grunt-tasks plugin won't automatically load closure-compiler
+Override the path before first use.
+
+```
+const Compiler = require('google-closure-compiler');
+
+Compiler.prototype.javaPath = '/node_modules/MODULE_NAME/jre/jre1.8.0_131.jre/Contents/Home/bin/java';
+
+const compiler = new Compiler({args});
 ```
 
-Task targets, files and options may be specified according to the grunt
-[Configuring tasks](http://gruntjs.com/configuring-tasks) guide.
-
-### Basic Configuration Example:
-
-```js
-require('google-closure-compiler').grunt(grunt);
-
-// Project configuration.
-grunt.initConfig({
-  'closure-compiler': {
-    my_target: {
-      files: {
-        'dest/output.min.js': ['src/js/**/*.js']
-      },
-      options: {
-        compilation_level: 'SIMPLE',
-        language_in: 'ECMASCRIPT5_STRICT',
-        create_source_map: 'dest/output.min.js.map',
-        output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
-      }
-    }
-  }
-});
-```
-
-### Closure Library Example:
-
-```js
-
-var compilerPackage = require('google-closure-compiler');
-compilerPackage.grunt(grunt);
-
-// Project configuration.
-grunt.initConfig({
-  'closure-compiler': {
-    my_target: {
-      files: {
-        'dest/output.min.js': ['src/js/**/*.js']
-      },
-      options: {
-        js: '/node_modules/google-closure-library/**.js'
-        externs: compilerPackage.compiler.CONTRIB_PATH + '/externs/jquery-1.9.js',
-        compilation_level: 'SIMPLE',
-        manage_closure_dependencies: true,
-        language_in: 'ECMASCRIPT5_STRICT',
-        create_source_map: 'dest/output.min.js.map',
-        output_wrapper: '(function(){\n%output%\n}).call(this)\n//# sourceMappingURL=output.min.js.map'
-      }
-    }
-  }
-});
-```
-
-### Advanced Usage with Arguments Array:
-
-```js
-// Project configuration.
-grunt.initConfig({
-  'closure-compiler': {
-    my_target: {
-      options: {
-        // When args is present, all other options are ignored
-        args: [
-          '--js', '/file-one.js',
-          '--js', '/file-two.js',
-          '--compilation_level', 'ADVANCED',
-          '--js_output_file', 'out.js',
-          '--debug'
-        ]
-      }
-    }
-  }
-});
-```
-
-## Using the Gulp Plugin
-
-The gulp plugin supports piping multiple files through the compiler.
-
-Options are a direct match to the compiler flags without the leading "--".
-
-### Basic Configuration Example:
-
-```js
-var closureCompiler = require('google-closure-compiler').gulp();
-
-gulp.task('js-compile', function () {
-  return gulp.src('./src/js/**/*.js', {base: './'})
-      .pipe(closureCompiler({
-          compilation_level: 'SIMPLE',
-          warning_level: 'VERBOSE',
-          language_in: 'ECMASCRIPT6_STRICT',
-          language_out: 'ECMASCRIPT5_STRICT',
-          output_wrapper: '(function(){\n%output%\n}).call(this)',
-          js_output_file: 'output.min.js'
-        }))
-      .pipe(gulp.dest('./dist/js'));
-});
-```
-
-### Use without gulp.src
-Gulp files are all read into memory, transformed into a JSON stream, and piped through the
-compiler. With large source sets this may require a large amount of memory.
-
-Closure-compiler can natively expand file globs which will greatly alleviate this issue.
-
-```js
-var compilerPackage = require('google-closure-compiler');
-var closureCompiler = compilerPackage.gulp();
-
-gulp.task('js-compile', function () {
-  return closureCompiler({
-        js: './src/js/**.js',
-        externs: compilerPackage.compiler.CONTRIB_PATH + '/externs/jquery-1.9.js',
-        compilation_level: 'SIMPLE',
-        warning_level: 'VERBOSE',
-        language_in: 'ECMASCRIPT6_STRICT',
-        language_out: 'ECMASCRIPT5_STRICT',
-        output_wrapper: '(function(){\n%output%\n}).call(this)',
-        js_output_file: 'output.min.js'
-      })
-      .src() // needed to force the plugin to run without gulp.src
-      .pipe(gulp.dest('./dist/js'));
-});
-```
-
-### gulp.src base option
-Gulp attempts to set the base of a glob from the point of the first wildcard. This isn't always
-what is desired. Users can specify the { base: 'path' } option to `gulp.src` calls to override
-this behavior.
-
-### Advanced Usage with Arguments Array:
-
-```js
-var closureCompiler = require('google-closure-compiler').gulp();
-
-gulp.task('js-compile', function () {
-  return closureCompiler([
-        '--js', '/file-one.js',
-        '--js', '/file-two.js',
-        '--compilation_level', 'ADVANCED',
-        '--js_output_file', 'out.js',
-        '--debug'
-      ])
-      .src() // needed to force the plugin to run without gulp.src
-      .pipe(gulp.dest('./dist/js'));
-});
-```
-
-### Gulp Sourcemaps
-The gulp plugin supports gulp sourcemaps.
-
-```js
-var closureCompiler = require('google-closure-compiler').gulp();
-var sourcemaps = require('gulp-sourcemaps');
-
-gulp.task('js-compile', function () {
-  return gulp.src('./src/js/**/*.js', {base: './'})
-      .pipe(sourcemaps.init())
-      .pipe(closureCompiler({
-          compilation_level: 'SIMPLE',
-          warning_level: 'VERBOSE',
-          language_in: 'ECMASCRIPT6_STRICT',
-          language_out: 'ECMASCRIPT5_STRICT',
-          output_wrapper: '(function(){\n%output%\n}).call(this)',
-          js_output_file: 'output.min.js'
-        }))
-      .pipe(sourcemaps.write('/')) // gulp-sourcemaps automatically adds the sourcemap url comment
-      .pipe(gulp.dest('./dist/js'));
-});
-```
-
-## Running the compiler using nailgun
-This gets around the long startup time of Google Closure Compiler using Nailgun, which runs a single java process in the background and keeps all of the classes loaded.
+### Running the compiler using nailgun
+This gets around the long startup time of Google Closure Compiler using
+[Nailgun](https://github.com/facebook/nailgun), which runs a single java process in the background
+and keeps all of the classes loaded.
 
 First you need to install closure-gun by running the following command.
 ```bash
 npm install closure-gun
 ```
 
-### Gulp
+Then point the package to use closure-gun rather than the JDK.
+
 ```js
-var compilerPackage = require('google-closure-compiler');
-var closureCompiler = compilerPackage.gulp();
+const compilerPackage = require('google-closure-compiler');
 
 compilerPackage.compiler.JAR_PATH = undefined;
 compilerPackage.compiler.prototype.javaPath = './node_modules/.bin/closure-gun'
 ```
 
-Note that when using gulp, Only without gulp.src works with nailgun.
-
-### Grunt
-```js
-var compilerPackage = require('google-closure-compiler');
-var closureCompiler = compilerPackage.grunt();
-
-compilerPackage.compiler.JAR_PATH = undefined;
-compilerPackage.compiler.prototype.javaPath = './node_modules/.bin/closure-gun'
-```
-
-## Specifying Extra Java Arguments
-Some users may wish to pass the java vm extra arguments - such as to specify the amount of memory the compiler should
-be allocated. Both the grunt and gulp plugins support this.
-
-### Grunt
-```js
-require('google-closure-compiler').grunt(grunt, ['-Xms2048m']);
-```
-
-### Gulp
-```js
-var closureCompiler = require('google-closure-compiler').gulp({
-  extraArguments: ['-Xms2048m']
-});
-```
+Note that when using gulp, Only invocations without gulp.src work with nailgun.
 
 ## Native Node Usage (for Plugin Authors)
 A low-level node class is included to facilitate spawning the compiler jar as a process from Node.
 In addition, it exposes a static property with the path to the compiler jar file.
 
+### Java Version
+
 ```js
-var ClosureCompiler = require('google-closure-compiler').compiler;
+const ClosureCompiler = require('google-closure-compiler').compiler;
 
 console.log(ClosureCompiler.COMPILER_PATH); // absolute path the compiler jar
 console.log(ClosureCompiler.CONTRIB_PATH); // absolute path the contrib folder which contains
 
-var closureCompiler = new ClosureCompiler({
+const closureCompiler = new ClosureCompiler({
   js: 'file-one.js',
   compilation_level: 'ADVANCED'
 });
 
-var compilerProcess = closureCompiler.run(function(exitCode, stdOut, stdErr) {
+const compilerProcess = closureCompiler.run(function(exitCode, stdOut, stdErr) {
   //compilation complete
 });
+```
+
+### JavaScript Version
+
+```js
+const ClosureCompiler = require('google-closure-compiler').jsCompiler;
+
+console.log(ClosureCompiler.CONTRIB_PATH); // absolute path the contrib folder which contains
+
+const closureCompiler = new ClosureCompiler({
+  compilation_level: 'ADVANCED'
+});
+
+const compilerProcess = closureCompiler.run(function(exitCode, stdOut, stdErr) {
+  //compilation complete
+}, [{
+ path: 'file-one.js',
+ src: 'alert("hello world")',
+ sourceMap: null // optional input source map
+}]);
 ```
 
 ## License

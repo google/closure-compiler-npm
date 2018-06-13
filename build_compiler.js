@@ -1,29 +1,29 @@
 #!/usr/bin/env node
 'use strict';
 
-var spawn = require('child_process').spawnSync;
-var ncp = require('ncp');
-var Semver = require('semver');
-var version = require('./package.json').version;
-var fs = require('fs');
-var packageVer = new Semver(version);
+const {spawn, spawnSync} = require('child_process');
+const ncp = require('ncp');
+const Semver = require('semver');
+const version = require('./package.json').version;
+const fs = require('fs');
+const packageVer = new Semver(version);
 
-var mavenVersion = 'v' + version.split('.')[0];
-var url =
+const mavenVersion = 'v' + version.split('.')[0];
+const url =
     'https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/'
     + mavenVersion + '/closure-compiler-' + mavenVersion + '.jar';
 
-var shouldDownloadCompiler = true;
-var compilerJarStats = null;
+let shouldDownloadCompiler = true;
+let compilerJarStats = null;
 try {
   compilerJarStats = fs.statSync('./compiler.jar');
 } catch (e) {}
 if (compilerJarStats && compilerJarStats.isFile()) {
-  var versionOutput = spawn('java',  ['-jar', 'compiler.jar', '--version']);
-  for (var line of versionOutput.output) {
+  const versionOutput = spawnSync('java',  ['-jar', 'compiler.jar', '--version']);
+  for (let line of versionOutput.output) {
     if (line) {
-      var lineString = line.toString();
-      var versionParts = /^Version: v(\d+)$/m.exec(lineString);
+      const lineString = line.toString();
+      const versionParts = /^Version: v(\d+)$/m.exec(lineString);
       if (versionParts) {
         shouldDownloadCompiler = parseInt(versionParts[1], 10) < packageVer.major;
       }
@@ -32,7 +32,7 @@ if (compilerJarStats && compilerJarStats.isFile()) {
 }
 
 if (shouldDownloadCompiler) {
-   var compilerBuild = spawn('curl', ['-s', '-S', '-L', '-o', './compiler.jar', url], {
+   const compilerBuild = spawnSync('curl', ['-s', '-S', '-L', '-o', './compiler.jar', url], {
     stdio: 'inherit'
    });
 
@@ -41,8 +41,30 @@ if (shouldDownloadCompiler) {
    }
 }
 
-ncp('./compiler/contrib', './contrib', function(err) {
+ncp('./compiler/contrib', './contrib', err => {
   if (err) {
     throw new Error(err);
   }
 });
+
+if (shouldDownloadCompiler) {
+  const gwtBuild = spawn(
+      'mvn', ['-DskipTests', '-f', 'pom-gwt.xml', 'clean', 'install'], {
+        cwd: './compiler',
+        stdio: 'inherit',
+      });
+  gwtBuild.on('error', err => {
+    throw err;
+  });
+  gwtBuild.on('close', exitCode => {
+    if (exitCode != 0) {
+      process.exit(1);
+      return;
+    }
+    ncp('./compiler/target/closure-compiler-gwt-1.0-SNAPSHOT/jscomp/jscomp.js', './jscomp.js', err => {
+      if (err) {
+        throw new Error(err);
+      }
+    });
+  });
+}

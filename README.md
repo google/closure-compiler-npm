@@ -58,8 +58,8 @@ java -jar compiler.jar --help
 The compiler package also includes build tool plugins for [Grunt](http://gruntjs.com/) and
 [Gulp](http://gulpjs.com/). There is also an [official webpack plugin](https://www.npmjs.com/package/closure-webpack-plugin).
 
- * [Grunt Plugin](https://github.com/google/closure-compiler-npm/blob/include-js-version/docs/grunt.md)
- * [Gulp Plugin](https://github.com/google/closure-compiler-npm/blob/include-js-version/docs/gulp.md)
+ * [Grunt Plugin](https://github.com/google/closure-compiler-npm/blob/master/docs/grunt.md)
+ * [Gulp Plugin](https://github.com/google/closure-compiler-npm/blob/master/docs/gulp.md)
  * [Webpack Plugin](https://github.com/webpack-contrib/closure-webpack-plugin)
 
 ### Specifying Options

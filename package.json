@@ -30,6 +30,7 @@
     "compiler.jar",
     "cli.js",
     "index.js",
+    "jscomp.js",
     "package.json",
     "contrib/",
     "README.md"

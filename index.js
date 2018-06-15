@@ -22,14 +22,23 @@
 
 'use strict';
 
-const grunt_plugin = require('./lib/grunt');
-const gulp_plugin = require('./lib/gulp');
-const Compiler = require('./lib/node/closure-compiler');
-const CompilerJS = require('./lib/node/closure-compiler-js');
+// defer loading modules. The jscomp file is rather large. Don't load it unless it's actually referenced.
+class Main {
+  static get grunt() {
+    return require('./lib/grunt');
+  }
 
-module.exports = {
-  grunt: grunt_plugin,
-  compiler: Compiler,
-  jsCompiler: CompilerJS,
-  gulp: gulp_plugin
-};
+  static get gulp() {
+    return require('./lib/gulp');
+  }
+
+  static get compiler() {
+    return require('./lib/node/closure-compiler');
+  }
+
+  static get jsCompiler() {
+    return require('./lib/node/closure-compiler-js');
+  }
+}
+
+module.exports = Main;

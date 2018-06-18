@@ -44,7 +44,13 @@ describe('closure-compiler node bindings', () => {
 
       const compiler = new Compiler({version: true});
       compiler.javaPath = 'DOES_NOT_EXIST';
+      let hasRun = false;
       compiler.run(function (exitCode, stdout, stderr) {
+        if (hasRun) {
+          return;
+        }
+        hasRun = true;
+
         exitCode.should.not.eql(0);
         stderr.indexOf('Is java in the path?').should.be.aboveOrEqual(0);
         done();

@@ -1,6 +1,6 @@
 {
   "name": "google-closure-compiler",
-  "version": "20180610.0.1",
+  "version": "20180610.0.2",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",
   "repository": {
     "type": "git",
@@ -47,10 +47,10 @@
   },
   "devDependencies": {
     "gulp": "^3.9.0",
-    "gulp-mocha": "^4.0.1",
-    "gulp-sourcemaps": "^2.4.1",
-    "lodash": "^4.6.1",
-    "mocha": "^3.2.0",
+    "gulp-mocha": "6.0.0",
+    "gulp-sourcemaps": "^2.6.4",
+    "lodash": "^4.17.10",
+    "mocha": "5.2.0",
     "ncp": "^2.0.0",
     "semver": "^5.1.0",
     "should": "^11.2.0",

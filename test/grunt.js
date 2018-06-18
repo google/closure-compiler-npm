@@ -99,13 +99,14 @@ describe('grunt-google-closure-compiler', function() {
       this.timeout(10000);
 
       it('should emit an error for invalid options', done => {
+        let didFail = false;
         const taskObj = getGruntTaskObject([{
           dest: 'unused.js',
           src: [__dirname + '/fixtures/one.js']
         }], {
           compilation_level: 'FOO'
         }, () => {
-          assertError.fail();
+          should(didFail).be.eql(true);
           done();
         });
 
@@ -117,7 +118,7 @@ describe('grunt-google-closure-compiler', function() {
         mockGrunt.fail.warn = (err, code) => {
           should(err).startWith('Compilation error');
           should(gruntWarning).not.be.eql(undefined);
-          done();
+          didFail = true;
         };
 
         closureCompiler.call(taskObj);

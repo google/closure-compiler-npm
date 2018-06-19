@@ -1,5 +1,6 @@
 language: node_js
 node_js:
+- '10'
 - '8'
 - '6'
 branches:
@@ -10,7 +11,7 @@ deploy:
   provider: npm
   email: chadkillingsworth@gmail.com
   on:
-    node: '6'
+    node: '8'
     branch: master
   api_key:
     secure: a8wHNDVPtq2aXh7uunK/mivAxzBU2Kh72dNYq6WErzzboZMl/slwpffi+A0aT6Ug5rIM0w1ble+lSvVSEzD7s4CXmd4wGdQfDaME/pacx/gqICwt4YVlHgMwGKA2jX70EyNhrG3Yfbhw6BUZ3rq18UdxkHyXizxtTGHCHzj61OPcCAcwetbiA6OUnDlKuLze3gnxzQ7C+lfgpprynAgmKSUlunAKqZEpNmOkststsMtfkWwSFOjCxkeMDDHzG0WB1GhRxX3ziga+fz3BkIoNvS/Do6sFw3yS5tTk9ohaOb6BeGaDhdbz6ayUCP5G4CKMpfUPBs4UMPt1scGPY90Wuz3uTSrDRhSqu1nS1soyxM6ySPSMifspezYod/6euYKa736uiiciHs8qHIL6ThrYpFAa4AfvcREbReaiNrf2/7nsvaqjeMZsU+lNJfUAEUmqc93TOwId0p/C89391bHb8uWE8FzCzU+K/Gl4ZYtRo2Ay1i8zk/Hnq9Mc1vNen/KqoLM7+As60NgkL4nhH9dYEvPC6URAGviM69L+H3z/9T9APMVnWF3TaEQ7de8TZjwtaY884M/8mPvDjS5UnfHL+XldxGSdbXUSmuvVE+k00vEuWMeWCQuZ8URlsWXo5q+oQUKWrcwH62eHi1clW3S7916qK7YK28HKsogfGWTeOlM=

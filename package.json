@@ -1,7 +1,10 @@
 {
   "name": "google-closure-compiler",
-  "version": "20180610.0.2",
+  "version": "20180621.0.0-webpack-beta",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",
+  "publishConfig": {
+    "tag": "webpack-beta"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/google/closure-compiler-npm.git"

@@ -23,7 +23,7 @@ if (compilerJarStats && compilerJarStats.isFile()) {
   for (let line of versionOutput.output) {
     if (line) {
       const lineString = line.toString();
-      const versionParts = /^Version: v(\d+)$/m.exec(lineString);
+      const versionParts = /^Version: v(\d+)(?:[-\.][-a-z0-9]+)?$/m.exec(lineString);
       if (versionParts) {
         shouldDownloadCompiler = parseInt(versionParts[1], 10) < packageVer.major;
       }

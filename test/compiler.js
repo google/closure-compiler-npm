@@ -27,7 +27,7 @@ const compilerPackage = require('../');
 const Compiler = compilerPackage.compiler;
 const packageInfo = require('../package.json');
 const Semver = require('semver');
-const compilerVersionExpr = /^Version:\sv(.*)$/m;
+const compilerVersionExpr = /^Version: v(\d+)(?:[-\.][-a-z0-9]+)?$/m;
 const spawn = require('child_process').spawnSync;
 require('mocha');
 
@@ -87,8 +87,9 @@ describe('compiler submodule', function() {
     const mvnVersion = 'v' + packageVer.major;
     let normalizedTag = currentTag;
     if (normalizedTag) {
-      normalizedTag = currentTag.replace(/^v\d{8}(-.*)$/, (match, g1) => match.substr(0, match.length - g1.length));
+      normalizedTag = currentTag.replace(/^([a-z]+-)?v\d{8}(.*)$/, (match, g1, g2) => match.substr(g1.length, match.length - g1.length - g2.length));
     }
+    console.log(normalizedTag);
     should(normalizedTag).eql(mvnVersion)
   });
 });

@@ -46,23 +46,8 @@ npm install --save google-closure-compiler
 
 ### Configuration
 
-The compiler has a large number of flags. The best documentation for the flags can be found by
-running the `--help` command of the compiler.jar found inside the
-`node_modules/google-closure-compiler` folder:
+See the [full list of compiler flags](https://github.com/google/closure-compiler/wiki/Flags-and-Options).
 
-```
-java -jar compiler.jar --help
-```
-
-## Build Tool Plugins
-The compiler package also includes build tool plugins for [Grunt](http://gruntjs.com/) and
-[Gulp](http://gulpjs.com/). There is also an [official webpack plugin](https://www.npmjs.com/package/closure-webpack-plugin).
-
- * [Grunt Plugin](https://github.com/google/closure-compiler-npm/blob/master/docs/grunt.md)
- * [Gulp Plugin](https://github.com/google/closure-compiler-npm/blob/master/docs/gulp.md)
- * [Webpack Plugin](https://github.com/webpack-contrib/closure-webpack-plugin)
-
-### Specifying Options
 The build tool plugins take options objects. The option parameters map directly to the
 compiler flags without the leading '--' characters. You may also use camelCase option names.
 
@@ -89,6 +74,14 @@ certain arguments:
     debug: true
   }
 ```
+
+## Build Tool Plugins
+The compiler package also includes build tool plugins for [Grunt](http://gruntjs.com/) and
+[Gulp](http://gulpjs.com/). There is also an [official webpack plugin](https://www.npmjs.com/package/closure-webpack-plugin).
+
+ * [Grunt Plugin](https://github.com/google/closure-compiler-npm/blob/master/docs/grunt.md)
+ * [Gulp Plugin](https://github.com/google/closure-compiler-npm/blob/master/docs/gulp.md)
+ * [Webpack Plugin](https://github.com/webpack-contrib/closure-webpack-plugin)
 
 ## Advanced Java Version Usage
 

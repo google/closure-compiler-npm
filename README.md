@@ -82,6 +82,7 @@ The compiler package also includes build tool plugins for [Grunt](http://gruntjs
  * [Grunt Plugin](https://github.com/google/closure-compiler-npm/blob/master/docs/grunt.md)
  * [Gulp Plugin](https://github.com/google/closure-compiler-npm/blob/master/docs/gulp.md)
  * [Webpack Plugin](https://github.com/webpack-contrib/closure-webpack-plugin)
+ * [Rollup Plugin](https://github.com/ampproject/rollup-plugin-closure-compiler)
 
 ## Advanced Java Version Usage
 

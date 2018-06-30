@@ -35,7 +35,7 @@ process.on('unhandledRejection', e => { throw e; });
 describe('gulp-google-closure-compiler', function() {
   ['java', 'native', 'javascript'].forEach(platform => {
     describe(`${platform} version`, function() {
-      const closureCompiler = compilerPackage.gulp({platform});
+      const closureCompiler = compilerPackage.gulp();
       this.timeout(30000);
       this.slow(10000);
 
@@ -56,6 +56,8 @@ describe('gulp-google-closure-compiler', function() {
       it('should emit an error for invalid options', done => {
         const stream = closureCompiler({
           compilation_level: 'FOO'
+        }, {
+          platform
         });
 
         stream.on('error', err => {
@@ -70,6 +72,8 @@ describe('gulp-google-closure-compiler', function() {
         const stream = closureCompiler({
           compilation_level: 'SIMPLE',
           warning_level: 'VERBOSE'
+        }, {
+          platform
         });
 
         stream.pipe(assert.length(1))
@@ -86,6 +90,8 @@ describe('gulp-google-closure-compiler', function() {
         const stream = closureCompiler({
           compilation_level: 'SIMPLE',
           warning_level: 'VERBOSE'
+        }, {
+          platform
         });
         stream.pipe(assert.length(1))
           .pipe(assert.first(f => {
@@ -102,6 +108,8 @@ describe('gulp-google-closure-compiler', function() {
           compilation_level: 'SIMPLE',
           warning_level: 'VERBOSE',
           js_output_file: 'out.js'
+        }, {
+          platform
         });
         stream.pipe(assert.length(1))
           .pipe(assert.first(f => {
@@ -117,6 +125,8 @@ describe('gulp-google-closure-compiler', function() {
         const stream = closureCompiler({
           compilation_level: 'SIMPLE',
           warning_level: 'VERBOSE'
+        }, {
+          platform
         });
 
         stream.pipe(assert.length(1))
@@ -140,6 +150,8 @@ describe('gulp-google-closure-compiler', function() {
             'two:1'
           ],
           createSourceMap: true
+        }, {
+          platform
         });
 
         stream.pipe(assert.length(2))
@@ -164,6 +176,8 @@ describe('gulp-google-closure-compiler', function() {
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE'
+          }, {
+            platform
           }))
           .pipe(assert.length(1))
           .pipe(assert.first(f => {
@@ -184,7 +198,10 @@ describe('gulp-google-closure-compiler', function() {
               'two:1:one'
             ],
             createSourceMap: true
-          }, {debugLog: true}))
+          }, {
+            debugLog: true,
+            platform
+          }))
           .pipe(assert.length(2))
           .pipe(assert.first(f => {
             f.sourceMap.sources.should.have.length(1);
@@ -203,6 +220,8 @@ describe('gulp-google-closure-compiler', function() {
             js: __dirname + '/fixtures/**.js',
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE'
+          }, {
+            platform
           })
             .src()
             .pipe(assert.length(1))
@@ -218,6 +237,8 @@ describe('gulp-google-closure-compiler', function() {
               js: __dirname + '/fixtures/one.js',
               compilation_level: 'SIMPLE',
               warning_level: 'VERBOSE'
+            }, {
+              platform
             }))
             .pipe(assert.length(1))
             .pipe(assert.first(f => {
@@ -231,7 +252,9 @@ describe('gulp-google-closure-compiler', function() {
             '--js="' + __dirname + '/fixtures/**.js"',
             '--compilation_level=SIMPLE',
             '--warning_level=VERBOSE'
-          ])
+          ], {
+            platform
+          })
             .src()
             .pipe(assert.length(1))
             .pipe(assert.first(f => {
@@ -245,6 +268,8 @@ describe('gulp-google-closure-compiler', function() {
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE',
             js: __dirname + '/fixtures/**.js'
+          }, {
+            platform
           })
             .src()
             .pipe(assert.length(1))
@@ -260,6 +285,8 @@ describe('gulp-google-closure-compiler', function() {
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE'
+          }, {
+            platform
           }))
           .pipe(assert.length(0))
           .pipe(assert.end(done));
@@ -273,6 +300,8 @@ describe('gulp-google-closure-compiler', function() {
             warning_level: 'VERBOSE',
             formatting: 'PRETTY_PRINT',
             sourceMapIncludeContent: true
+          }, {
+            platform
           }))
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
@@ -296,6 +325,8 @@ describe('gulp-google-closure-compiler', function() {
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE'
+          }, {
+            platform
           }))
           .on('error', err => {
             err.message.should.eql('Streaming not supported');

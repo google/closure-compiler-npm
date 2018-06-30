@@ -22,7 +22,12 @@ You may also post in the
 
 *Please don't cross post to both Stackoverflow and Closure Compiler Discuss.*
 
-The compiler is distributed as a Java jar or as a JavaScript library.
+The compiler is distributed as a Java jar, a JavaScript library. Mac OS and Linux also have native binaries.
+
+### Native Binary Version
+On Mac OS or Linux, optional dependencies will install a native binary of the compiler.
+Native binaries offer faster compile times without requiring Java to be installed and available.
+Compilations with a very large number of source files may be slightly slower than the java version.
 
 ### Java Version
 Requires java to be installed and in the path. Using the java version typically results in faster compilation times.
@@ -98,6 +103,8 @@ const compiler = new Compiler({args});
 ```
 
 ### Running the compiler using nailgun
+*Note: nailgun users are encouraged to try the native binary viersions where available.*
+
 This gets around the long startup time of Google Closure Compiler using
 [Nailgun](https://github.com/facebook/nailgun), which runs a single java process in the background
 and keeps all of the classes loaded.

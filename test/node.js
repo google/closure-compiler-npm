@@ -64,7 +64,7 @@ describe('closure-compiler node bindings', () => {
         three: ['one', 'two', 'three']
       });
 
-      const expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+      const expectedArray = ['--one=true', '--two=two',
         '--three=one', '--three=two', '--three=three'];
       compiler.commandArguments.length.should.eql(expectedArray.length);
       compiler.commandArguments.forEach((item, index) => {
@@ -72,40 +72,49 @@ describe('closure-compiler node bindings', () => {
       });
     });
 
-    it('should prepend the -jar argument and compiler path when configured by array', () => {
+    it('should prepend the -jar argument and compiler path when configured by array', done => {
       const expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
         '--three=one', '--three=two', '--three=three'];
 
       const compiler = new Compiler(expectedArray.slice(2));
 
-      compiler.commandArguments.length.should.eql(expectedArray.length);
-      compiler.commandArguments.forEach((item, index) => {
-        expectedArray[index].should.eql(item);
+      compiler.run(() => {
+        compiler.commandArguments.length.should.eql(expectedArray.length);
+        compiler.commandArguments.forEach((item, index) => {
+          expectedArray[index].should.eql(item);
+        });
+        done();
       });
     });
 
-    describe('extra command arguments', () => {
-      it('should include initial command arguments when configured by an options object', () => {
+    describe('extra command arguments', done => {
+      it('should include initial command arguments when configured by an options object', done => {
         const expectedArray = ['-Xms2048m', '-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
           '--three=one', '--three=two', '--three=three'];
 
         const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
 
-        compiler.commandArguments.length.should.eql(expectedArray.length);
-        compiler.commandArguments.forEach(function (item, index) {
-          expectedArray[index].should.eql(item);
+        compiler.run(() => {
+          compiler.commandArguments.length.should.eql(expectedArray.length);
+          compiler.commandArguments.forEach(function (item, index) {
+            expectedArray[index].should.eql(item);
+          });
+          done();
         });
       });
 
-      it('should include initial command arguments when configured by array', () => {
+      it('should include initial command arguments when configured by array', done => {
         const expectedArray = ['-Xms2048m', '-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
           '--three=one', '--three=two', '--three=three'];
 
         const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
 
-        compiler.commandArguments.length.should.eql(expectedArray.length);
-        compiler.commandArguments.forEach(function (item, index) {
-          expectedArray[index].should.eql(item);
+        compiler.run(() => {
+          compiler.commandArguments.length.should.eql(expectedArray.length);
+          compiler.commandArguments.forEach(function (item, index) {
+            expectedArray[index].should.eql(item);
+          });
+          done();
         });
       });
     });

@@ -92,11 +92,15 @@ function getGruntTaskObject(fileObj, options, asyncDone) {
 }
 
 describe('grunt-google-closure-compiler', function() {
-  ['java', 'javascript'].forEach(mode => {
-    describe(`${mode} version`, function() {
-      const closureCompiler = require('../').grunt(mockGrunt, mode === 'javascript' ? mode : undefined);
+  ['java', 'native', 'javascript'].forEach(platform => {
+    describe(`${platform} version`, function() {
+      let closureCompiler;
       this.slow(1000);
       this.timeout(10000);
+
+      beforeEach(() => {
+        closureCompiler = require('../').grunt(mockGrunt, {platform});
+      });
 
       it('should emit an error for invalid options', done => {
         let didFail = false;
@@ -190,7 +194,7 @@ describe('grunt-google-closure-compiler', function() {
         closureCompiler.call(taskObj);
       });
 
-      if (mode !== 'javascript') {
+      if (platform !== 'javascript') {
         it('should run when grunt provides no files', function (done) {
           this.timeout(30000);
           this.slow(10000);

@@ -6,8 +6,6 @@ Options are a direct match to the compiler flags without the leading "--".
 
 ## Basic Configuration Example:
 
-### Java Version
-
 ```js
 const closureCompiler = require('google-closure-compiler').gulp();
 
@@ -20,29 +18,15 @@ gulp.task('js-compile', function () {
           language_out: 'ECMASCRIPT5_STRICT',
           output_wrapper: '(function(){\n%output%\n}).call(this)',
           js_output_file: 'output.min.js'
+        }, {
+          platform: ['native', 'java', 'javascript']
         }))
       .pipe(gulp.dest('./dist/js'));
 });
 ```
 
-### JavaScript Version
-
-```js
-const closureCompiler = require('google-closure-compiler').gulp({jsMode: true});
-
-gulp.task('js-compile', function () {
-  return gulp.src('./src/js/**/*.js', {base: './'})
-      .pipe(closureCompiler({
-          compilation_level: 'SIMPLE',
-          warning_level: 'VERBOSE',
-          language_in: 'ECMASCRIPT6_STRICT',
-          language_out: 'ECMASCRIPT5_STRICT',
-          output_wrapper: '(function(){\n%output%\n}).call(this)',
-          js_output_file: 'output.min.js'
-        }))
-      .pipe(gulp.dest('./dist/js'));
-});
-```
+The `platform` option specifies whether to use the `java`, `javascript` or `native` versions of the compiler.
+The option can be either a string or an array where the first supported platform will be used:
 
 ## Use without gulp.src (Java Version Only)
 Gulp files are all read into memory, transformed into a JSON stream, and piped through the

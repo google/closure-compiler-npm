@@ -5,18 +5,15 @@ Task targets, files and options may be specified according to the grunt
 
 Include the plugin in your Gruntfile.js:
 
-## Java Version of Closure Compiler
 ```js
-require('google-closure-compiler').grunt(grunt);
+require('google-closure-compiler').grunt(grunt, {
+  platform: ['native', 'java', 'javascript']
+});
 // The load-grunt-tasks plugin won't automatically load closure-compiler
 ```
 
-## JS Version of Closure Compiler
-
-```js
-require('google-closure-compiler').grunt(grunt, 'javascript');
-// The load-grunt-tasks plugin won't automatically load closure-compiler
-```
+The `platform` option specifies whether to use the `java`, `javascript` or `native` versions of the compiler.
+The option can be either a string or an array where the first supported platform will be used:
 
 ## Basic Configuration Example:
 
@@ -74,5 +71,8 @@ Some users may wish to pass the java vm extra arguments - such as to specify the
 be allocated. Both the grunt and gulp plugins support this.
 
 ```js
-require('google-closure-compiler').grunt(grunt, ['-Xms2048m']);
+require('google-closure-compiler').grunt(grunt, {
+  platform: 'java',
+  extraArguments: ['-Xms2048m']
+});
 ```

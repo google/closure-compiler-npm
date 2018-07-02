@@ -1,6 +1,6 @@
 {
   "name": "google-closure-compiler",
-  "version": "20180624.0.0-webpack-beta",
+  "version": "20180701.0.0-webpack-beta",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",
   "publishConfig": {
     "tag": "webpack-beta"
@@ -47,6 +47,10 @@
     "chalk": "^1.0.0",
     "vinyl": "^2.0.1",
     "vinyl-sourcemaps-apply": "^0.2.0"
+  },
+  "optionalDependencies": {
+    "google-closure-compiler-linux": "^20180701.0.0-webpack-beta",
+    "google-closure-compiler-osx": "^20180701.0.0-webpack-beta"
   },
   "devDependencies": {
     "gulp": "^3.9.0",

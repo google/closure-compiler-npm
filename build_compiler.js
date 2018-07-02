@@ -13,6 +13,8 @@ const url =
     'https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/'
     + mavenVersion + '/closure-compiler-' + mavenVersion + '.jar';
 
+console.log(process.platform, process.arch);
+
 let shouldDownloadCompiler = true;
 let compilerJarStats = null;
 try {

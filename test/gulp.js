@@ -28,14 +28,52 @@ const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
 const File = require('vinyl');
 const compilerPackage = require('../');
+const ClosureCompiler = require('../lib/node/closure-compiler');
+const JsClosureCompiler = require('../lib/node/closure-compiler-js');
+
 require('mocha');
 
 process.on('unhandledRejection', e => { throw e; });
 
 describe('gulp-google-closure-compiler', function() {
+  let originalCompilerRunMethod;
+  let originalJsCompilerRunMethod;
+  let platformUtilized;
+
+  before(() => {
+    originalCompilerRunMethod = Object.getOwnPropertyDescriptor(ClosureCompiler.prototype, 'run');
+    Object.defineProperty(ClosureCompiler.prototype, 'run', {
+      value: function(...args) {
+        const retVal = originalCompilerRunMethod.value.apply(this, ...args);
+        platformUtilized = /^java/.test(this.getFullCommand()) ? 'java' : 'native';
+        return retVal;
+      },
+      writable: true,
+      enumerable: false,
+      configurable: true
+    });
+
+    originalJsCompilerRunMethod = Object.getOwnPropertyDescriptor(JsClosureCompiler.prototype, 'run');
+    Object.defineProperty(JsClosureCompiler.prototype, 'run', {
+      value: function(...args) {
+        platformUtilized = 'javascript';
+        return originalJsCompilerRunMethod.value.apply(this, ...args);
+      },
+      writable: true,
+      enumerable: false,
+      configurable: true
+    });
+  });
+
+  after(() => {
+    Object.defineProperty(ClosureCompiler.prototype, 'run', originalCompilerRunMethod);
+    Object.defineProperty(JsClosureCompiler.prototype, 'run', originalJsCompilerRunMethod);
+  });
+
   ['java', 'native', 'javascript'].forEach(platform => {
     describe(`${platform} version`, function() {
       const closureCompiler = compilerPackage.gulp();
+
       this.timeout(30000);
       this.slow(10000);
 
@@ -52,6 +90,13 @@ describe('gulp-google-closure-compiler', function() {
           'var WindowInfo=function(){this.props=[]};WindowInfo.prototype.propList=function(){' +
           'for(var a in window)this.props.push(a)};WindowInfo.prototype.list=function(){' +
           'log(this.props.join(", "))};(new WindowInfo).list();\n';
+
+      afterEach(() => {
+        if (platformUtilized) {
+          should.equal(platform, platformUtilized);
+        }
+        platformUtilized = undefined;
+      });
 
       it('should emit an error for invalid options', done => {
         const stream = closureCompiler({
@@ -309,6 +354,8 @@ describe('gulp-google-closure-compiler', function() {
             formatting: 'PRETTY_PRINT',
             js_output_file: 'final.js',
             sourceMapIncludeContent: true
+          }, {
+            platform
           }))
           .pipe(assert.first(f => {
             f.sourceMap.sources.should.containEql('test/fixtures/one.js');

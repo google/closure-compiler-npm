@@ -43,6 +43,9 @@ The simplest way to invoke the compiler (e.g. if you're just trying it out) is w
 
     npx google-closure-compiler --js=my_program.js --js_output_file=out.js
 
+The npx version will attempt to detect the best platform to use. You can also specify the platform
+with the special `--platform` flag.
+
 ### Installation
 
 ```

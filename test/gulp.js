@@ -44,7 +44,7 @@ describe('gulp-google-closure-compiler', function() {
     originalCompilerRunMethod = Object.getOwnPropertyDescriptor(ClosureCompiler.prototype, 'run');
     Object.defineProperty(ClosureCompiler.prototype, 'run', {
       value: function(...args) {
-        const retVal = originalCompilerRunMethod.value.apply(this, ...args);
+        const retVal = originalCompilerRunMethod.value.apply(this, args);
         platformUtilized = /^java/.test(this.getFullCommand()) ? 'java' : 'native';
         return retVal;
       },
@@ -57,7 +57,7 @@ describe('gulp-google-closure-compiler', function() {
     Object.defineProperty(JsClosureCompiler.prototype, 'run', {
       value: function(...args) {
         platformUtilized = 'javascript';
-        return originalJsCompilerRunMethod.value.apply(this, ...args);
+        return originalJsCompilerRunMethod.value.apply(this, args);
       },
       writable: true,
       enumerable: false,

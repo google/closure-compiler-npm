@@ -50,6 +50,7 @@ ncp('./compiler/contrib', './contrib', err => {
 });
 
 if (shouldDownloadCompiler) {
+  spawnSync('mvn', ['clean']);
   const gwtBuild = spawn(
       'mvn', ['-DskipTests', '-f', 'pom-gwt.xml', 'clean', 'install'], {
         cwd: './compiler',
@@ -63,7 +64,10 @@ if (shouldDownloadCompiler) {
       process.exit(1);
       return;
     }
-    ncp('./compiler/target/closure-compiler-gwt-1.0-SNAPSHOT/jscomp/jscomp.js', './jscomp.js', err => {
+    const targetFiles = fs.readdirSync('./compiler/target');
+    const gwtDir = targetFiles.find(filePath =>
+      /^closure-compiler-gwt-/.test(filePath) && !/\.war$/.test(filePath));
+    ncp(`./compiler/target/${gwtDir}/jscomp/jscomp.js`, './jscomp.js', err => {
       if (err) {
         throw new Error(err);
       }

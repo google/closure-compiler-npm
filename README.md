@@ -22,7 +22,7 @@ You may also post in the
 
 *Please don't cross post to both Stackoverflow and Closure Compiler Discuss.*
 
-The compiler is distributed as a Java jar, a JavaScript library. Mac OS and Linux also have native binaries.
+The compiler is distributed as a Java jar and a JavaScript library. Mac OS and Linux also have native binaries.
 
 ### Native Binary Version
 On Mac OS or Linux, optional dependencies will install a native binary of the compiler.

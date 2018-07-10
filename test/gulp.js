@@ -186,34 +186,36 @@ describe('gulp-google-closure-compiler', function() {
         stream.end();
       });
 
-      it('should compile multiple inputs into multiple outputs with chunk options', done => {
-        const stream = closureCompiler({
-          compilation_level: 'SIMPLE',
-          warning_level: 'VERBOSE',
-          chunk: [
-            'one:1',
-            'two:1'
-          ],
-          createSourceMap: true
-        }, {
-          platform
+      if (platform !== 'javascript') {
+        it('should compile multiple inputs into multiple outputs with chunk options', done => {
+          const stream = closureCompiler({
+            compilation_level: 'SIMPLE',
+            warning_level: 'VERBOSE',
+            chunk: [
+              'one:1',
+              'two:1'
+            ],
+            createSourceMap: true
+          }, {
+            platform
+          });
+
+          stream.pipe(assert.length(2))
+                .pipe(assert.first(f => {
+                  f.contents.toString().trim().should.eql(fakeFile1.contents.toString());
+                  f.path.should.eql('one.js');
+                }))
+                .pipe(assert.second(f => {
+                  f.contents.toString().trim().should.eql(fakeFile2.contents.toString());
+                  f.path.should.eql('two.js');
+                }))
+                .pipe(assert.end(done));
+
+          stream.write(fakeFile1);
+          stream.write(fakeFile2);
+          stream.end();
         });
-
-        stream.pipe(assert.length(2))
-          .pipe(assert.first(f => {
-            f.contents.toString().trim().should.eql(fakeFile1.contents.toString());
-            f.path.should.eql('one.js');
-          }))
-          .pipe(assert.second(f => {
-            f.contents.toString().trim().should.eql(fakeFile2.contents.toString());
-            f.path.should.eql('two.js');
-          }))
-          .pipe(assert.end(done));
-
-        stream.write(fakeFile1);
-        stream.write(fakeFile2);
-        stream.end();
-      });
+      }
 
       it('should generate a sourcemap for a single output file', done => {
         gulp.src('test/fixtures/**/*.js', {base: './'})
@@ -232,32 +234,34 @@ describe('gulp-google-closure-compiler', function() {
           .pipe(assert.end(done));
       });
 
-      it('should generate a sourcemap for each output file with chunks', done => {
-        gulp.src(__dirname + '/fixtures/**/*.js')
-          .pipe(sourcemaps.init())
-          .pipe(closureCompiler({
-            compilation_level: 'SIMPLE',
-            warning_level: 'VERBOSE',
-            chunk: [
-              'one:1',
-              'two:1:one'
-            ],
-            createSourceMap: true
-          }, {
-            debugLog: true,
-            platform
-          }))
-          .pipe(assert.length(2))
-          .pipe(assert.first(f => {
-            f.sourceMap.sources.should.have.length(1);
-            f.sourceMap.file.should.eql('./one.js');
-          }))
-          .pipe(assert.second(f => {
-            f.sourceMap.sources.should.have.length(1);
-            f.sourceMap.file.should.eql('./two.js');
-          }))
-          .pipe(assert.end(done));
-      });
+      if (platform !== 'javascript') {
+        it('should generate a sourcemap for each output file with chunks', done => {
+          gulp.src(__dirname + '/fixtures/**/*.js')
+              .pipe(sourcemaps.init())
+              .pipe(closureCompiler({
+                compilation_level: 'SIMPLE',
+                warning_level: 'VERBOSE',
+                chunk: [
+                  'one:1',
+                  'two:1:one'
+                ],
+                createSourceMap: true
+              }, {
+                debugLog: true,
+                platform
+              }))
+              .pipe(assert.length(2))
+              .pipe(assert.first(f => {
+                f.sourceMap.sources.should.have.length(1);
+                f.sourceMap.file.should.eql('./one.js');
+              }))
+              .pipe(assert.second(f => {
+                f.sourceMap.sources.should.have.length(1);
+                f.sourceMap.file.should.eql('./two.js');
+              }))
+              .pipe(assert.end(done));
+        });
+      }
 
       if (platform !== 'javascript') {
         it('should support passing input globs directly to the compiler', done => {

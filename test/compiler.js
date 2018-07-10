@@ -87,7 +87,8 @@ describe('compiler submodule', function() {
     const mvnVersion = 'v' + packageVer.major;
     let normalizedTag = currentTag;
     if (normalizedTag) {
-      normalizedTag = currentTag.replace(/^([a-z]+-)?v\d{8}(.*)$/, (match, g1, g2) => match.substr(g1.length, match.length - g1.length - g2.length));
+      normalizedTag = currentTag.replace(/^([a-z]+-)?v\d{8}(.*)$/,
+          (match, g1, g2) => match.substr((g1 || '').length, match.length - (g1 || '').length - (g2 || '').length));
     }
     should(normalizedTag).eql(mvnVersion)
   });

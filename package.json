@@ -43,10 +43,10 @@
   "dependencies": {
     "chalk": "^1.0.0",
     "vinyl": "^2.0.1",
-    "vinyl-sourcemaps-apply": "^0.2.0"
+    "vinyl-sourcemaps-apply": "^0.2.0",
+    "gulp": "^3.9.0"
   },
   "devDependencies": {
-    "gulp": "^3.9.0",
     "gulp-mocha": "6.0.0",
     "gulp-sourcemaps": "^2.6.4",
     "lodash": "^4.17.10",

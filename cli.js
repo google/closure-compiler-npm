@@ -133,7 +133,10 @@ if (platform !== 'javascript') {
         }
 
         process.exitCode = process.exitCode || exitCode;
-        process.exit();
       });
+    })
+    .catch(e => {
+      console.error(e);
+      process.exitCode = process.exitCode || 1;
     });
 }

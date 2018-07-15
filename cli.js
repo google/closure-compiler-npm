@@ -5,7 +5,7 @@ const {getNativeImagePath, getFirstSupportedPlatform, parseCliFlags} = require('
 
 const compilerFlags = parseCliFlags(process.argv.slice(2));
 let platform;
-if (compilerFlags.platform) {
+if (compilerFlags.hasOwnProperty('platform')) {
   platform = compilerFlags.platform;
   delete compilerFlags.platform;
 } else {
@@ -35,7 +35,7 @@ if (platform !== 'javascript') {
   }
 
   compiler.run((exitCode) => {
-    process.exit(exitCode);
+    process.exitCode = exitCode;
   });
 } else {
   if (compilerFlags.help === true) {
@@ -60,7 +60,10 @@ if (platform !== 'javascript') {
     inputFilePromises = compilerFlags.js.map(path =>
         new Promise((resolve, reject) =>
             fs.readFile(path, 'utf8', (err, src) => err ? reject(err) : resolve({src, path})))
-        .catch(e => console.error(e)));
+        .catch(e => {
+          process.exitCode = 1;
+          console.error(e);
+        }));
 
     delete compilerFlags.js;
   }
@@ -72,16 +75,18 @@ if (platform !== 'javascript') {
     externFilePromises = compilerFlags.externs.map(path =>
         new Promise((resolve, reject) =>
             fs.readFile(path, 'utf8', (err, src) => err ? reject(err) : resolve({src, path})))
-        .catch(e => console.error(e)));
+        .catch(e => {
+          process.exitCode = 1;
+          console.error(e);
+        }));
 
     delete compilerFlags.externs;
   }
 
-  const inputsReadPromise = inputFilePromises.length > 0 ? Promise.all(inputFilePromises) : Promise.resolve([]);
-  const externsReadPromise = externFilePromises.length > 0 ? Promise.all(externFilePromises) : Promise.resolve([]);
-
-  Promise.all([inputsReadPromise, externsReadPromise])
-    .then(([inputFiles, externs]) => {
+  Promise.all([...inputFilePromises, ...externFilePromises])
+    .then(files => {
+      const inputFiles = files.slice(0, inputFilePromises.length);
+      const externs = files.slice(inputFilePromises.length);
       if (externs.length > 0) {
         compilerFlags.externs = externs;
       } else {
@@ -93,11 +98,16 @@ if (platform !== 'javascript') {
       } else {
         return new Promise(resolve => {
           let stdInData = '';
+          process.stdin.setEncoding('utf8');
           process.stdin.on('readable', () => {
             const chunk = process.stdin.read();
             if (chunk !== null) {
               stdInData += chunk;
             }
+          });
+          process.stdin.on('error', (err) => {
+            process.exitCode = 1;
+            console.error(err);
           });
           process.stdin.on('end', () => {
             if (stdInData.length > 0) {
@@ -122,7 +132,8 @@ if (platform !== 'javascript') {
           console.log(compiledFiles[0].src);
         }
 
-        process.exit(exitCode);
+        process.exitCode = process.exitCode || exitCode;
+        process.exit();
       });
     });
 }

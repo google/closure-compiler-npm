@@ -27,7 +27,7 @@ const compilerPackage = require('../');
 const Compiler = compilerPackage.compiler;
 const packageInfo = require('../package.json');
 const Semver = require('semver');
-const compilerVersionExpr = /^Version: v(\d+)(?:[-\.][-a-z0-9]+)?$/m;
+const compilerVersionMatch = require('../version-match');
 const spawn = require('child_process').spawnSync;
 require('mocha');
 
@@ -45,7 +45,7 @@ describe('compiler.jar', function() {
   it('should not be a snapshot build', done => {
     const compiler = new Compiler({ version: true});
     compiler.run(function(exitCode, stdout, stderr) {
-      let versionInfo = (stdout || '').match(compilerVersionExpr);
+      let versionInfo = (stdout || '').match(compilerVersionMatch);
       should(versionInfo).not.be.eql(null);
       versionInfo = versionInfo || [];
       versionInfo.length.should.be.eql(2);
@@ -58,7 +58,7 @@ describe('compiler.jar', function() {
     const compiler = new Compiler({ version: true});
     const packageVer = new Semver(packageInfo.version);
     compiler.run(function(exitCode, stdout, stderr) {
-      let versionInfo = (stdout || '').match(compilerVersionExpr);
+      let versionInfo = (stdout || '').match(compilerVersionMatch);
       should(versionInfo).not.be.eql(null);
       versionInfo = versionInfo || [];
       versionInfo.length.should.be.eql(2);

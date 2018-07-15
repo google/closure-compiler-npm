@@ -106,7 +106,7 @@ const compiler = new Compiler({args});
 ```
 
 ### Running the compiler using nailgun
-*Note: nailgun users are encouraged to try the native binary viersions where available.*
+*Note: nailgun users are encouraged to try the native binary versions where available.*
 
 This gets around the long startup time of Google Closure Compiler using
 [Nailgun](https://github.com/facebook/nailgun), which runs a single java process in the background

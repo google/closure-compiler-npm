@@ -6,6 +6,7 @@ const ncp = require('ncp');
 const Semver = require('semver');
 const version = require('./package.json').version;
 const fs = require('fs');
+const compilerVersionMatch = require('./version-match');
 const packageVer = new Semver(version);
 
 const mavenVersion = 'v' + version.split('.')[0];
@@ -25,7 +26,7 @@ if (compilerJarStats && compilerJarStats.isFile()) {
   for (let line of versionOutput.output) {
     if (line) {
       const lineString = line.toString();
-      const versionParts = /^Version: v(\d+)(?:[-\.][-a-z0-9]+)?$/m.exec(lineString);
+      const versionParts = compilerVersionMatch.exec(lineString);
       if (versionParts) {
         shouldDownloadCompiler = parseInt(versionParts[1], 10) < packageVer.major;
       }

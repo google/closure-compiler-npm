@@ -1,5 +1,5 @@
 node_modules
 npm-debug.log
-compiler.jar
-contrib/
-jscomp.js
+/compiler.jar
+/contrib/
+/jscomp.js

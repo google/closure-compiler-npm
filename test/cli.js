@@ -93,7 +93,6 @@ describe('command line interface', function() {
       it('--help flag', done => {
         function complete() {
           should(stdOut.length).above(0);
-          should(stdError.length).equal(0);
           should(exitCode).equal(0);
           done();
         }

@@ -120,7 +120,7 @@ describe('command line interface', function() {
           if (stdError.length > 0) {
             console.error(stdError);
           }
-          should(stdError.length).equal(0);
+          should(stdOut.indexOf("console.log")).above(-1);
           done();
         }
 
@@ -133,6 +133,7 @@ describe('command line interface', function() {
         function complete() {
           should(exitCode).equal(0);
           should(stdOut.length).above(0);
+          should(stdOut.indexOf('alert("hello world")')).above(-1);
           done();
         }
 

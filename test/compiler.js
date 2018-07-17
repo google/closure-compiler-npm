@@ -27,7 +27,7 @@ const compilerPackage = require('../');
 const Compiler = compilerPackage.compiler;
 const packageInfo = require('../package.json');
 const Semver = require('semver');
-const compilerVersionExpr = /^Version:\sv(.*)$/m;
+const compilerVersionMatch = require('../version-match');
 const spawn = require('child_process').spawnSync;
 require('mocha');
 
@@ -42,10 +42,10 @@ describe('compiler.jar', function() {
   this.timeout(10000);
   this.slow(5000);
 
-  it('should not be a snapshot build', function(done) {
+  it('should not be a snapshot build', done => {
     const compiler = new Compiler({ version: true});
     compiler.run(function(exitCode, stdout, stderr) {
-      let versionInfo = (stdout || '').match(compilerVersionExpr);
+      let versionInfo = (stdout || '').match(compilerVersionMatch);
       should(versionInfo).not.be.eql(null);
       versionInfo = versionInfo || [];
       versionInfo.length.should.be.eql(2);
@@ -54,11 +54,11 @@ describe('compiler.jar', function() {
     });
   });
 
-  it('version should be equal to the package major version', function(done) {
+  it('version should be equal to the package major version', done => {
     const compiler = new Compiler({ version: true});
     const packageVer = new Semver(packageInfo.version);
     compiler.run(function(exitCode, stdout, stderr) {
-      let versionInfo = (stdout || '').match(compilerVersionExpr);
+      let versionInfo = (stdout || '').match(compilerVersionMatch);
       should(versionInfo).not.be.eql(null);
       versionInfo = versionInfo || [];
       versionInfo.length.should.be.eql(2);
@@ -87,8 +87,20 @@ describe('compiler submodule', function() {
     const mvnVersion = 'v' + packageVer.major;
     let normalizedTag = currentTag;
     if (normalizedTag) {
-      normalizedTag = currentTag.replace(/^v\d{8}(-.*)$/, (match, g1) => match.substr(0, match.length - g1.length));
+      normalizedTag = currentTag.replace(/^([a-z]+-)?v\d{8}(.*)$/,
+          (match, g1, g2) => match.substr((g1 || '').length, match.length - (g1 || '').length - (g2 || '').length));
     }
     should(normalizedTag).eql(mvnVersion)
+  });
+});
+
+describe('native dependencies', () => {
+  const packageInfo = require('../package.json');
+  it('optional dependencies should be the same major version as the package', () => {
+    const packageVer = new Semver(packageInfo.version);
+    Object.keys(packageVer.optionalDependencies || {}).forEach(optionalDep => {
+      const depVer = new Semver(packageVer.optionalDependencies[optionalDep]);
+      should(depVer.major).be.eql(packageVer.major);
+    });
   });
 });

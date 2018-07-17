@@ -46,6 +46,10 @@
     "vinyl-sourcemaps-apply": "^0.2.0",
     "gulp": "^3.9.0"
   },
+  "optionalDependencies": {
+    "google-closure-compiler-linux": "^20180610.0.1",
+    "google-closure-compiler-osx": "^20180610.0.1"
+  },
   "devDependencies": {
     "gulp-mocha": "6.0.0",
     "gulp-sourcemaps": "^2.6.4",

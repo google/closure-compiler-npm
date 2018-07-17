@@ -6,12 +6,15 @@ const ncp = require('ncp');
 const Semver = require('semver');
 const version = require('./package.json').version;
 const fs = require('fs');
+const compilerVersionMatch = require('./version-match');
 const packageVer = new Semver(version);
 
 const mavenVersion = 'v' + version.split('.')[0];
 const url =
     'https://repo1.maven.org/maven2/com/google/javascript/closure-compiler/'
     + mavenVersion + '/closure-compiler-' + mavenVersion + '.jar';
+
+console.log(process.platform, process.arch);
 
 let shouldDownloadCompiler = true;
 let compilerJarStats = null;
@@ -23,7 +26,7 @@ if (compilerJarStats && compilerJarStats.isFile()) {
   for (let line of versionOutput.output) {
     if (line) {
       const lineString = line.toString();
-      const versionParts = /^Version: v(\d+)$/m.exec(lineString);
+      const versionParts = compilerVersionMatch.exec(lineString);
       if (versionParts) {
         shouldDownloadCompiler = parseInt(versionParts[1], 10) < packageVer.major;
       }
@@ -48,6 +51,7 @@ ncp('./compiler/contrib', './contrib', err => {
 });
 
 if (shouldDownloadCompiler) {
+  spawnSync('mvn', ['clean']);
   const gwtBuild = spawn(
       'mvn', ['-DskipTests', '-f', 'pom-gwt.xml', 'clean', 'install'], {
         cwd: './compiler',
@@ -61,7 +65,10 @@ if (shouldDownloadCompiler) {
       process.exit(1);
       return;
     }
-    ncp('./compiler/target/closure-compiler-gwt-1.0-SNAPSHOT/jscomp/jscomp.js', './jscomp.js', err => {
+    const targetFiles = fs.readdirSync('./compiler/target');
+    const gwtDir = targetFiles.find(filePath =>
+      /^closure-compiler-gwt-/.test(filePath) && !/\.war$/.test(filePath));
+    ncp(`./compiler/target/${gwtDir}/jscomp/jscomp.js`, './jscomp.js', err => {
       if (err) {
         throw new Error(err);
       }

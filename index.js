@@ -39,6 +39,10 @@ class Main {
   static get jsCompiler() {
     return require('./lib/node/closure-compiler-js');
   }
+  
+  static get gjd() {
+    return require('jscomp.js').gjd; 
+  }
 }
 
 module.exports = Main;

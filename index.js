@@ -41,7 +41,7 @@ class Main {
   }
   
   static get gjd() {
-    return require('jscomp.js').gjd; 
+    return require('./jscomp.js').gjd; 
   }
 }
 

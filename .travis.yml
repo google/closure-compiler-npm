@@ -2,6 +2,9 @@ language: node_js
 node_js:
 - '8'
 - '6'
+cache:
+  directories:
+  - $HOME/.m2
 branches:
   only:
   - master

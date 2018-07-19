@@ -24,6 +24,7 @@
 
 const should = require('should');
 const fs = require('fs');
+const path = require('path');
 const _ = require('lodash');
 const ClosureCompiler = require('../lib/node/closure-compiler');
 const JsClosureCompiler = require('../lib/node/closure-compiler-js');
@@ -64,10 +65,22 @@ const mockGrunt = {
       } catch (e) {
         return false;
       }
+    },
+    write: function(filepath, contents, opts) {
+      const pathSegments = filepath.split(path.sep);
+      for (let i = 0; i < pathSegments.length - 1; i++) {
+        const intermediatePath = pathSegments.slice(0, i + 1).join(path.sep);
+        try {
+          fs.mkdirSync(intermediatePath);
+        } catch (e) {}
+      }
+      return fs.writeFileSync(filepath, contents, opts);
     }
   },
   fail: {
-    warn: function() {}
+    warn: function(...args) {
+      console.error(args);
+    }
   },
   registerMultiTask: function() {}
 };

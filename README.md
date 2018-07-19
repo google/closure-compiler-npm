@@ -148,7 +148,7 @@ const closureCompiler = new ClosureCompiler({
   compilation_level: 'ADVANCED'
 });
 
-const compilerProcess = closureCompiler.run(function(exitCode, stdOut, stdErr) {
+const compilerProcess = closureCompiler.run((exitCode, stdOut, stdErr) => {
   //compilation complete
 });
 ```
@@ -164,13 +164,13 @@ const closureCompiler = new ClosureCompiler({
   compilation_level: 'ADVANCED'
 });
 
-const compilerProcess = closureCompiler.run(function(exitCode, stdOut, stdErr) {
-  //compilation complete
-}, [{
+const compilerProcess = closureCompiler.run([{
  path: 'file-one.js',
  src: 'alert("hello world")',
  sourceMap: null // optional input source map
-}]);
+}], (exitCode, stdOut, stdErr) => {
+  //compilation complete
+});
 ```
 
 ## License

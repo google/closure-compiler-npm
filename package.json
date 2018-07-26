@@ -42,6 +42,7 @@
   "homepage": "https://developers.google.com/closure/compiler/",
   "dependencies": {
     "chalk": "^1.0.0",
+    "minimist": "^1.2.0",
     "vinyl": "^2.0.1",
     "vinyl-sourcemaps-apply": "^0.2.0"
   },

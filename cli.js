@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 'use strict';
 const fs = require('fs');
-const {getNativeImagePath, getFirstSupportedPlatform, parseCliFlags} = require('./lib/utils');
+const {getNativeImagePath, getFirstSupportedPlatform} = require('./lib/utils');
+const parseArgs = require('minimist');
 
-const compilerFlags = parseCliFlags(process.argv.slice(2));
+const compilerFlags = parseArgs(process.argv.slice(2));
+
+// The platform flag is only used by this cli script - it is not natively supported by any compiler version.
+// If it exists, use the value, but then delete it so that it's not actually passed to the compiler.
 let platform;
 if (compilerFlags.hasOwnProperty('platform')) {
   platform = compilerFlags.platform;
@@ -11,6 +15,35 @@ if (compilerFlags.hasOwnProperty('platform')) {
 } else {
   platform = getFirstSupportedPlatform(['native', 'java', 'javascript']);
 }
+
+// The compiler treats default arguments as if they were --js args.
+// Minimist parses default arguments and puts them under the '_' key.
+// Move the '_' key to the 'js' key.
+if (compilerFlags.hasOwnProperty('_') && compilerFlags['_'].length > 0) {
+  let existingJsFlags = [];
+  if (compilerFlags.js) {
+    if (Array.isArray(compilerFlags.js)) {
+      existingJsFlags = compilerFlags.js;
+    } else {
+      existingJsFlags = [compilerFlags.js];
+    }
+  }
+  compilerFlags.js = existingJsFlags.concat(compilerFlags['_']);
+  delete compilerFlags['_'];
+} else {
+  delete compilerFlags['_'];
+}
+
+// Boolean arguments can in some cases be parsed as strings.
+// Since its highly unlikely that an argument actually needs to be the strings 'true' or 'false',
+// convert them to true booleans.
+Object.keys(compilerFlags).forEach(flag => {
+  if (compilerFlags[flag] === 'true') {
+    compilerFlags[flag] = true;
+  } else if (compilerFlags[flag] === 'false') {
+    compilerFlags[flag] = false;
+  }
+});
 
 if (platform !== 'javascript') {
   const Compiler = require('./lib/node/closure-compiler');

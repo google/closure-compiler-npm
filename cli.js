@@ -156,17 +156,17 @@ if (platform !== 'javascript') {
     })
     .then(inputFiles => {
       const Compiler = require('./lib/node/closure-compiler-js');
+      const logErrors = require('./lib/logger');
       const compiler = new Compiler(compilerFlags);
-      compiler.run(inputFiles, (exitCode, compiledFiles, errors) => {
-        if (errors && errors.length > 0) {
-          console.error(errors);
-        }
-        if (compiledFiles.length === 1 && compiledFiles[0].path === 'compiled.js' && !compilerFlags['js_output_file']) {
-          console.log(compiledFiles[0].src);
-        }
+      const output = compiler.run(inputFiles);
+      const exitCode = output.errors.length === 0 ? 0 : 1;
+      logErrors(output, inputFiles);
+      if (output.compiledFiles.length === 1 && output.compiledFiles[0].path === 'compiled.js' &&
+          !compilerFlags['js_output_file']) {
+        console.log(output.compiledFiles[0].src);
+      }
 
-        process.exitCode = process.exitCode || exitCode;
-      });
+      process.exitCode = process.exitCode || exitCode;
     })
     .catch(e => {
       console.error(e);

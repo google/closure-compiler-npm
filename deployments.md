@@ -1,6 +1,7 @@
 # Deploying Closure Compiler to NPM
 
 *You now need yarn installed - `npm install -g yarn`*
+*The compiler must be published to maven first as the build script downloads the jar from maven.*
 
  1. Update the package version number in `package.json` at
     https://github.com/chadkillingsworth/closure-compiler-graal.

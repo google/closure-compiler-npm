@@ -649,13 +649,13 @@ glogg@^1.0.0:
   dependencies:
     sparkles "^1.0.0"
 
-google-closure-compiler-linux@^20180716.0.0:
-  version "20180716.0.0"
-  resolved "https://registry.yarnpkg.com/google-closure-compiler-linux/-/google-closure-compiler-linux-20180716.0.0.tgz#b0dc9aa4751085b46002d6a300146df73fa87d35"
+google-closure-compiler-linux@^20180805.0.0:
+  version "20180805.0.0"
+  resolved "https://registry.yarnpkg.com/google-closure-compiler-linux/-/google-closure-compiler-linux-20180805.0.0.tgz#f6e0a7dca90a61181a7dea6f5748305645d9a1b7"
 
-google-closure-compiler-osx@^20180716.0.0:
-  version "20180716.0.0"
-  resolved "https://registry.yarnpkg.com/google-closure-compiler-osx/-/google-closure-compiler-osx-20180716.0.0.tgz#5691c07580578dfea3205e90a6a2968d23b85bd9"
+google-closure-compiler-osx@^20180805.0.0:
+  version "20180805.0.0"
+  resolved "https://registry.yarnpkg.com/google-closure-compiler-osx/-/google-closure-compiler-osx-20180805.0.0.tgz#71bc29b8dcd4882742709af01466ca1958e229c0"
 
 graceful-fs@4.X:
   version "4.1.11"

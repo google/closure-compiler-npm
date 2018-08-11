@@ -141,6 +141,39 @@ describe('command line interface', function() {
           .then(complete)
           .catch(complete);
       });
+
+      it('read input js files', done => {
+        function complete() {
+          should(exitCode).equal(0);
+          should(stdOut.length).above(0);
+          should(stdOut.indexOf('console.log')).above(-1);
+          done();
+        }
+
+        runCmd(cliPath, [`--platform=${platform}`, '--js=test/fixtures/one.js'])
+          .then(complete)
+          .catch(complete);
+      });
+
+      it('read extern files', done => {
+        function complete() {
+          should(exitCode).equal(0);
+          should(stdOut.length).above(0);
+          should(stdOut.indexOf('externalMethod')).above(-1);
+          done();
+        }
+
+        runCmd(
+            cliPath,
+            [
+              `--platform=${platform}`,
+              '--warning_level=VERBOSE',
+              '--externs=test/fixtures/extern.js'
+            ],
+            'externalMethod("foo")')
+          .then(complete)
+          .catch(complete);
+      });
     });
   });
 });

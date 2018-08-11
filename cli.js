@@ -1,8 +1,28 @@
 #!/usr/bin/env node
 'use strict';
 const fs = require('fs');
+const path = require('path');
 const {getNativeImagePath, getFirstSupportedPlatform} = require('./lib/utils');
 const parseArgs = require('minimist');
+
+function mkDirByPathSync(targetDir, {isRelativeToScript = false} = {}) {
+  const sep = path.sep;
+  const initDir = path.isAbsolute(targetDir) ? sep : '';
+  const baseDir = isRelativeToScript ? __dirname : '.';
+
+  targetDir.split(sep).reduce((parentDir, childDir) => {
+    const curDir = path.resolve(baseDir, parentDir, childDir);
+    try {
+      fs.mkdirSync(curDir);
+    } catch (err) {
+      if (err.code !== 'EEXIST') {
+        throw err;
+      }
+    }
+
+    return curDir;
+  }, initDir);
+}
 
 const compilerFlags = parseArgs(process.argv.slice(2));
 
@@ -72,101 +92,81 @@ if (platform !== 'javascript') {
   });
 } else {
   if (compilerFlags.help === true) {
-    console.log('Sample usage: --compilation_level (-O) VAL --externs VAL --js VAL --js_output_file VAL --warning_level (-W) [QUIET | DEFAULT | VERBOSE]');
-    console.log('See https://github.com/google/closure-compiler/wiki/Flags-and-Options for the full list of flags');
+    process.stdout.write('Sample usage: --compilation_level (-O) VAL --externs VAL --js VAL --js_output_file VAL --warning_level (-W) [QUIET | DEFAULT | VERBOSE]\n');
+    process.stdout.write('See https://github.com/google/closure-compiler/wiki/Flags-and-Options for the full list of flags`);\n');
     process.exit(0);
   }
 
   if (compilerFlags.version === true) {
     const {version} = require('./package.json');
-    console.log(`Version: ${version}`);
+    process.stdout.write(`Version: ${version}\n`);
     process.exit(0);
   }
 
-  let inputFilePromises = [];
   let waitOnStdIn = true;
   if (compilerFlags.js) {
     waitOnStdIn = false;
-    if (!Array.isArray(compilerFlags.js)) {
-      compilerFlags.js = [compilerFlags.js];
-    }
-    inputFilePromises = compilerFlags.js.map(path =>
-        new Promise((resolve, reject) =>
-            fs.readFile(path, 'utf8', (err, src) => err ? reject(err) : resolve({src, path})))
-        .catch(e => {
-          process.exitCode = 1;
-          console.error(e);
-        }));
-
-    delete compilerFlags.js;
-  }
-  let externFilePromises = [];
-  if (compilerFlags.externs) {
-    if (!Array.isArray(compilerFlags.externs)) {
-      compilerFlags.externs = [compilerFlags.externs];
-    }
-    externFilePromises = compilerFlags.externs.map(path =>
-        new Promise((resolve, reject) =>
-            fs.readFile(path, 'utf8', (err, src) => err ? reject(err) : resolve({src, path})))
-        .catch(e => {
-          process.exitCode = 1;
-          console.error(e);
-        }));
-
-    delete compilerFlags.externs;
   }
 
-  Promise.all([...inputFilePromises, ...externFilePromises])
-    .then(files => {
-      const inputFiles = files.slice(0, inputFilePromises.length);
-      const externs = files.slice(inputFilePromises.length);
-      if (externs.length > 0) {
-        compilerFlags.externs = externs;
-      } else {
-        delete compilerFlags.externs;
+  const startCompile = !waitOnStdIn ? Promise.resolve([]) : new Promise(resolve => {
+    let stdInData = '';
+    const waitingTimeout = setTimeout(() => {
+      process.stderr.write('The compiler is waiting for input via stdin.\n');
+    }, 1000);
+    process.stdin.setEncoding('utf8');
+    process.stdin.on('readable', () => {
+      const chunk = process.stdin.read();
+      if (chunk !== null) {
+        stdInData += chunk;
+        clearTimeout(waitingTimeout);
       }
+    });
+    process.stdin.on('error', (err) => {
+      process.exitCode = 1;
+      console.error(err);
+      clearTimeout(waitingTimeout);
+    });
+    process.stdin.on('end', () => {
+      if (stdInData.length > 0) {
+        resolve([{
+          path: 'stdin',
+          src: stdInData
+        }]);
+      } else {
+        resolve([]);
+      }
+      clearTimeout(waitingTimeout);
+    });
+  });
 
-      if (!waitOnStdIn) {
-        return inputFiles;
-      } else {
-        return new Promise(resolve => {
-          let stdInData = '';
-          process.stdin.setEncoding('utf8');
-          process.stdin.on('readable', () => {
-            const chunk = process.stdin.read();
-            if (chunk !== null) {
-              stdInData += chunk;
-            }
-          });
-          process.stdin.on('error', (err) => {
-            process.exitCode = 1;
-            console.error(err);
-          });
-          process.stdin.on('end', () => {
-            if (stdInData.length > 0) {
-              inputFiles.push({
-                path: 'stdin',
-                src: stdInData
-              });
-            }
-            resolve(inputFiles);
-          });
-        });
-      }
-    })
-    .then(inputFiles => {
+  startCompile.then(inputFiles => {
       const Compiler = require('./lib/node/closure-compiler-js');
       const logErrors = require('./lib/logger');
       const compiler = new Compiler(compilerFlags);
       const output = compiler.run(inputFiles);
-      const exitCode = output.errors.length === 0 ? 0 : 1;
-      logErrors(output, inputFiles);
-      if (output.compiledFiles.length === 1 && output.compiledFiles[0].path === 'compiled.js' &&
-          !compilerFlags['js_output_file']) {
-        console.log(output.compiledFiles[0].src);
+      if (output.errors.length > 0) {
+        process.exitCode = process.exitCode || 1;
       }
-
-      process.exitCode = process.exitCode || exitCode;
+      logErrors(output, inputFiles);
+      if (output.compiledFiles.length > 0) {
+        if (compilerFlags['js_output_file'] || compilerFlags['chunk']) {
+          let srcMapPattern = '%outname%.map';
+          if (compilerFlags.create_source_map && typeof compilerFlags.create_source_map === 'string') {
+            srcMapPattern = compilerFlags.create_source_map;
+          }
+          output.compiledFiles.forEach(compiledFile => {
+            mkDirByPathSync(path.dirname(compiledFile.path));
+            fs.writeFileSync(compiledFile.path, compiledFile.src, 'utf8');
+            if (compiledFile.sourceMap) {
+              const srcMapPath = srcMapPattern.replace('%outname%', compiledFile.path);
+              mkDirByPathSync(path.dirname(srcMapPath));
+              fs.writeFileSync(srcMapPath, compiledFile.sourceMap, 'utf8');
+            }
+          });
+        } else {
+          process.stdout.write(`${output.compiledFiles[0].src}\n`);
+        }
+      }
     })
     .catch(e => {
       console.error(e);

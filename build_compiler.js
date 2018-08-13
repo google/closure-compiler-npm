@@ -35,7 +35,7 @@ if (compilerJarStats && compilerJarStats.isFile()) {
 }
 
 if (shouldDownloadCompiler) {
-   const compilerBuild = spawnSync('curl', ['-s', '-S', '-L', '-o', './compiler.jar', url], {
+   const compilerBuild = spawnSync('curl', ['--fail', '-s', '-S', '-L', '-o', './compiler.jar', url], {
     stdio: 'inherit'
    });
 

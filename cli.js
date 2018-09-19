@@ -5,6 +5,7 @@ const path = require('path');
 const {getNativeImagePath, getFirstSupportedPlatform} = require('./lib/utils');
 const parseArgs = require('minimist');
 
+/** @see https://stackoverflow.com/a/40686853/1211524 */
 function mkDirByPathSync(targetDir, {isRelativeToScript = false} = {}) {
   const sep = path.sep;
   const initDir = path.isAbsolute(targetDir) ? sep : '';
@@ -108,7 +109,9 @@ if (platform !== 'javascript') {
     waitOnStdIn = false;
   }
 
-  const startCompile = !waitOnStdIn ? Promise.resolve([]) : new Promise(resolve => {
+  // Mimic the behavior of the java version and wait for input from standard if there
+  // are no --js flags
+  const getFilesFromStdin = !waitOnStdIn ? Promise.resolve([]) : new Promise(resolve => {
     let stdInData = '';
     const waitingTimeout = setTimeout(() => {
       process.stderr.write('The compiler is waiting for input via stdin.\n');
@@ -139,7 +142,7 @@ if (platform !== 'javascript') {
     });
   });
 
-  startCompile.then(inputFiles => {
+  getFilesFromStdin.then(inputFiles => {
       const Compiler = require('./lib/node/closure-compiler-js');
       const logErrors = require('./lib/logger');
       const compiler = new Compiler(compilerFlags);
@@ -149,8 +152,11 @@ if (platform !== 'javascript') {
       }
       logErrors(output, inputFiles);
       if (output.compiledFiles.length > 0) {
+        // If a --js_output_file or --chunk flag was provided, the output should be written to disk
         if (compilerFlags['js_output_file'] || compilerFlags['chunk']) {
           let srcMapPattern = '%outname%.map';
+          // Unfortunately the JS version of the compiler supported the `--create_source_map` flag as a boolean.
+          // We now support it both as a boolean and as a string path pattern.
           if (compilerFlags.create_source_map && typeof compilerFlags.create_source_map === 'string') {
             srcMapPattern = compilerFlags.create_source_map;
           }

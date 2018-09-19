@@ -151,8 +151,7 @@ describe('command line interface', function() {
         }
 
         runCmd(cliPath, [`--platform=${platform}`, '--js=test/fixtures/one.js'])
-          .then(complete)
-          .catch(complete);
+          .then(complete, complete);
       });
 
       it('read extern files', done => {
@@ -171,8 +170,7 @@ describe('command line interface', function() {
               '--externs=test/fixtures/extern.js'
             ],
             'externalMethod("foo")')
-          .then(complete)
-          .catch(complete);
+          .then(complete, complete);
       });
     });
   });

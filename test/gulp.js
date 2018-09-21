@@ -236,7 +236,7 @@ describe('gulp-google-closure-compiler', function() {
 
       if (platform !== 'javascript') {
         it('should generate a sourcemap for each output file with chunks', done => {
-          gulp.src(__dirname + '/fixtures/**/*.js')
+          gulp.src([__dirname + '/fixtures/one.js', __dirname + '/fixtures/two.js'])
               .pipe(sourcemaps.init())
               .pipe(closureCompiler({
                 compilation_level: 'SIMPLE',

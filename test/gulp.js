@@ -202,6 +202,9 @@ describe('gulp-google-closure-compiler', function() {
           });
 
           stream
+              // The compiler outputs a file named $weeak$.js which is empty.
+              // It's used to hold weak dependency that were imported for type information only.
+              // Exclude it from test assertions.
               .pipe(streamFilter(['**', '!**/$weak$.js']))
               .pipe(assert.length(2))
               .pipe(assert.first(f => {
@@ -253,6 +256,9 @@ describe('gulp-google-closure-compiler', function() {
                 debugLog: true,
                 platform
               }))
+              // The compiler outputs a file named $weeak$.js which is empty.
+              // It's used to hold weak dependency that were imported for type information only.
+              // Exclude it from test assertions.
               .pipe(streamFilter(['**', '!**/$weak$.js']))
               .pipe(assert.length(2))
               .pipe(assert.first(f => {

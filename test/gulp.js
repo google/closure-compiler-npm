@@ -79,11 +79,11 @@ describe('gulp-google-closure-compiler', function() {
 
       const fakeFile1 = new File({
         path: '/foo.js',
-        contents: new Buffer('console.log("foo");')
+        contents: Buffer.from('console.log("foo");')
       });
       const fakeFile2 = new File({
         path: '/bar.js',
-        contents: new Buffer('console.log("bar");')
+        contents: Buffer.from('console.log("bar");')
       });
 
       const fixturesCompiled = 'function log(a){console.log(a)}log("one.js");' +

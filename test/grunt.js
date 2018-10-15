@@ -161,30 +161,41 @@ describe('grunt-google-closure-compiler', function() {
       it('should emit an error for invalid options', done => {
         let didFail = false;
         let gruntWarning;
-        const taskObj = getGruntTaskObject([{
-          dest: 'unused.js',
-          src: [__dirname + '/fixtures/one.js']
-        }], {
-          compilation_level: 'FOO'
-        }, () => {
-          // Wait a bit to account for delays in logging
-          setTimeout(() => {
-            should(didFail).be.eql(true);
-            should(gruntWarning).not.be.eql(undefined);
-            done();
-          }, 100);
+
+        let taskObj;
+        const completed = new Promise(resolve => {
+          taskObj = getGruntTaskObject([{
+            dest: 'unused.js',
+            src: [__dirname + '/fixtures/one.js']
+          }], {
+            compilation_level: 'FOO'
+          }, () => {
+            resolve();
+          });
         });
 
-        mockGrunt.log.warn = msg => {
-          gruntWarning = msg;
-          console.warn(gruntWarning);
-        };
+        const logWarning = new Promise(resolve => {
+          mockGrunt.log.warn = msg => {
+            gruntWarning = msg;
+            console.warn(gruntWarning);
+            resolve();
+          };
+        });
 
-        mockGrunt.fail.warn = (err, code) => {
-          should(err).startWith('Compilation error');
-          console.warn(err);
-          didFail = true;
-        };
+        const failWarning = new Promise(resolve => {
+          mockGrunt.fail.warn = (err, code) => {
+            should(err).startWith('Compilation error');
+            console.warn(err);
+            didFail = true;
+            resolve();
+          };
+        });
+
+        Promise.all([completed, logWarning, failWarning]).then(() => {
+          should(didFail).be.eql(true);
+          should(gruntWarning).not.be.eql(undefined);
+          done();
+        });
 
         closureCompiler.call(taskObj);
       });

@@ -1,19 +1,43 @@
 language: node_js
+
+os:
+ - linux
+ - osx
+
+# Use Java 8
+osx_image: xcode9.3
+
 node_js:
-- '8'
-- '6'
-cache:
-  directories:
-  - $HOME/.m2
+  - '10'
+  - '6'
+
+matrix:
+  exclude:
+    - os: osx
+      node_js: '10'
+    - os: linux
+      node_js: '6'
+
+# safelist
 branches:
   only:
   - master
-deploy:
-  skip_cleanup: true
-  provider: npm
-  email: chadkillingsworth@gmail.com
-  on:
-    node: '6'
-    branch: master
-  api_key:
-    secure: Mww1k4dB8GtBTbOtJJnwUIgOrtGDwa8jCXg11CFXeQHK5LhvV/ST7b8Xckd8YHNmaeyp70BLkberXeaMFZM96jBP78lhqpIPboJtbbxqg4cN+9MLVQRxK2U99Zv9K8V46iYaBrCXrBw0QTqcNhrOsehV7JbfG7seS28TjMJexTACpOLDinCaMcpEVloPSUid6POTaK9NasLzg941uJycEvYwKc5HhINwnLMIZRyxZlJmFK16SAlOPO1zjYAZSOQ/YDJn9bMKhMI9ZJyDWr7AjO/6oRHlDxnwSUzz+pYUM1G3qMfrU7U1slHSzc5LWABImsvIElzheaXjK1Mbr5b/cybs5Zefhwi8H8y1RlQa1554NeBgu9aPAwFBRieVkiUPSyYRc77D8ewstyY45vi/1NWTxC64azJxhkmCBSdoA8BwCvysy1R9aTmi6SrFB4dnHjJeLvsA21mUHbn3NQci+RYwIqePdX2+dYvHuD14pLZ0pv5GF+o2oLeqcfYPh2pz875Nj7iaJFEptqaqktJjMpmkhQzDX8SBx9mrabk7/fErVanwbdZKm13jUwsVBHx/LL288VJUmq5WmFbTSIBAJl4HaPUDGt4TzSlr840A69aICVHK+ZHYLjSe3fSegxrhiQ/RhcrNcs5n4RlP2ArMZivamuvW6FJN0VheBnaTvO0=
+
+cache:
+  yarn: true
+  directories:
+    - $HOME/.m2
+
+before_install:
+  - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
+  - export PATH="$HOME/.yarn/bin:$PATH"
+  - if [ $TRAVIS_EVENT_TYPE = "cron" ]; then
+      export COMPILER_NIGHTLY=1;
+      cd compiler && git checkout master && git pull origin master && git log -1 | cat;
+      cd ..;
+    fi
+
+before_script: yarn run build
+
+script: yarn test

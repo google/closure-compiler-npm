@@ -1,39 +1,19 @@
 {
-  "name": "google-closure-compiler",
-  "version": "20181008.0.0",
+  "name": "closure-compiler-npm",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",
   "repository": {
     "type": "git",
     "url": "https://github.com/google/closure-compiler-npm.git"
   },
-  "keywords": [
-    "javascript",
-    "compiler",
-    "optimizer",
-    "minifier",
-    "closure",
-    "gulpplugin",
-    "gruntplugin"
-  ],
-  "bin": {
-    "google-closure-compiler": "cli.js"
-  },
-  "main": "index.js",
   "contributors": [
     {
       "name": "Chad Killingsworth",
       "email": "chadkillingsworth@gmail.com"
     }
-  ],
-  "files": [
-    "lib/",
-    "compiler.jar",
-    "cli.js",
-    "index.js",
-    "jscomp.js",
-    "package.json",
-    "contrib/",
-    "README.md"
   ],
   "license": "Apache-2.0",
   "bugs": {
@@ -41,32 +21,17 @@
   },
   "homepage": "https://developers.google.com/closure/compiler/",
   "dependencies": {
-    "chalk": "^1.0.0",
-    "minimist": "^1.2.0",
-    "vinyl": "^2.0.1",
-    "vinyl-sourcemaps-apply": "^0.2.0"
-  },
-  "optionalDependencies": {
-    "google-closure-compiler-linux": "^20181008.0.0",
-    "google-closure-compiler-osx": "^20181008.0.0"
+    "glob": "^7.1.3"
   },
   "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-filter": "^5.1.0",
-    "gulp-mocha": "6.0.0",
-    "gulp-sourcemaps": "^2.6.4",
-    "lodash": "^4.17.10",
+    "lerna": "^3.4.1",
     "mocha": "5.2.0",
     "ncp": "^2.0.0",
     "semver": "^5.1.0",
-    "should": "^11.2.0",
-    "stream-assert": "^2.0.3"
+    "should": "^11.2.0"
   },
   "scripts": {
-    "test": "mocha",
-    "pretest": "./build_compiler.js"
-  },
-  "engines": {
-    "node": ">=6"
+    "build": "./build-scripts/build_compiler.js && yarn workspaces run build",
+    "test": "mocha && yarn workspaces run test"
   }
 }

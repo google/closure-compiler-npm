@@ -115,11 +115,11 @@ describe('command line interface', function() {
 
       it('compile successfully', done => {
         function complete() {
-          should(exitCode).equal(0);
-          should(stdOut.length).above(0);
-          if (stdError.length > 0) {
+          if (exitCode != 0 || stdError.length > 0) {
             console.error(stdError);
           }
+          should(exitCode).equal(0);
+          should(stdOut.length).above(0);
           should(stdOut.indexOf("console.log")).above(-1);
           done();
         }

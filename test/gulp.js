@@ -30,6 +30,7 @@ const File = require('vinyl');
 const compilerPackage = require('../');
 const ClosureCompiler = require('../lib/node/closure-compiler');
 const JsClosureCompiler = require('../lib/node/closure-compiler-js');
+const streamFilter = require('gulp-filter');
 
 require('mocha');
 
@@ -79,11 +80,11 @@ describe('gulp-google-closure-compiler', function() {
 
       const fakeFile1 = new File({
         path: '/foo.js',
-        contents: new Buffer('console.log("foo");')
+        contents: Buffer.from('console.log("foo");')
       });
       const fakeFile2 = new File({
         path: '/bar.js',
-        contents: new Buffer('console.log("bar");')
+        contents: Buffer.from('console.log("bar");')
       });
 
       const fixturesCompiled = 'function log(a){console.log(a)}log("one.js");' +
@@ -200,7 +201,12 @@ describe('gulp-google-closure-compiler', function() {
             platform
           });
 
-          stream.pipe(assert.length(2))
+          stream
+              // The compiler outputs a file named $weeak$.js which is empty.
+              // It's used to hold weak dependency that were imported for type information only.
+              // Exclude it from test assertions.
+              .pipe(streamFilter(['**', '!**/$weak$.js']))
+              .pipe(assert.length(2))
               .pipe(assert.first(f => {
                 f.contents.toString().trim().should.eql(fakeFile1.contents.toString());
                 f.path.should.eql('one.js');
@@ -250,6 +256,10 @@ describe('gulp-google-closure-compiler', function() {
                 debugLog: true,
                 platform
               }))
+              // The compiler outputs a file named $weeak$.js which is empty.
+              // It's used to hold weak dependency that were imported for type information only.
+              // Exclude it from test assertions.
+              .pipe(streamFilter(['**', '!**/$weak$.js']))
               .pipe(assert.length(2))
               .pipe(assert.first(f => {
                 f.sourceMap.sources.should.have.length(1);

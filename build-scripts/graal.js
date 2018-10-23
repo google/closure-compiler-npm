@@ -39,7 +39,8 @@ process.on('unhandledRejection', error => {
   process.exit(1);
 });
 
-const GRAAL_BUILD_FROM_SRC = true;
+// The latest compiler is now compatible with a released version of graal
+const GRAAL_BUILD_FROM_SRC = !Boolean('COMPILER_NIGHTLY' in process.env);
 
 /**
  * Simple wrapper for the NodeJS spawn command to use promises
@@ -169,6 +170,9 @@ if (GRAAL_BUILD_FROM_SRC) {
             env: Object.assign({}, process.env, {JAVA_HOME: JDK_PATH, EXTRA_JAVA_HOMES: JDK_PATH})
           }))
       .then(() =>
+          // The mx launched version requires quotes around the arguments.
+          // But to correctly handle the quotes, we need to use a native shell to properly escape and pass them
+          // to the executable.
           runCommand(`${path.resolve(MX_SRC_BASE, 'mx')} -v native-image ${NATIVE_IMAGE_BUILD_ARGS.join(' ')}`, {
             cwd: path.resolve(GRAAL_SRC_BASE, 'substratevm'),
             env: Object.assign({}, process.env, {JAVA_HOME: JDK_PATH, EXTRA_JAVA_HOMES: JDK_PATH}),
@@ -201,7 +205,7 @@ if (GRAAL_BUILD_FROM_SRC) {
       `graalvm-ce-${GRAAL_VERSION}`,
       ...(GRAAL_OS === 'macos' ? ['Contents', 'Home'] : []).concat(['bin', 'native-image']));
 
-  buildSteps = buildSteps.then(() => runCommand(`${GRAAL_NATIVE_IMAGE_PATH} ${NATIVE_IMAGE_BUILD_ARGS.join(' ')}`), {
-    shell: true // Needed for proper quote escaping
-  });
+  // Unlike the mx launched version, the native binary must not have quotes around arugments
+  buildSteps = buildSteps.then(
+      () => runCommand(`${GRAAL_NATIVE_IMAGE_PATH} ${NATIVE_IMAGE_BUILD_ARGS.join(' ').replace(/"/g, '')}`));
 }

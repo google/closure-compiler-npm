@@ -14,31 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * @fileoverview Build the compiler java jar and GWT platforms from source.
+ *
+ * Invoked as part of the package build process:
+ *
+ *     yarn run build
+ */
 'use strict';
 
 const {spawn, spawnSync} = require('child_process');
 const ncp = require('ncp');
 const Semver = require('semver');
-const version = require('../lerna.json').version;
+
+// Master version number of the packages. Replaces the version
+// information from the root package.json file.
+const packageInfo = require('../lerna.json');
+const packageVersion = new Semver(packageInfo.version);
+
 const fs = require('fs');
-const packageVer = new Semver(version);
 const glob = require('glob');
 
-const gitCmd = spawnSync('git', ['tag', '--points-at', 'HEAD'], {
+const gitTagResults = spawnSync('git', ['tag', '--points-at', 'HEAD'], {
   cwd: './compiler'
 });
 let compilerVersion = '1.0-SNAPSHOT';
-if (gitCmd.status === 0) {
-  const currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
+if (gitTagResults.status === 0) {
+  const currentTag = gitTagResults.stdout.toString().replace(/\s/g, '');
   let normalizedTag = currentTag;
   if (normalizedTag) {
-    normalizedTag = currentTag.replace(/^([a-z]+-)?v\d{8}(.*)$/,
-        (match, g1, g2) => match.substr((g1 || '').length, match.length - (g1 || '').length - (g2 || '').length));
+    // Standard release tags are of the form "vYYYYMMDD".
+    // We also recognize the form where a special release name proceeds it:
+    //     "webpack-v20180810"
+    //     "v20180810-gwt-fix"
+    normalizedTag = currentTag.replace(/^([a-z]+-)?(v\d{8})(.*)$/, '$2');
   }
 
   // If the compiler submodule is pointing at a tagged version that matches the package
   // major version, update the compiler build to use the correct version number.
-  if (normalizedTag === `v${packageVer.major}`) {
+  if (normalizedTag === `v${packageVersion.major}`) {
     compilerVersion = normalizedTag;
     const pomPaths = glob.sync('./compiler/**/pom*.xml');
     pomPaths.forEach(pomPath => {

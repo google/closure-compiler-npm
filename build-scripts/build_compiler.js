@@ -118,6 +118,7 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
     // Add a license header to the gwt version jscomp.js file since the compiler build omits this.
     // If the gwt version ever has a source map, the source mappings will need updated to account for the
     // prepended lines.
+    const jscompFileContents = fs.readFileSync(compilerJsBinaryPath, 'utf8');
     fs.writeFileSync(
         compilerJsBinaryPath,
         `/*
@@ -135,7 +136,7 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- ${fs.readFileSync(compilerJsBinaryPath, 'utf8')}`,
+ ${jscompFileContents}`,
         'utf8');
     copyCompilerBinaries();
   });

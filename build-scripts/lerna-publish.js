@@ -45,11 +45,11 @@ const fs = require('fs');
 const path = require('path');
 
 function factory(argv) {
-  return new PublishWithoutCleanCheckCommand(argv);
+  return new TravisPublishCommand(argv);
 }
 
 /** Override methods in the main publication command class to bypass clean working directory checks */
-class PublishWithoutCleanCheckCommand extends PublishCommand {
+class TravisPublishCommand extends PublishCommand {
   verifyWorkingTreeClean() {
     return describeRef(this.execOpts);
   }
@@ -85,8 +85,8 @@ class PublishWithoutCleanCheckCommand extends PublishCommand {
 }
 
 // New command meta data
-const publishWithoutCleanCheckCmd = Object.assign({}, publishCmd, {
-  command: 'publish-without-clean-check [bump]',
+const travisPublishCmd = Object.assign({}, publishCmd, {
+  command: 'publish-travis [bump]',
   describe: 'Publish packages in the current project - even without a clean working directory',
   handler: factory
 });
@@ -120,7 +120,7 @@ function main(argv) {
       .command(publishCmd)
       .command(runCmd)
       .command(versionCmd)
-      .command(publishWithoutCleanCheckCmd)
+      .command(travisPublishCmd)
       .parse(argv, context);
 }
 

@@ -54,12 +54,10 @@ script: yarn test
 deploy:
   skip_cleanup: true
   provider: script
-  script: build-scripts/lerna-publish.js publish-without-clean-check --npm-client build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --bump from-git --yes
+  script: build-scripts/lerna-publish.js publish-travis --npm-client ${TRAVIS_BUILD_DIR}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --bump from-git --yes
   on:
     branch:
       - mono-repo
       - master
 
-after_deploy:
-  - ls -la
-  - cat publish-log.txt
+after_deploy: cat publish-log.txt

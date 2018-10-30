@@ -55,23 +55,14 @@ function getCompilerSubmoduleReleaseVersion() {
       // We also recognize the forms where a special release name is present:
       //     "webpack-v20180810"
       //     "v20180810-gwt-fix"
-      normalizedTag = currentTag.replace(/^([a-z]+-)?(v\d{8})(.*)$/, '$2');
+      normalizedTag = currentTag.replace(/^([-a-z]+-)?(v\d{8})(.*)$/, '$2');
     }
     return normalizedTag;
   }
 }
 
 let compilerVersion = getCompilerSubmoduleReleaseVersion();
-if (compilerVersion === `v${packageVersion.major}`) {
-  // Since the tagged commit pom.xml files are still set as SNAPSHOT versions,
-  // update these files to the correct version so that the `compiler --version` command is correct.
-  // TODO(chadkillingsworth): Find a better way to do this
-  const pomPaths = glob.sync('./compiler/**/pom*.xml');
-  pomPaths.forEach(pomPath => {
-    const contents = fs.readFileSync(pomPath, 'utf8');
-    fs.writeFileSync(pomPath, contents.replace('<version>1.0-SNAPSHOT</version>', `<version>${compilerVersion}</version>`), 'utf8');
-  });
-} else {
+if (compilerVersion !== `v${packageVersion.major}`) {
   compilerVersion = '1.0-SNAPSHOT';
 }
 

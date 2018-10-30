@@ -6,7 +6,7 @@
      * if not already done, update the compiler submodule
        `git submodule init && git submodule update`
      * change to the '/compiler' folder
-     * `git checkout` the correct tag/commit
+     * `git checkout` the correct tag/commit (should be of the form `closure-compiler-parent-vYYYYMMDD`)
      * change back to the root folder and commit this change
  2. Run `node_modules/.bin/lerna version {COMPILER_VERSION_NUMBER}.0.0`.
     The command will ask you to verify that you wish to create new versions for each package.

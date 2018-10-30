@@ -41,11 +41,8 @@ process.on('unhandledRejection', error => {
   process.exit(1);
 });
 
-// If this is a release build (not a nightly build), we have to build graal from source.
-// As of the 20181008 release, the compiler was not compatible with any pre-built version of GRAAL.
-//
-// However, master is now compatible so nightly builds can use a pre-built graal.
-const GRAAL_BUILD_FROM_SRC = !Boolean('COMPILER_NIGHTLY' in process.env);
+// As of the 20181028 release, the compiler is compatible with the latest RC of GRAAL.
+const GRAAL_BUILD_FROM_SRC = false;
 
 /**
  * Simple wrapper for the NodeJS spawn command to use promises

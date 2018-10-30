@@ -164,19 +164,19 @@ switch (pkg.name) {
       logToFile(`skipping publication of ${pkg.name} - wrong platform`);
       process.exitCode = 0;
     } else {
-      npmPublish(pkg).catch(() => {
+      npmPublish(pkg).catch(err => {
         process.exitCode = 1;
         logToFile('publish failed');
-        return Promise.reject(new Error('Publish failed'));
+        return Promise.reject(err || new Error('Publish failed'));
       });
     }
     break;
 
   default:
-    npmPublish(pkg).catch(() => {
+    npmPublish(pkg).catch(err => {
       process.exitCode = 1;
       logToFile('publish failed');
-      return Promise.reject(new Error('Publish failed'));
+      return Promise.reject(err || new Error('Publish failed'));
     });
     break;
 }

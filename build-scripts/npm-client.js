@@ -115,12 +115,14 @@ function checkThatVersionExists(packageWithVersion) {
 function npmPublish(packageInfo) {
   // Check both the "dependencies" and "optionalDependencies" keys
   const depsInfo = [];
+  const depNames = [];
   ['dependencies', 'optionalDependencies'].forEach(depBlock => {
     if (!(depBlock in packageInfo)) {
       return;
     }
     Object.keys(packageInfo[depBlock]).forEach(key => {
       if (/google-closure-compiler/.test(key)) {
+        depNames.push(`${key}@${packageInfo[depBlock][key]}`);
         depsInfo.push(checkThatVersionExists(`${key}@${packageInfo[depBlock][key]}`)
             .catch(() => {
               throw new Error('Version does not exist');
@@ -131,8 +133,8 @@ function npmPublish(packageInfo) {
 
   return Promise.all(depsInfo).then(depsInfoResults => {
     for (let i = 0; i < depsInfoResults.length; i++) {
-      if (depsInfoResults[i].trim().length === 0) {
-        return Promise.reject(new Error('Version does not exist'));
+      if (depsInfoResults[i][0].trim().length === 0) {
+        return Promise.reject(new Error(`Version does not exist - ${depNames[i]} - ${depsInfoResults[i][0].trim()}`));
       }
     }
   }).then(() => {
@@ -142,11 +144,11 @@ function npmPublish(packageInfo) {
           if (/You cannot publish over the previously published versions/.test(results[1])) {
             return Promise.resolve();
           }
-          return Promise.reject(new Error('Publish failed'));
+          return Promise.reject(new Error(`Publish failed ${JSON.stringify(results, null, 2)}`));
         });
-  }).catch(() => {
+  }).catch(err => {
     logToFile(`missing dependencies`);
-    return promise.reject(new Error('Missing dependencies'));
+    return Promise.reject(err || new Error('Missing dependencies'));
   });
 }
 

@@ -60,4 +60,6 @@ deploy:
       - mono-repo
       - master
 
-after_deploy: cat publish-log.txt
+after_deploy:
+  - ls -la
+  - cat publish-log.txt

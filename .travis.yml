@@ -50,3 +50,13 @@ before_install:
 before_script: yarn run build
 
 script: yarn test
+
+deploy:
+  provider: script
+  script: build-scripts/lerna-publish.js publish-without-clean-check --npm-client build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --bump from-git --yes
+  on:
+    branch:
+      - mono-repo
+      - master
+
+after_deploy: cat publish-log.txt

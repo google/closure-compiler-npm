@@ -31,6 +31,13 @@ const {spawn} = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// This script should catch and handle all rejected promises.
+// If it ever fails to do so, report that and exit immediately.
+process.on('unhandledRejection', error => {
+  console.error(error);
+  process.exit(1);
+});
+
 /**
  * Simple function to log out publication process to a file. Standard out doesn't work because lerna
  * swallows it.

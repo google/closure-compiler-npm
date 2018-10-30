@@ -41,6 +41,8 @@ const versionCmd = require('@lerna/version/command');
 const pkg = require('lerna/package.json');
 const { PublishCommand } = require('@lerna/publish');
 const getCurrentTags = require('@lerna/publish/lib/get-current-tags');
+const fs = require('fs');
+const path = require('path');
 
 function factory(argv) {
   return new PublishWithoutCleanCheckCommand(argv);

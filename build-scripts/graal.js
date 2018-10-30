@@ -190,9 +190,9 @@ if (GRAAL_BUILD_FROM_SRC) {
   //   - a /graal folder checked out to the proper commit
   buildSteps = buildSteps
       .then(() => runCommand(
-          `${path.resolve(MX_SRC_BASE, 'mx')} -v --primary-suite-path substratevm build`,
+          `${path.resolve(MX_SRC_BASE, 'mx')} -v build`,
           {
-            cwd: GRAAL_SRC_BASE,
+            cwd: path.resolve(GRAAL_SRC_BASE, 'substratevm'),
             env: Object.assign({}, process.env, {JAVA_HOME: JDK_PATH, EXTRA_JAVA_HOMES: JDK_PATH})
           }))
       .then(() =>

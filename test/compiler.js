@@ -64,12 +64,14 @@ if (!process.env.COMPILER_NIGHTLY) {
         versionInfo = versionInfo || [];
         versionInfo.length.should.be.eql(2);
 
+        let compilerVersion;
         try {
-          const compilerVersion = new Semver(versionInfo[1] + '.0.0');
-          compilerVersion.major.should.be.equal(packageVer.major);
+          console.log(versionInfo[1] + '.0.0');
+          compilerVersion = new Semver(versionInfo[1] + '.0.0');
         } catch (e) {
           assertError.fail();
         }
+        compilerVersion.major.should.be.equal(packageVer.major);
         done();
       });
     });
@@ -88,8 +90,7 @@ if (!process.env.COMPILER_NIGHTLY) {
       const mvnVersion = 'v' + packageVer.major;
       let normalizedTag = currentTag;
       if (normalizedTag) {
-        normalizedTag = currentTag.replace(/^([a-z]+-)?v\d{8}(.*)$/,
-            (match, g1, g2) => match.substr((g1 || '').length, match.length - (g1 || '').length - (g2 || '').length));
+        normalizedTag = currentTag.replace(/^([-a-z]+-)?(v\d{8})(.*)$/, '$2');
       }
       should(normalizedTag).eql(mvnVersion)
     });

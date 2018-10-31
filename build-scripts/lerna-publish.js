@@ -124,5 +124,25 @@ function main(argv) {
       .parse(argv, context);
 }
 
-// Invoke the cli with arguments
-main(process.argv.slice(2));
+if (/publish/.test(process.argv[2])) {
+  // Make sure the compiler version matches the package major version before publishing
+  const compilerVersionMatch = require(path.resolve(__dirname, 'version-match.js'));
+  const lernaConfig = require(path.resolve(__dirname, '..', 'lerna.json'));
+  const Compiler = require('google-closure-compiler').compiler;
+  const compiler = new Compiler({version: true});
+  compiler.run(function (exitCode, stdout) {
+    let versionInfo = (stdout || '').match(compilerVersionMatch);
+    versionInfo = versionInfo || [];
+    if (versionInfo.length < 2 || versionInfo[1] !== `v${lernaConfig.version}`) {
+      console.log('Package major version does not match compiler version - skipping publication');
+      console.log(stdout);
+      process.exit(0);
+    } else {
+      // Invoke the cli with arguments
+      main(process.argv.slice(2));
+    }
+  });
+} else {
+  // Invoke the cli with arguments
+  main(process.argv.slice(2));
+}

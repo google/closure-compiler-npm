@@ -33,39 +33,17 @@
 
 const {spawn, spawnSync} = require('child_process');
 const ncp = require('ncp');
-const Semver = require('semver');
-
-// Master version number of the packages. Replaces the version
-// information from the root package.json file.
-const packageInfo = require('../lerna.json');
-const packageVersion = new Semver(packageInfo.version);
-
 const fs = require('fs');
-const glob = require('glob');
+const path = require('path');
 
-function getCompilerSubmoduleReleaseVersion() {
-  const gitTagResults = spawnSync('git', ['tag', '--points-at', 'HEAD'], {
-    cwd: './compiler'
-  });
-  if (gitTagResults.status === 0) {
-    const currentTag = gitTagResults.stdout.toString().replace(/\s/g, '');
-    let normalizedTag = currentTag;
-    if (normalizedTag) {
-      // Standard release tags are of the form "vYYYYMMDD".
-      // We also recognize the forms where a special release name is present:
-      //     "webpack-v20180810"
-      //     "v20180810-gwt-fix"
-      normalizedTag = currentTag.replace(/^([-a-z]+-)?(v\d{8})(.*)$/, '$2');
-    }
-    return normalizedTag;
-  }
+// Extract the version number from the compiler root pom.xml file
+function getCompilerVersionFromPomXml() {
+  const pomXmlContents = fs.readFileSync(path.resolve(__dirname, '..', 'compiler', 'pom.xml'), 'utf8');
+  const versionParts = /<version>([^<]+)<\/version>/.exec(pomXmlContents);
+  return versionParts[1];
 }
 
-let compilerVersion = getCompilerSubmoduleReleaseVersion();
-if (compilerVersion !== `v${packageVersion.major}`) {
-  compilerVersion = '1.0-SNAPSHOT';
-}
-
+let compilerVersion = getCompilerVersionFromPomXml();
 const compilerJavaBinaryPath = `./compiler/target/closure-compiler-${compilerVersion}.jar`;
 const compilerJsBinaryPath = `./compiler/target/closure-compiler-gwt-${compilerVersion}/jscomp/jscomp.js`;
 

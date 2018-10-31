@@ -133,22 +133,21 @@ function npmPublish(packageInfo) {
 
   return Promise.all(depsInfo).then(depsInfoResults => {
     for (let i = 0; i < depsInfoResults.length; i++) {
-      if (depsInfoResults[i][0].trim().length === 0) {
-        return Promise.reject(new Error(`Version does not exist - ${depNames[i]} - ${depsInfoResults[i][0].trim()}`));
+      const [stdout] = depsInfoResults[i];
+      if (stdout.trim().length === 0) {
+        return Promise.reject(new Error(`Version does not exist - ${stdout.trim()}`));
       }
     }
   }).then(() => {
-    logToFile(`all dependencies published`);
+    logToFile('all dependencies published');
     return runCommand('npm', process.argv.slice(2))
         .catch(results => {
-          if (/You cannot publish over the previously published versions/.test(results[1])) {
-            return Promise.resolve();
+          if (!/You cannot publish over the previously published versions/.test(results[1])) {
+            return Promise.reject(new Error(`Publish failed ${JSON.stringify(results, null, 2)}`));
           }
-          return Promise.reject(new Error(`Publish failed ${JSON.stringify(results, null, 2)}`));
         });
-  }).catch(err => {
-    logToFile(`missing dependencies`);
-    return Promise.reject(err || new Error('Missing dependencies'));
+  }, () => {
+    logToFile('missing dependencies');
   });
 }
 
@@ -169,7 +168,7 @@ switch (pkg.name) {
       npmPublish(pkg).catch(err => {
         process.exitCode = 1;
         logToFile('publish failed');
-        return Promise.reject(err || new Error('Publish failed'));
+        return Promise.reject(err);
       });
     }
     break;
@@ -178,7 +177,7 @@ switch (pkg.name) {
     npmPublish(pkg).catch(err => {
       process.exitCode = 1;
       logToFile('publish failed');
-      return Promise.reject(err || new Error('Publish failed'));
+      return Promise.reject(err);
     });
     break;
 }

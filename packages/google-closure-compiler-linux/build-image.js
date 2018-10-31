@@ -27,8 +27,8 @@ const {DIM, RESET} = require('../../build-scripts/colors');
 const {spawn} = require('child_process');
 
 if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
-  process.stdout.write(`  ${DIM}google-closure-compiler-linux build compiler missing${RESET}\n`);
-} else if (process.platform !== 'darwin') {
+  process.stdout.write(`  ${DIM}google-closure-compiler-linux binary already exists${RESET}\n`);
+} else if (process.platform !== 'linux') {
   process.stdout.write(`  ${DIM}google-closure-compiler-linux build wrong platform${RESET}\n`);
 } else {
   process.stdout.write(`  ${DIM}google-closure-compiler-linux building image${RESET}\n`);

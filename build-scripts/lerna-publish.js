@@ -16,8 +16,8 @@
  */
 
 /**
- * @fileoverview Custom lerna cli which adds a publication command to bypass checks for a
- * clean working directory.
+ * @fileoverview Custom lerna cli which adds a publication command to always attempt publication
+ * of all packages.
  *
  * Taken directly from the lerna publication command and lerna cli packages.
  */
@@ -40,7 +40,6 @@ const runCmd = require('@lerna/run/command');
 const versionCmd = require('@lerna/version/command');
 const pkg = require('lerna/package.json');
 const { PublishCommand } = require('@lerna/publish');
-const getCurrentTags = require('@lerna/publish/lib/get-current-tags');
 const fs = require('fs');
 const path = require('path');
 
@@ -48,39 +47,33 @@ function factory(argv) {
   return new TravisPublishCommand(argv);
 }
 
-/** Override methods in the main publication command class to bypass clean working directory checks */
+/** Override methods in the main publication command class to return the full set of packages for publication */
 class TravisPublishCommand extends PublishCommand {
-  verifyWorkingTreeClean() {
-    return describeRef(this.execOpts);
-  }
-
-  detectFromGit() {
+  findVersionedUpdates() {
     let chain = Promise.resolve();
 
-    chain = chain.then(() => getCurrentTags(this.execOpts));
-    chain = chain.then(taggedPackageNames => {
-      if (!taggedPackageNames.length) {
-        this.logger.notice("from-git", "No tagged release found");
+    if (this.options.bump === "from-git") {
+      chain = chain.then(() => this.detectFromGit());
+    } else if (this.options.canary) {
+      chain = chain.then(() => this.detectCanaryVersions());
+    } else {
+      // If no version bump was specified, check to ensure the working directory is clean
+      // and then attempt to publish all packages.
+      chain = chain
+          .then(() => this.verifyWorkingTreeClean())
+          .then(() => Array.from(this.packageGraph.values()))
+          .then(updates => {
+            const updatesVersions = updates.map(({ pkg }) => [pkg.name, pkg.version]);
 
-        return [];
-      }
+            return {
+              updates,
+              updatesVersions,
+              needsConfirmation: true,
+            };
+          });
+    }
 
-      if (this.project.isIndependent()) {
-        return taggedPackageNames.map(name => this.packageGraph.get(name));
-      }
-
-      return Array.from(this.packageGraph.values());
-    });
-
-    return chain.then(updates => {
-      const updatesVersions = updates.map(({ pkg }) => [pkg.name, pkg.version]);
-
-      return {
-        updates,
-        updatesVersions,
-        needsConfirmation: true,
-      };
-    });
+    return chain;
   }
 }
 

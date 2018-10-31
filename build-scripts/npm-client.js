@@ -56,7 +56,7 @@ function logToFile(message) {
  *
  * @param {string} cmd
  * @param {!Array<strings>} args
- * @return {!Promise<!Array<string|number>>}
+ * @return {!Promise<!{stdout: string, stderr: string, exitCode: number}>}
  */
 function runCommand(cmd, args) {
   return new Promise((resolve, reject) => {
@@ -67,13 +67,13 @@ function runCommand(cmd, args) {
       stdio: 'pipe'
     });
     externalProcess.on('error', err => {
-      reject([stdout, stderr, -1]);
+      reject({stdout, stderr, exitCode: -1});
     });
     externalProcess.on('close', exitCode => {
       if (exitCode != 0) {
-        reject([stdout, stderr, exitCode]);
+        reject({stdout, stderr, exitCode});
       }
-      resolve([stdout, stderr, exitCode]);
+      resolve({stdout, stderr, exitCode});
     });
     externalProcess.stdout.on('data', data => {
       stdout += data.toString();
@@ -94,8 +94,8 @@ function runCommand(cmd, args) {
 function checkThatVersionExists(packageWithVersion) {
   return runCommand('npm', ['view', packageWithVersion])
       .catch(results => {
-        logToFile(results[1]);
-        return Promise.reject();
+        logToFile(results.stderr);
+        return Promise.reject(new Error('version did not exist in registry'));
       });
 }
 
@@ -142,7 +142,7 @@ function npmPublish(packageInfo) {
     logToFile('all dependencies published');
     return runCommand('npm', process.argv.slice(2))
         .catch(results => {
-          if (!/You cannot publish over the previously published versions/.test(results[1])) {
+          if (!/You cannot publish over the previously published versions/.test(results.stderr)) {
             return Promise.reject(new Error(`Publish failed ${JSON.stringify(results, null, 2)}`));
           }
         });

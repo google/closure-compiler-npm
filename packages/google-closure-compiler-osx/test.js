@@ -19,17 +19,13 @@ const fs = require('fs');
 const path = require('path');
 const {spawn} = require('child_process');
 const nativeImagePath = require('./');
-const ESC = '\u001B';
-const COLOR_END = ESC + '[0m';
-const COLOR_RED = ESC + '[91m';
-const COLOR_GREEN = ESC + '[92m';
-const COLOR_DIM = ESC + '[2m';
+const {RED, GREEN, DIM, RESET} = require('../../build-scripts/colors');
 
 process.stdout.write('google-closure-compiler-osx\n');
 if (process.platform !== 'darwin') {
-  process.stdout.write(`  ${COLOR_DIM}skipping tests - incorrect platform${COLOR_END}\n`);
+  process.stdout.write(`  ${DIM}skipping tests - incorrect platform${RESET}\n`);
 } else if (fs.existsSync(nativeImagePath)) {
-  process.stdout.write(`  ${COLOR_GREEN}✓${COLOR_END} ${COLOR_DIM}compiler binary exists${COLOR_END}\n`);
+  process.stdout.write(`  ${GREEN}✓${RESET} ${DIM}compiler binary exists${RESET}\n`);
   new Promise((resolve, reject) => {
     const compilerTest = spawn(
         path.resolve(__dirname, 'compiler'),
@@ -43,7 +39,7 @@ if (process.platform !== 'darwin') {
         return reject('non zero exit code');
       }
       process.stdout.write(
-          `  ${COLOR_GREEN}✓${COLOR_END} ${COLOR_DIM}compiler version successfully reported${COLOR_END}\n`);
+          `  ${GREEN}✓${RESET} ${DIM}compiler version successfully reported${RESET}\n`);
       resolve();
     });
   })
@@ -60,16 +56,16 @@ if (process.platform !== 'darwin') {
         return reject('non zero exit code');
       }
       process.stdout.write(
-          `  ${COLOR_GREEN}✓${COLOR_END} ${COLOR_DIM}compiler help successfully reported${COLOR_END}\n`);
+          `  ${GREEN}✓${RESET} ${DIM}compiler help successfully reported${RESET}\n`);
       resolve();
     });
   }))
   .catch(err => {
     process.stderr.write((err || '').toString() + '\n');
-    process.stdout.write(`  ${COLOR_RED}compiler execution tests failed${COLOR_END}\n`);
+    process.stdout.write(`  ${RED}compiler execution tests failed${RESET}\n`);
     process.exitCode = 1;
   });
 } else {
-  process.stdout.write(`  ${COLOR_RED}compiler binary does not exist${COLOR_END}\n`);
+  process.stdout.write(`  ${RED}compiler binary does not exist${RESET}\n`);
   process.exitCode = 1;
 }

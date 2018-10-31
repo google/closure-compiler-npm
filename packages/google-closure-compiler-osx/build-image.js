@@ -23,10 +23,14 @@
 
 const fs = require('fs');
 const path = require('path');
-if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
-  process.exit(1);
-}
+const {DIM, RESET} = require('../../build-scripts/colors');
+const {spawn} = require('child_process');
 
-if (process.platform !== 'darwin') {
-  process.exit(1);
+if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
+  process.stdout.write(`  ${DIM}google-closure-compiler-osx build compiler missing${RESET}\n`);
+} else if (process.platform !== 'darwin') {
+  process.stdout.write(`  ${DIM}google-closure-compiler-osx build wrong platform${RESET}\n`);
+} else {
+  process.stdout.write(`  ${DIM}google-closure-compiler-osx building image${RESET}\n`);
+  spawn('../../build-scripts/graal.js', [], {stdio: 'inherit'});
 }

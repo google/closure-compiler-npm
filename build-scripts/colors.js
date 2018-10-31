@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /*
  * Copyright 2018 The Closure Compiler Authors.
  *
@@ -15,13 +14,19 @@
  * limitations under the License.
  */
 
-const {RED, GREEN, DIM, RESET} = require('../../build-scripts/colors');
+/**
+ * @fileoverview Colors for use in console logging
+ */
+'use strict';
 
-process.stdout.write('google-closure-compiler-js\n');
-try {
-  require('./');
-  process.stdout.write(`  ${GREEN}✓${RESET} ${DIM}jscomp exists${RESET}\n`);
-} catch (e) {
-  process.stdout.write(`  ${RED}jscomp does not exist${RESET}\n`);
-  process.exitCode = 1;
-}
+const ESC = '\u001B';
+const COLOR_END = `${ESC}[0m`;
+const COLOR_RED = `${ESC}[0;31m`;
+const COLOR_GREEN = `${ESC}[0;32m`;
+const COLOR_DIM = `${ESC}[1;30m`;
+module.exports = {
+  RED: COLOR_RED,
+  GREEN: COLOR_GREEN,
+  DIM: COLOR_DIM,
+  RESET: COLOR_END
+};

@@ -24,6 +24,10 @@ branches:
     - master
     - mono-repo
 
+env:
+  # Force maven to use colorized output
+  MAVEN_OPTS="-Djansi.force=true"
+
 cache:
   yarn: true
   directories:
@@ -47,9 +51,11 @@ before_install:
       cd ..;
     fi
 
-before_script: yarn run build
+install: yarn install --colors=always
 
-script: yarn test
+before_script: yarn run build --colors=always
+
+script: yarn test --colors
 
 deploy:
   skip_cleanup: true

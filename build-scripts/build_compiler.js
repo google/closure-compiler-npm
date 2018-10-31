@@ -63,15 +63,17 @@ function copyCompilerBinaries() {
 }
 
 if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
-  spawnSync('mvn', ['clean'], {cwd: './compiler', stdio: 'inherit'});
+  const extraMvnArgs = process.env.TRAVIS ? ['-Dstyle.color=always'] : [];
+
+  spawnSync('mvn', extraMvnArgs.concat(['clean']), {cwd: './compiler', stdio: 'inherit'});
   const compilerBuild = spawn(
       'mvn',
-      [
+      extraMvnArgs.concat([
         '-DskipTests',
         '-pl',
         'externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml',
         'install'
-      ],
+      ]),
       {
         cwd: './compiler',
         stdio: 'inherit',

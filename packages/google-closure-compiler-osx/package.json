@@ -22,7 +22,7 @@
     "readme.md"
   ],
   "scripts": {
-    "build": "./check-build-image.js; if [ $? -eq 0 ]; then echo \"google-closure-compiler-osx building image\"; node ../../build-scripts/graal.js; else echo \"google-closure-compiler-osx build\"; fi",
+    "build": "./build-image.js",
     "test": "./test.js"
   }
 }

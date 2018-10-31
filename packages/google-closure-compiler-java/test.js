@@ -17,16 +17,12 @@
 
 const fs = require('fs');
 const javaPath = require('./');
-const ESC = '\u001B';
-const COLOR_END = ESC + '[0m';
-const COLOR_RED = ESC + '[91m';
-const COLOR_GREEN = ESC + '[92m';
-const COLOR_DIM = ESC + '[2m';
+const {RED, GREEN, DIM, RESET} = require('../../build-scripts/colors');
 
 process.stdout.write('google-closure-compiler-java\n');
 if (fs.existsSync(javaPath)) {
-  process.stdout.write(`  ${COLOR_GREEN}✓${COLOR_END} ${COLOR_DIM}compiler jar exists${COLOR_END}\n`);
+  process.stdout.write(`  ${GREEN}✓${RESET} ${DIM}compiler jar exists${RESET}\n`);
 } else {
-  process.stdout.write(`  ${COLOR_RED}compiler jar does not exist${COLOR_END}\n`);
+  process.stdout.write(`  ${RED}compiler jar does not exist${RESET}\n`);
   process.exitCode = 1;
 }

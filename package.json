@@ -29,7 +29,7 @@
     "should": "^11.2.0"
   },
   "scripts": {
-    "build": "./build-scripts/build_compiler.js && yarn workspaces run build",
-    "test": "yarn workspaces run test && mocha"
+    "build": "./build-scripts/build.sh",
+    "test": "./build-scripts/test.sh"
   }
 }

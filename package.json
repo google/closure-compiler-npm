@@ -30,6 +30,6 @@
   },
   "scripts": {
     "build": "./build-scripts/build_compiler.js && yarn workspaces run build",
-    "test": "mocha && yarn workspaces run test"
+    "test": "yarn workspaces run test && mocha"
   }
 }

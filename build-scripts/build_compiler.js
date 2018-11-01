@@ -36,7 +36,13 @@ const ncp = require('ncp');
 const fs = require('fs');
 const path = require('path');
 
-// Extract the version number from the compiler root pom.xml file
+/**
+ * Retrieves the compiler version that will be built by reading the contents of ./compiler/pom.xml.
+ * For release builds, this is of the form: "vYYYYMMDD"
+ * For nightly builds, this is "1.0-SNAPSHOT"
+ *
+ * @return {string}
+ */
 function getCompilerVersionFromPomXml() {
   const pomXmlContents = fs.readFileSync(path.resolve(__dirname, '..', 'compiler', 'pom.xml'), 'utf8');
   const versionParts = /<version>([^<]+)<\/version>/.exec(pomXmlContents);
@@ -49,17 +55,36 @@ const compilerJsBinaryPath = `./compiler/target/closure-compiler-gwt-${compilerV
 
 console.log(process.platform, process.arch, compilerVersion);
 
+/**
+ * @param {string} src path to source file or folder
+ * @param {string} dest path to destination file or folder
+ * @return {!Promise<undefined>}
+ */
+function copy(src, dest) {
+  return new Promise((resolve, reject) => {
+    ncp(compilerJavaBinaryPath, './packages/google-closure-compiler-java/compiler.jar', err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+/**
+ * Copy the newly built compiler and the contrib folder to the applicable packages.
+ *
+ * @return {!Promise<undefined>}
+ */
 function copyCompilerBinaries() {
-  const reportErrors = err => {
-    if (err) {
-      throw new Error(err);
-    }
-  };
-  ncp(compilerJavaBinaryPath, './packages/google-closure-compiler-java/compiler.jar', reportErrors);
-  ncp(compilerJavaBinaryPath, './packages/google-closure-compiler-linux/compiler.jar', reportErrors);
-  ncp(compilerJavaBinaryPath, './packages/google-closure-compiler-osx/compiler.jar', reportErrors);
-  ncp(compilerJsBinaryPath, './packages/google-closure-compiler-js/jscomp.js', reportErrors);
-  ncp('./compiler/contrib', './packages/google-closure-compiler/contrib', reportErrors);
+  return Promise.all([
+    copy(compilerJavaBinaryPath, './packages/google-closure-compiler-java/compiler.jar'),
+    copy(compilerJavaBinaryPath, './packages/google-closure-compiler-linux/compiler.jar'),
+    copy(compilerJavaBinaryPath, './packages/google-closure-compiler-osx/compiler.jar'),
+    copy(compilerJsBinaryPath, './packages/google-closure-compiler-js/jscomp.js'),
+    copy('./compiler/contrib', './packages/google-closure-compiler/contrib')
+  ]);
 }
 
 if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {

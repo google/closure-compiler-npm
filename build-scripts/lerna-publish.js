@@ -38,6 +38,7 @@ const listCmd = require('@lerna/list/command');
 const publishCmd = require('@lerna/publish/command');
 const runCmd = require('@lerna/run/command');
 const versionCmd = require('@lerna/version/command');
+const Semver = require('semver');
 const pkg = require('lerna/package.json');
 const { PublishCommand } = require('@lerna/publish');
 const fs = require('fs');
@@ -80,7 +81,7 @@ class TravisPublishCommand extends PublishCommand {
 // New command meta data
 const travisPublishCmd = Object.assign({}, publishCmd, {
   command: 'publish-travis [bump]',
-  describe: 'Publish packages in the current project - even without a clean working directory',
+  describe: 'Publish all packages in the current project',
   handler: factory
 });
 
@@ -118,6 +119,7 @@ function main(argv) {
 }
 
 if (/publish/.test(process.argv[2])) {
+  // Looks like we're trying to publish packages
   // Make sure the compiler version matches the package major version before publishing
   const compilerVersionMatch = require(path.resolve(__dirname, 'version-match.js'));
   const lernaConfig = require(path.resolve(__dirname, '..', 'lerna.json'));
@@ -126,7 +128,8 @@ if (/publish/.test(process.argv[2])) {
   compiler.run(function (exitCode, stdout) {
     let versionInfo = (stdout || '').match(compilerVersionMatch);
     versionInfo = versionInfo || [];
-    if (versionInfo.length < 2 || versionInfo[1] !== `v${lernaConfig.version}`) {
+    let packageVersion = new Semver(lernaConfig.version);
+    if (versionInfo.length < 2 || versionInfo[1] !== `v${packageVersion.major}`) {
       console.log('Package major version does not match compiler version - skipping publication');
       console.log(stdout);
       process.exit(0);

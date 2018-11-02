@@ -44,18 +44,29 @@ const { PublishCommand } = require('@lerna/publish');
 const fs = require('fs');
 const path = require('path');
 
-function factory(argv) {
-  return new TravisPublishCommand(argv);
-}
-
 /** Override methods in the main publication command class to return the full set of packages for publication */
 class TravisPublishCommand extends PublishCommand {
+  /**
+   * @see https://github.com/lerna/lerna/blob/master/commands/publish/index.js
+   *
+   * @override
+   * @return {Promise<{
+   *     updates: Array<PackageGraphNode>,
+   *     updatesVersions: Array<string>,
+   *     needsConfirmation: boolean
+   *   }>
+   * }
+   */
   findVersionedUpdates() {
     let chain = Promise.resolve();
 
     if (this.options.bump === "from-git") {
+      // Returns packages which have changes in git since the last release
+      // Copied from the main lerna publish command
       chain = chain.then(() => this.detectFromGit());
     } else if (this.options.canary) {
+      // Returns which should be part of a canary (nightly) release
+      // Copied from the main lerna publish command
       chain = chain.then(() => this.detectCanaryVersions());
     } else {
       // If no version bump was specified, check to ensure the working directory is clean
@@ -79,13 +90,18 @@ class TravisPublishCommand extends PublishCommand {
 }
 
 // New command meta data
+// Used by yargs to invoke the correct class and display help information
+// The bump argument has identical semantics as the main publish command
 const travisPublishCmd = Object.assign({}, publishCmd, {
   command: 'publish-travis [bump]',
   describe: 'Publish all packages in the current project',
-  handler: factory
+  handler: argv => new TravisPublishCommand(argv)
 });
 
-// Setup the custom cli
+/**
+ * Setup the custom cli
+ * @see https://github.com/lerna/lerna/blob/master/core/lerna/index.js
+ */
 function main(argv) {
   // For lerna publication to work, the NPM token must be stored in the .npmrc file in the user home directory
   if (process.env.TRAVIS && process.env.NPM_TOKEN) {
@@ -99,6 +115,8 @@ function main(argv) {
     lernaVersion: pkg.version,
   };
 
+  // yargs instance.
+  // Add all the standard lerna commands + our custom travis-publish command
   return cli()
       .command(addCmd)
       .command(bootstrapCmd)
@@ -118,6 +136,7 @@ function main(argv) {
       .parse(argv, context);
 }
 
+// match both the "publish" and "publish-travis" lerna commands
 if (/publish/.test(process.argv[2])) {
   // Looks like we're trying to publish packages
   // Make sure the compiler version matches the package major version before publishing
@@ -133,10 +152,9 @@ if (/publish/.test(process.argv[2])) {
       console.log('Package major version does not match compiler version - skipping publication');
       console.log(stdout);
       process.exit(0);
-    } else {
-      // Invoke the cli with arguments
-      main(process.argv.slice(2));
     }
+    // Invoke the cli with arguments
+    main(process.argv.slice(2));
   });
 } else {
   // Invoke the cli with arguments

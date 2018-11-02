@@ -46,7 +46,7 @@ process.on('unhandledRejection', error => {
  */
 function logToFile(message) {
   fs.writeFileSync(path.resolve(__dirname, '..', 'publish-log.txt'), `${message}\n`, {
-    flag: 'a'
+    flag: 'a' // Append to file
   });
 }
 

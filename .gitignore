@@ -1,5 +1,13 @@
 node_modules
 npm-debug.log
-/compiler.jar
-/contrib/
-/jscomp.js
+yarn-error.log
+/lerna-debug.log
+/packages/google-closure-compiler/contrib/
+/packages/google-closure-compiler-java/compiler.jar
+/packages/google-closure-compiler-linux/compiler.jar
+/packages/google-closure-compiler-linux/compiler
+/packages/google-closure-compiler-osx/compiler.jar
+/packages/google-closure-compiler-osx/compiler
+/packages/google-closure-compiler-js/jscomp.js
+/temp
+/publish-log.txt

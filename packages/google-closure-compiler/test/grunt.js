@@ -158,7 +158,8 @@ describe('grunt-google-closure-compiler', function() {
         platformUtilized = undefined;
       });
 
-      it('should emit an error for invalid options', done => {
+      it('should emit an error for invalid options', function(done) {
+        this.retries(3); // this test can be flaky
         let didFail = false;
         let gruntWarning;
 

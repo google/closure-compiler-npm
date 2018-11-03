@@ -23,11 +23,11 @@
 'use strict';
 
 const should = require('should');
-const compilerPackage = require('../');
+const compilerPackage = require('google-closure-compiler');
 const Compiler = compilerPackage.compiler;
-const packageInfo = require('../package.json');
+const packageInfo = require('../lerna.json');
 const Semver = require('semver');
-const compilerVersionMatch = require('../version-match');
+const compilerVersionMatch = require('../build-scripts/version-match');
 const spawn = require('child_process').spawnSync;
 require('mocha');
 
@@ -38,69 +38,61 @@ assertError.params = {
   operator: 'should be a semver parseabe',
 };
 
-describe('compiler.jar', function() {
-  this.timeout(10000);
-  this.slow(5000);
+if (!process.env.COMPILER_NIGHTLY) {
+  describe('compiler.jar', function () {
+    this.timeout(10000);
+    this.slow(5000);
 
-  it('should not be a snapshot build', done => {
-    const compiler = new Compiler({ version: true});
-    compiler.run(function(exitCode, stdout, stderr) {
-      let versionInfo = (stdout || '').match(compilerVersionMatch);
-      should(versionInfo).not.be.eql(null);
-      versionInfo = versionInfo || [];
-      versionInfo.length.should.be.eql(2);
-      versionInfo[1].indexOf('SNAPSHOT').should.be.below(0);
-      done();
+    it('should not be a snapshot build', done => {
+      const compiler = new Compiler({version: true});
+      compiler.run(function (exitCode, stdout, stderr) {
+        let versionInfo = (stdout || '').match(compilerVersionMatch);
+        should(versionInfo).not.be.eql(null);
+        versionInfo = versionInfo || [];
+        versionInfo.length.should.be.eql(2);
+        versionInfo[1].indexOf('SNAPSHOT').should.be.below(0);
+        done();
+      });
     });
-  });
 
-  it('version should be equal to the package major version', done => {
-    const compiler = new Compiler({ version: true});
-    const packageVer = new Semver(packageInfo.version);
-    compiler.run(function(exitCode, stdout, stderr) {
-      let versionInfo = (stdout || '').match(compilerVersionMatch);
-      should(versionInfo).not.be.eql(null);
-      versionInfo = versionInfo || [];
-      versionInfo.length.should.be.eql(2);
+    it('version should be equal to the package major version', done => {
+      const compiler = new Compiler({version: true});
+      const packageVer = new Semver(packageInfo.version);
+      compiler.run(function (exitCode, stdout, stderr) {
+        let versionInfo = (stdout || '').match(compilerVersionMatch);
+        should(versionInfo).not.be.eql(null);
+        versionInfo = versionInfo || [];
+        versionInfo.length.should.be.eql(2);
 
-      try {
-        const compilerVersion = new Semver(versionInfo[1] + '.0.0');
+        let compilerVersion;
+        try {
+          console.log(versionInfo[1] + '.0.0');
+          compilerVersion = new Semver(versionInfo[1] + '.0.0');
+        } catch (e) {
+          assertError.fail();
+        }
         compilerVersion.major.should.be.equal(packageVer.major);
-      } catch (e) {
-        assertError.fail();
+        done();
+      });
+    });
+  });
+
+  describe('compiler submodule', function () {
+    this.timeout(10000);
+    this.slow(5000);
+    it('should be synced to the tagged commit', function () {
+      const gitCmd = spawn('git', ['tag', '--points-at', 'HEAD'], {
+        cwd: './compiler'
+      });
+      should(gitCmd.status).eql(0)
+      const currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
+      const packageVer = new Semver(packageInfo.version);
+      const mvnVersion = 'v' + packageVer.major;
+      let normalizedTag = currentTag;
+      if (normalizedTag) {
+        normalizedTag = currentTag.replace(/^([-a-z]+-)?(v\d{8})(.*)$/, '$2');
       }
-      done();
+      should(normalizedTag).eql(mvnVersion)
     });
   });
-});
-
-describe('compiler submodule', function() {
-  this.timeout(10000);
-  this.slow(5000);
-  it('should be synced to the tagged commit', function() {
-    const gitCmd = spawn('git', ['tag', '--points-at', 'HEAD'], {
-      cwd: './compiler'
-    });
-    should(gitCmd.status).eql(0)
-    const currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
-    const packageVer = new Semver(packageInfo.version);
-    const mvnVersion = 'v' + packageVer.major;
-    let normalizedTag = currentTag;
-    if (normalizedTag) {
-      normalizedTag = currentTag.replace(/^([a-z]+-)?v\d{8}(.*)$/,
-          (match, g1, g2) => match.substr((g1 || '').length, match.length - (g1 || '').length - (g2 || '').length));
-    }
-    should(normalizedTag).eql(mvnVersion)
-  });
-});
-
-describe('native dependencies', () => {
-  const packageInfo = require('../package.json');
-  it('optional dependencies should be the same major version as the package', () => {
-    const packageVer = new Semver(packageInfo.version);
-    Object.keys(packageVer.optionalDependencies || {}).forEach(optionalDep => {
-      const depVer = new Semver(packageVer.optionalDependencies[optionalDep]);
-      should(depVer.major).be.eql(packageVer.major);
-    });
-  });
-});
+}

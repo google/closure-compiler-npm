@@ -1,0 +1,249 @@
+[
+  {
+    "name" : "com.google.javascript.jscomp.CommandLineRunner$Flags",
+    "allDeclaredFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.CommandLineRunner$Flags$BooleanOptionHandler",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.CommandLineRunner$Flags$WarningGuardErrorOptionHandler",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.CommandLineRunner$Flags$WarningGuardWarningOptionHandler",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.CommandLineRunner$Flags$WarningGuardOffOptionHandler",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.CommandLineRunner$Flags$JsOptionHandler",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.CommandLineRunner$Flags$JsZipOptionHandler",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.AbstractCommandLineRunner$JsonFileSpec",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name" : "org.kohsuke.args4j.CmdLineParser",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name" : "org.kohsuke.args4j.Option",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name" : "org.kohsuke.args4j.OptionDef",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name" : "org.kohsuke.args4j.spi.FieldSetter",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name" : "org.kohsuke.args4j.spi.Setter",
+    "allDeclaredConstructors" : true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.BooleanOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.ByteOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.CharOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.DoubleOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.EnumOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.FileOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.FloatOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.InetAddressOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.IntOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.LongOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.MapOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.OneArgumentOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.OptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.PathOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.ShortOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.StringOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.URIOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.kohsuke.args4j.spi.URLOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.ConformanceConfig",
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.ConformanceConfig$Builder",
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.ConformanceRules",
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.ConformanceRules$BanCreateDom",
+    "methods" : [ { "name" : "<init>" } ],
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.ConformanceRules$BanCreateElement",
+    "methods" : [ { "name" : "<init>" } ],
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.ConformanceRules$BanExpose",
+    "methods" : [ { "name" : "<init>" } ],
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.ConformanceRules$BanGlobalVars",
+    "methods" : [ { "name" : "<init>" } ],
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.ConformanceRules$BanThrowOfNonErrorTypes",
+    "methods" : [ { "name" : "<init>" } ],
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.ConformanceRules$BanUnknownThis",
+    "methods" : [ { "name" : "<init>" } ],
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  }
+]

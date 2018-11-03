@@ -1,0 +1,11 @@
+{
+  "packages": [
+    "packages/*"
+  ],
+  "npmClient": "yarn",
+  "useWorkspaces": true,
+  "version": "20181008.0.0",
+  "ignoreChanges": [
+    "**/compiler/**"
+  ]
+}

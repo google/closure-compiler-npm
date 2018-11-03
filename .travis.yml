@@ -18,12 +18,6 @@ matrix:
     - os: linux
       node_js: '6'
 
-# safelist
-branches:
-  only:
-    - master
-    - mono-repo
-
 env:
   # Force maven to use colorized output
   MAVEN_OPTS="-Djansi.force=true"
@@ -58,12 +52,9 @@ before_script: yarn run build --colors=always
 script: yarn test --colors
 
 deploy:
-  skip_cleanup: true
   provider: script
   script: build-scripts/lerna-publish.js publish-travis --npm-client ${TRAVIS_BUILD_DIR}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes
   on:
-    branch:
-      - mono-repo
-      - master
+    branch: master
 
 after_deploy: cat publish-log.txt

@@ -117,6 +117,7 @@ function main(argv) {
 
   // yargs instance.
   // Add all the standard lerna commands + our custom travis-publish command
+  // This is a direct copy of the lerna cli setup with our custom travis command added.
   return cli()
       .command(addCmd)
       .command(bootstrapCmd)

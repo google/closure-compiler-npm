@@ -113,17 +113,30 @@ function checkThatVersionExists(packageWithVersion) {
  * @return {!Promise<undefined>}
  */
 function npmPublish(packageInfo) {
+  /** @type {!Array<!Promise<undefined>>} */
+  const dependenciesPublishedToRegistry = [];
   // Check both the "dependencies" and "optionalDependencies" keys
-  const depsInfo = [];
-  const depNames = [];
   ['dependencies', 'optionalDependencies'].forEach(depBlock => {
+    // In a package.json file, the dependencies and optionalDependencies keys have the form:
+    //
+    // "dependencies": {
+    //   "depname": "version-specifier"
+    // }
+    //
+    // With the `npm view` command, we can look to see if a version is published to the registry
+    // using the form:
+    //
+    //    npm view depname@version-specifier
+    //
+    // Loop through all the dependencies and ensure any dependencies which are internal to
+    // this repo (they all start with "google-closure-compiler") have already been published.
     if (!(depBlock in packageInfo)) {
       return;
     }
     Object.keys(packageInfo[depBlock]).forEach(key => {
       if (/google-closure-compiler/.test(key)) {
-        depNames.push(`${key}@${packageInfo[depBlock][key]}`);
-        depsInfo.push(checkThatVersionExists(`${key}@${packageInfo[depBlock][key]}`)
+        const versionSpecifier = packageInfo[depBlock][key];
+        dependenciesPublishedToRegistry.push(checkThatVersionExists(`${key}@${versionSpecifier}`)
             .catch(() => {
               throw new Error('Version does not exist');
             }));
@@ -131,7 +144,7 @@ function npmPublish(packageInfo) {
     });
   });
 
-  return Promise.all(depsInfo).then(depsInfoResults => {
+  return Promise.all(dependenciesPublishedToRegistry).then(depsInfoResults => {
     for (let i = 0; i < depsInfoResults.length; i++) {
       const [stdout] = depsInfoResults[i];
       if (stdout.trim().length === 0) {

@@ -65,7 +65,7 @@ class TravisPublishCommand extends PublishCommand {
       // Copied from the main lerna publish command
       chain = chain.then(() => this.detectFromGit());
     } else if (this.options.canary) {
-      // Returns which should be part of a canary (nightly) release
+      // Returns packages which should be part of a canary (nightly) release
       // Copied from the main lerna publish command
       chain = chain.then(() => this.detectCanaryVersions());
     } else {
@@ -145,7 +145,7 @@ if (/publish/.test(process.argv[2])) {
   const lernaConfig = require(path.resolve(__dirname, '..', 'lerna.json'));
   const Compiler = require('google-closure-compiler').compiler;
   const compiler = new Compiler({version: true});
-  compiler.run(function (exitCode, stdout) {
+  compiler.run((exitCode, stdout) => {
     let versionInfo = (stdout || '').match(compilerVersionMatch);
     versionInfo = versionInfo || [];
     let packageVersion = new Semver(lernaConfig.version);

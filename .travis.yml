@@ -18,6 +18,11 @@ matrix:
     - os: linux
       node_js: '6'
 
+# safelist
+branches:
+  only:
+    - master
+
 env:
   # Force maven to use colorized output
   MAVEN_OPTS="-Djansi.force=true"

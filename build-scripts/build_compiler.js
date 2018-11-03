@@ -62,7 +62,7 @@ console.log(process.platform, process.arch, compilerVersion);
  */
 function copy(src, dest) {
   return new Promise((resolve, reject) => {
-    ncp(compilerJavaBinaryPath, './packages/google-closure-compiler-java/compiler.jar', err => {
+    ncp(src, dest, err => {
       if (err) {
         reject(err);
       } else {

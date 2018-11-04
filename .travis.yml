@@ -57,6 +57,7 @@ before_script: yarn run build --colors=always
 script: yarn test --colors
 
 deploy:
+  skip_cleanup: true
   provider: script
   script: build-scripts/lerna-publish.js publish-travis --npm-client ${TRAVIS_BUILD_DIR}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes
   on:

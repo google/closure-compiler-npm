@@ -140,6 +140,11 @@ function main(argv) {
 // match both the "publish" and "publish-travis" lerna commands
 if (/publish/.test(process.argv[2])) {
   // Looks like we're trying to publish packages
+  // Don't publish for cron jobs
+  if (process.env.COMPILER_NIGHTLY) {
+    process.exit(0);
+  }
+
   // Make sure the compiler version matches the package major version before publishing
   const compilerVersionMatch = require(path.resolve(__dirname, 'version-match.js'));
   const lernaConfig = require(path.resolve(__dirname, '..', 'lerna.json'));

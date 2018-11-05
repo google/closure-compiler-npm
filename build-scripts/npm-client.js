@@ -146,13 +146,13 @@ function npmPublish(packageInfo) {
 
   return Promise.all(dependenciesPublishedToRegistry).then(depsInfoResults => {
     for (let i = 0; i < depsInfoResults.length; i++) {
-      const [stdout] = depsInfoResults[i];
+      const {stdout} = depsInfoResults[i];
       if (stdout.trim().length === 0) {
         return Promise.reject(new Error(`Version does not exist - ${stdout.trim()}`));
       }
     }
   }).then(() => {
-    logToFile('all dependencies published');
+    logToFile('    all dependencies published');
     return runCommand('npm', process.argv.slice(2))
         .catch(results => {
           if (!/You cannot publish over the previously published versions/.test(results.stderr)) {
@@ -175,7 +175,7 @@ switch (pkg.name) {
     // We only want to publish the linux or osx package from a Travis instance running on the correct os
     if (pkg.name === 'google-closure-compiler-linux' && process.platform !== 'linux' ||
         pkg.name === 'google-closure-compiler-osx' && process.platform !== 'darwin') {
-      logToFile(`skipping publication of ${pkg.name} - wrong platform`);
+      logToFile(`    skipping publication of ${pkg.name} - wrong platform`);
       process.exitCode = 0;
     } else {
       npmPublish(pkg)

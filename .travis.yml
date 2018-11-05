@@ -56,6 +56,8 @@ before_script: yarn run build --colors=always
 
 script: yarn test --colors
 
+before_deploy: build-scripts/add-os-restrictions.js
+
 deploy:
   skip_cleanup: true
   provider: script

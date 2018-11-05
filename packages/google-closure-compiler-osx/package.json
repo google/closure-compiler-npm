@@ -1,6 +1,6 @@
 {
   "name": "google-closure-compiler-osx",
-  "version": "20181028.0.0",
+  "version": "20181028.0.1",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler using Java",
   "main": "index.js",
   "repository": "https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-osx",
@@ -21,8 +21,13 @@
     "package.json",
     "readme.md"
   ],
-  "cpu" : ["x64", "x86"],
-  "os": ["linux"],
+  "cpu": [
+    "x64",
+    "x86"
+  ],
+  "os": [
+    "linux"
+  ],
   "scripts": {
     "build": "./build-image.js",
     "test": "./test.js"

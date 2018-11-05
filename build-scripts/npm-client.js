@@ -138,7 +138,7 @@ function npmPublish(packageInfo) {
         const versionSpecifier = packageInfo[depBlock][key];
         dependenciesPublishedToRegistry.push(checkThatVersionExists(`${key}@${versionSpecifier}`)
             .catch(() => {
-              throw new Error('Version does not exist');
+              throw new Error(`${key}@${versionSpecifier} not found in registry`);
             }));
       }
     });
@@ -159,13 +159,13 @@ function npmPublish(packageInfo) {
             return Promise.reject(new Error(`Publish failed ${JSON.stringify(results, null, 2)}`));
           }
         });
-  }, () => {
-    logToFile('missing dependencies');
+  }, err => {
+    logToFile(`  ❌ missing dependencies - ${err.message}`);
   });
 }
 
 // Log out what folder we are executing this from and the call arguments
-logToFile(`(${path.basename(process.cwd())}) npm ${process.argv.slice(2).join(' ')}`);
+logToFile(`Publishing ${path.basename(process.cwd())}`);
 
 // Add logic specific to each pacakge
 const pkg = require(path.resolve(process.cwd(), 'package.json'));
@@ -178,19 +178,23 @@ switch (pkg.name) {
       logToFile(`skipping publication of ${pkg.name} - wrong platform`);
       process.exitCode = 0;
     } else {
-      npmPublish(pkg).catch(err => {
-        process.exitCode = 1;
-        logToFile('publish failed');
-        return Promise.reject(err);
-      });
+      npmPublish(pkg)
+          .then(() => logToFile('  ✅ publish succeeded'))
+          .catch(err => {
+            process.exitCode = 1;
+            logToFile('   ❌ publish failed');
+            return Promise.reject(err);
+          });
     }
     break;
 
   default:
-    npmPublish(pkg).catch(err => {
-      process.exitCode = 1;
-      logToFile('publish failed');
-      return Promise.reject(err);
-    });
+    npmPublish(pkg)
+        .then(() => logToFile('  ✅ publish succeeded'))
+        .catch(err => {
+          process.exitCode = 1;
+          logToFile('   ❌ publish failed');
+          return Promise.reject(err);
+        });
     break;
 }

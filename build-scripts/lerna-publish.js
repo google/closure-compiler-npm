@@ -69,10 +69,9 @@ class TravisPublishCommand extends PublishCommand {
       // Copied from the main lerna publish command
       chain = chain.then(() => this.detectCanaryVersions());
     } else {
-      // If no version bump was specified, check to ensure the working directory is clean
-      // and then attempt to publish all packages.
+      // If no version bump was specified then attempt to publish all packages.
+      // WARNING: this does not check for a clean working directory.
       chain = chain
-          .then(() => this.verifyWorkingTreeClean())
           .then(() => Array.from(this.packageGraph.values()))
           .then(updates => {
             const updatesVersions = updates.map(({ pkg }) => [pkg.name, pkg.version]);

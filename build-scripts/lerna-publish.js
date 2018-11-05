@@ -154,7 +154,7 @@ if (/publish/.test(process.argv[2])) {
     let versionInfo = (stdout || '').match(compilerVersionMatch);
     versionInfo = versionInfo || [];
     let packageVersion = new Semver(lernaConfig.version);
-    if (versionInfo.length < 2 || versionInfo[1] !== `v${packageVersion.major}`) {
+    if (versionInfo.length < 2 || parseInt(versionInfo[1]) !== packageVersion.major) {
       console.log('Package major version does not match compiler version - skipping publication');
       console.log(stdout);
       process.exit(0);

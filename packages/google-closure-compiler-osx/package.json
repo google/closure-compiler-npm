@@ -21,6 +21,8 @@
     "package.json",
     "readme.md"
   ],
+  "cpu" : ["x64", "x86"],
+  "os": ["linux"],
   "scripts": {
     "build": "./build-image.js",
     "test": "./test.js"

@@ -21,6 +21,8 @@
     "package.json",
     "readme.md"
   ],
+  "cpu" : ["x64", "x86"],
+  "os": ["darwin"],
   "scripts": {
     "build": "./build-image.js",
     "test": "./test.js"

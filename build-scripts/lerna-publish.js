@@ -86,6 +86,23 @@ class TravisPublishCommand extends PublishCommand {
 
     return chain;
   }
+
+  /**
+   * After publication, write the custom npm client publish log to standard out
+   *
+   * @override
+   * @return {!Promise<undefined>}
+   */
+  execute() {
+    return super.execute().then(() => {
+      const logPath = path.resolve(__dirname, '..', 'publish-log.txt');
+      if (fs.existsSync(logPath)) {
+        process.stdout.write(fs.readFileSync(path.resolve(__dirname, '..', 'publish-log.txt'), 'utf8'));
+      } else {
+        process.stdout.write('publication log missing');
+      }
+    });
+  }
 }
 
 // New command meta data

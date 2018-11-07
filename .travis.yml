@@ -64,5 +64,3 @@ deploy:
   script: build-scripts/lerna-publish.js publish-travis --npm-client ${TRAVIS_BUILD_DIR}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes
   on:
     branch: master
-
-after_deploy: cat publish-log.txt

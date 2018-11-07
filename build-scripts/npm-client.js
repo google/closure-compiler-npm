@@ -38,6 +38,8 @@ process.on('unhandledRejection', error => {
   process.exit(1);
 });
 
+const logMessageQueue = [];
+
 /**
  * Simple function to log out publication process to a file. Standard out doesn't work because lerna
  * swallows it.
@@ -94,7 +96,7 @@ function runCommand(cmd, args) {
 function checkThatVersionExists(packageWithVersion) {
   return runCommand('npm', ['view', packageWithVersion])
       .catch(results => {
-        logToFile(results.stderr);
+        logMessageQueue.push(results.stderr);
         return Promise.reject(new Error('version did not exist in registry'));
       });
 }
@@ -152,7 +154,7 @@ function npmPublish(packageInfo) {
       }
     }
   }).then(() => {
-    logToFile('    all dependencies published');
+    logMessageQueue.push('    all dependencies published');
     return runCommand('npm', process.argv.slice(2))
         .catch(results => {
           if (!/You cannot publish over the previously published versions/.test(results.stderr)) {
@@ -160,12 +162,12 @@ function npmPublish(packageInfo) {
           }
         });
   }, err => {
-    logToFile(`  ❌ missing dependencies - ${err.message}`);
+    logMessageQueue.push(`  ❌ missing dependencies - ${err.message}`);
   });
 }
 
 // Log out what folder we are executing this from and the call arguments
-logToFile(`Publishing ${path.basename(process.cwd())}`);
+logMessageQueue.push(`Publishing ${path.basename(process.cwd())}`);
 
 // Add logic specific to each pacakge
 const pkg = require(path.resolve(process.cwd(), 'package.json'));
@@ -175,14 +177,18 @@ switch (pkg.name) {
     // We only want to publish the linux or osx package from a Travis instance running on the correct os
     if (pkg.name === 'google-closure-compiler-linux' && process.platform !== 'linux' ||
         pkg.name === 'google-closure-compiler-osx' && process.platform !== 'darwin') {
-      logToFile(`    skipping publication of ${pkg.name} - wrong platform`);
+      logMessageQueue.push(`    skipping publication of ${pkg.name} - wrong platform`);
       process.exitCode = 0;
     } else {
       npmPublish(pkg)
-          .then(() => logToFile('  ✅ publish succeeded'))
+          .then(() => {
+            logMessageQueue.push('  ✅ publish succeeded');
+            logToFile(logMessageQueue.join('\n'));
+          })
           .catch(err => {
             process.exitCode = 1;
-            logToFile('   ❌ publish failed');
+            logMessageQueue.push('   ❌ publish failed');
+            logToFile(logMessageQueue.join('\n'));
             return Promise.reject(err);
           });
     }
@@ -190,10 +196,14 @@ switch (pkg.name) {
 
   default:
     npmPublish(pkg)
-        .then(() => logToFile('  ✅ publish succeeded'))
+        .then(() => {
+          logMessageQueue.push('  ✅ publish succeeded');
+          logToFile(logMessageQueue.join('\n'));
+        })
         .catch(err => {
           process.exitCode = 1;
-          logToFile('   ❌ publish failed');
+          logMessageQueue.push('   ❌ publish failed');
+          logToFile(logMessageQueue.join('\n'));
           return Promise.reject(err);
         });
     break;

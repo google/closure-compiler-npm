@@ -1,5 +1,5 @@
 {
-  "name": "google-closure-compiler-java",
+  "name": "@banno/google-closure-compiler-java",
   "version": "20181028.0.0",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler using Java",
   "main": "index.js",

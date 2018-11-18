@@ -164,7 +164,7 @@ if (/publish/.test(process.argv[2])) {
   // Make sure the compiler version matches the package major version before publishing
   const compilerVersionMatch = require(path.resolve(__dirname, 'version-match.js'));
   const lernaConfig = require(path.resolve(__dirname, '..', 'lerna.json'));
-  const Compiler = require('google-closure-compiler').compiler;
+  const Compiler = require('@banno/google-closure-compiler').compiler;
   const compiler = new Compiler({version: true});
   compiler.run((exitCode, stdout) => {
     let versionInfo = (stdout || '').match(compilerVersionMatch);

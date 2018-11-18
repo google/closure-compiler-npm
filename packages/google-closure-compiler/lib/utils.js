@@ -18,13 +18,13 @@
 function getNativeImagePath() {
   if (process.platform === 'darwin') {
     try {
-      return require('google-closure-compiler-osx');
+      return require('@banno/google-closure-compiler-osx');
     } catch (e) {
       return;
     }
   }
   try {
-    return require('google-closure-compiler-linux');
+    return require('@banno/google-closure-compiler-linux');
   } catch (e) {
   }
 }

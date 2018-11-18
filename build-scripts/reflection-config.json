@@ -245,5 +245,47 @@
     "allDeclaredFields" : true,
     "allPublicMethods" : true,
     "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.Requirement",
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.Requirement$Builder",
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.Requirement$WhitelistEntry",
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.Requirement$Type",
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.Requirement$TypeMatchingStrategy",
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name" : "com.google.javascript.jscomp.Requirement$Severity",
+    "allDeclaredMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicMethods" : true,
+    "allPublicFields" : true
   }
 ]

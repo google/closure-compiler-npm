@@ -9,7 +9,7 @@ Any bugs not related to the plugins themselves should be reported to the
 
 ## Packages
 
-The compiler is distributed for multiple platforms. Each platform is it's own npm package.
+The compiler is distributed for multiple platforms. Each platform is its own npm package.
 
 ### Main Package
 

@@ -184,7 +184,7 @@ module.exports = function(initOptions) {
         });
 
         compilerProcess.stdin.on('error', err => {
-          this.emit('Error', new PluginError(this.PLUGIN_NAME_,
+          this.emit('error', new PluginError(this.PLUGIN_NAME_,
               'Error writing to stdin of the compiler.\n' + err.message));
           cb();
         });

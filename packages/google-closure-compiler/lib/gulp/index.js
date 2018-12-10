@@ -30,7 +30,13 @@
 
 class CustomError extends Error {
   constructor(plugin, message) {
-    super(`${plugin}: ${message}`);
+    if (message instanceof Error) {
+      super(`Error in ${plugin}`);
+      this.original = message
+      this.stack = `${this.stack.split('\n').slice(0,2).join('\n')}\n${this.stack}`;
+    } else {
+      super(`${plugin}: ${message}`);
+    }
   }
 }
 

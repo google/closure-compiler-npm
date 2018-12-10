@@ -4,7 +4,7 @@
   ],
   "npmClient": "yarn",
   "useWorkspaces": true,
-  "version": "20181205.0.0",
+  "version": "20181209.0.0-webpack-beta",
   "ignoreChanges": [
     "**/compiler/**"
   ]

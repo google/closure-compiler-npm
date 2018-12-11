@@ -156,28 +156,35 @@ function main(argv) {
 // match both the "publish" and "publish-travis" lerna commands
 if (/publish/.test(process.argv[2])) {
   // Looks like we're trying to publish packages
-  // Don't publish for cron jobs
-  if (process.env.COMPILER_NIGHTLY) {
-    process.exit(0);
-  }
-
-  // Make sure the compiler version matches the package major version before publishing
-  const compilerVersionMatch = require(path.resolve(__dirname, 'version-match.js'));
   const lernaConfig = require(path.resolve(__dirname, '..', 'lerna.json'));
-  const Compiler = require('google-closure-compiler').compiler;
-  const compiler = new Compiler({version: true});
-  compiler.run((exitCode, stdout) => {
-    let versionInfo = (stdout || '').match(compilerVersionMatch);
-    versionInfo = versionInfo || [];
-    let packageVersion = new Semver(lernaConfig.version);
-    if (versionInfo.length < 2 || parseInt(versionInfo[1]) !== packageVersion.major) {
-      console.log('Package major version does not match compiler version - skipping publication');
-      console.log(stdout);
+  const packageVersion = new Semver(lernaConfig.version);
+
+  // If publishing nightly images, the compiler version will be a snapshot
+  if (process.env.COMPILER_NIGHTLY) {
+    if (!packageVersion.prerelease.includes('nightly')) {
+      console.log('Package version does not have a nightly prerelease component');
       process.exit(0);
     }
-    // Invoke the cli with arguments
-    main(process.argv.slice(2));
-  });
+    // Add the nightly tag so we don't publish this as the "latest" tag
+    main(process.argv.slice(2).concat(['--npm-tag', 'nightly']));
+  } else {
+    // Make sure the compiler version matches the package major version before publishing
+    const compilerVersionMatch = require(path.resolve(__dirname, 'version-match.js'));
+
+    const Compiler = require('google-closure-compiler').compiler;
+    const compiler = new Compiler({version: true});
+    compiler.run((exitCode, stdout) => {
+      let versionInfo = (stdout || '').match(compilerVersionMatch);
+      versionInfo = versionInfo || [];
+      if (versionInfo.length < 2 || parseInt(versionInfo[1]) !== packageVersion.major) {
+        console.log('Package major version does not match compiler version - skipping publication');
+        console.log(stdout);
+        process.exit(0);
+      }
+      // Invoke the cli with arguments
+      main(process.argv.slice(2));
+    });
+  }
 } else {
   // Invoke the cli with arguments
   main(process.argv.slice(2));

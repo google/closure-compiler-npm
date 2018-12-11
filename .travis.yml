@@ -56,7 +56,13 @@ before_script: yarn run build --colors=always
 
 script: yarn test --colors
 
-before_deploy: build-scripts/add-os-restrictions.js
+before_deploy:
+  # If this is the daily cron job, create a nightly release version
+  - if [ $COMPILER_NIGHTLY = "1" ]; then build-scripts/create-nightly-version.js; fi
+  # The linux and osx packages need OS restrictions added to their package.json files.
+  # This cannot be added before now or the workspace install breaks.
+  # This leaves the working directory dirty so must be the last command before publication.
+  - build-scripts/add-os-restrictions.js
 
 deploy:
   skip_cleanup: true

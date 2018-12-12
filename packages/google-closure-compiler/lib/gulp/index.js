@@ -28,12 +28,17 @@
 
 'use strict';
 
+/**
+ * Rethrow an error with a custom message.
+ * @see https://stackoverflow.com/a/42755876/1211524
+ */
 class CustomError extends Error {
   constructor(plugin, message) {
     if (message instanceof Error) {
       super(`Error in ${plugin}`);
-      this.original = message
-      this.stack = `${this.stack.split('\n').slice(0,2).join('\n')}\n${this.stack}`;
+      this.original = message;
+      // Compose both the current stack and the original stack
+      this.stack = `${this.stack.split('\n').slice(0,2).join('\n')}\n${message.stack}`;
     } else {
       super(`${plugin}: ${message}`);
     }

@@ -28,9 +28,20 @@
 
 'use strict';
 
+/**
+ * Rethrow an error with a custom message.
+ * @see https://stackoverflow.com/a/42755876/1211524
+ */
 class CustomError extends Error {
   constructor(plugin, message) {
-    super(`${plugin}: ${message}`);
+    if (message instanceof Error) {
+      super(`Error in ${plugin}`);
+      this.original = message;
+      // Compose both the current stack and the original stack
+      this.stack = `${this.stack.split('\n').slice(0,2).join('\n')}\n${message.stack}`;
+    } else {
+      super(`${plugin}: ${message}`);
+    }
   }
 }
 
@@ -212,6 +223,9 @@ module.exports = function(initOptions) {
 
           this._compilationComplete(code, outputFiles, stdErrData);
           cb();
+        }).catch(err => {
+          this.emit('error', new PluginError(this.PLUGIN_NAME_, err, { showStack: true }));
+          cb();
         });
 
         const stdInStream = new stream.Readable({ read: function() {}});
@@ -222,15 +236,15 @@ module.exports = function(initOptions) {
     }
 
     _compilationComplete(exitCode, compiledJs, errors) {
-      // non-zero exit means a compilation error
-      if (exitCode !== 0) {
-        this.emit('error', new PluginError(this.PLUGIN_NAME_, `Compilation error: ${errors}`));
-      }
-
       // standard error will contain compilation warnings, log those
       if (errors && errors.trim().length > 0) {
         const logger = this.logger_.warn ? this.logger_.warn : this.logger_;
         logger(`${chalk.yellow(this.PLUGIN_NAME_)}: ${errors}`);
+      }
+
+      // non-zero exit means a compilation error
+      if (exitCode !== 0) {
+        this.emit('error', new PluginError(this.PLUGIN_NAME_, `Compilation errors occurred`));
       }
 
       // If present, standard output will be a string of JSON encoded files.

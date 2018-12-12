@@ -21,6 +21,7 @@
  */
 
 const {spawnSync} = require('child_process');
+const glob = require('glob');
 
 const today = new Date();
 const month = (today.getMonth() < 9 ? '0' : '') + (today.getMonth() + 1).toString();
@@ -29,8 +30,18 @@ const day = (today.getDate() < 10 ? '0' : '') + today.getDate().toString();
 // Version number is today's date with a -nightly prerelease suffix.
 const nightlyVersion = `${today.getFullYear()}${month}${day}.0.0-nightly`;
 
-// Lerna won't release packages on an already release tagged commit.
-// Create a new empty commit for this nightly release.
+// Lerna won't release packages on an already release tagged commit or
+// on a disconnected HEAD. Create a branch then an empty commit for this nightly release.
+spawnSync(
+    'git',
+    [
+      'checkout',
+      '-b',
+      `publish-${nightlyVersion}`
+    ],
+    {
+      stdio: 'inherit',
+    });
 spawnSync(
     'git',
     [
@@ -42,8 +53,6 @@ spawnSync(
     {
       stdio: 'inherit',
     });
-
-const glob = require('glob');
 
 // Get the list of packages in this repo
 const packages = glob.sync('packages/google-closure-compiler*')

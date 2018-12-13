@@ -32,27 +32,14 @@ const nightlyVersion = `${today.getFullYear()}${month}${day}.0.0-nightly`;
 
 // Lerna won't release packages on an already release tagged commit or
 // on a disconnected HEAD. Create a branch then an empty commit for this nightly release.
-spawnSync(
-    'git',
-    [
-      'checkout',
-      '-b',
-      `publish-${nightlyVersion}`
-    ],
-    {
-      stdio: 'inherit',
-    });
-spawnSync(
-    'git',
-    [
-      'commit',
-      '--allow-empty',
-      '-m',
-      `Create version for nightly release ${nightlyVersion}`
-    ],
-    {
-      stdio: 'inherit',
-    });
+function runGitCmd(args) {
+  spawnSync('git', args, { stdio: 'inherit' });
+}
+runGitCmd(['checkout', '-b', `publish-${nightlyVersion}`]);
+runGitCmd(['add', 'compiler']);
+runGitCmd(['add', 'packages/google-closure-compiler-linux/package.json']);
+runGitCmd(['add', 'packages/google-closure-compiler-osx/package.json']);
+runGitCmd(['commit', '-m', `Create version for nightly release ${nightlyVersion}`]);
 
 // Get the list of packages in this repo
 const packages = glob.sync('packages/google-closure-compiler*')

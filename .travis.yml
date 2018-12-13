@@ -37,7 +37,7 @@ before_install:
   # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
   # https://stackoverflow.com/a/36982050/1211524
   - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
-  #Install yarn version 1.10 by downloading its install script and executing it in bash
+  # Install yarn version 1.10 by downloading its install script and executing it in bash
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
   - export PATH="$HOME/.yarn/bin:$PATH"
   # For a cron job on travis, test the latest commit on the compiler submodule branch.
@@ -57,12 +57,11 @@ before_script: yarn run build --colors=always
 script: yarn test --colors
 
 before_deploy:
-  # If this is the daily cron job, create a nightly release version
-  - if [ $COMPILER_NIGHTLY = "1" ]; then build-scripts/create-nightly-version.js; fi
   # The linux and osx packages need OS restrictions added to their package.json files.
   # This cannot be added before now or the workspace install breaks.
-  # This leaves the working directory dirty so must be the last command before publication.
   - build-scripts/add-os-restrictions.js
+  # If this is the daily cron job, create a nightly release version
+  - if [ $COMPILER_NIGHTLY = "1" ]; then build-scripts/create-nightly-version.js; fi
 
 deploy:
   skip_cleanup: true

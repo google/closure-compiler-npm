@@ -37,15 +37,15 @@
   "homepage": "https://developers.google.com/closure/compiler/",
   "dependencies": {
     "chalk": "^1.0.0",
-    "google-closure-compiler-java": "^20190215.0.1",
-    "google-closure-compiler-js": "^20190215.0.1",
+    "google-closure-compiler-java": "^20190215.0.2",
+    "google-closure-compiler-js": "^20190215.0.2",
     "minimist": "^1.2.0",
     "vinyl": "^2.0.1",
     "vinyl-sourcemaps-apply": "^0.2.0"
   },
   "optionalDependencies": {
-    "google-closure-compiler-linux": "^20190215.0.1",
-    "google-closure-compiler-osx": "^20190215.0.1"
+    "google-closure-compiler-linux": "^20190215.0.2",
+    "google-closure-compiler-osx": "^20190215.0.2"
   },
   "devDependencies": {
     "gulp": "^3.9.0",

@@ -32,6 +32,7 @@
   },
   "scripts": {
     "build": "./build-scripts/build.sh",
-    "test": "./build-scripts/test.sh"
+    "test": "./build-scripts/test.sh",
+    "clean": "./build-scripts/clean.sh"
   }
 }

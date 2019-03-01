@@ -28,5 +28,8 @@
   "scripts": {
     "build": "./build-image.js",
     "test": "./test.js"
-  }
+  },
+  "os": [
+    "linux"
+  ]
 }

@@ -116,7 +116,7 @@ module.exports = function(initOptions) {
 
     _transform(file, enc, cb) {
       // ignore empty files
-      if (file.isNull()) {
+      if (!file || file.isNull()) {
         cb();
         return;
       }
@@ -143,7 +143,7 @@ module.exports = function(initOptions) {
       } else {
         // If files in the stream were required, no compilation needed here.
         if (this._streamInputRequired) {
-          this.emit('end');
+          this.push(null);
           cb();
           return;
         }
@@ -230,8 +230,10 @@ module.exports = function(initOptions) {
 
         const stdInStream = new stream.Readable({ read: function() {}});
         stdInStream.pipe(compilerProcess.stdin);
-        stdInStream.push(JSON.stringify(jsonFiles));
-        stdInStream.push(null);
+        process.nextTick(() => {
+          stdInStream.push(JSON.stringify(jsonFiles));
+          stdInStream.push(null);
+        });
       }
     }
 

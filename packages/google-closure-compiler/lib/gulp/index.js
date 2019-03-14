@@ -185,19 +185,14 @@ module.exports = function(initOptions) {
         compilerProcess.stderr.on('data', data => {
           stdErrData += data;
         });
-        let launchDidError = false;
         // Error events occur when there was a problem spawning the compiler process
         compilerProcess.on('error', err => {
-          launchDidError = true;
           this.emit('error', new PluginError(this.PLUGIN_NAME_,
               'Process spawn error. Is java in the path?\n' + err.message));
           cb();
         });
-
         compilerProcess.stdin.on('error', err => {
-          this.emit('error', new PluginError(this.PLUGIN_NAME_,
-              'Error writing to stdin of the compiler.\n' + err.message));
-          cb();
+          stdErrData += `Error writing to stdin of the compiler. ${err.message}`;
         });
 
         Promise.all([

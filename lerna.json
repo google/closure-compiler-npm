@@ -4,7 +4,7 @@
   ],
   "npmClient": "yarn",
   "useWorkspaces": true,
-  "version": "20190513.0.0",
+  "version": "20190528.0.0",
   "ignoreChanges": [
     "**/compiler/**"
   ]

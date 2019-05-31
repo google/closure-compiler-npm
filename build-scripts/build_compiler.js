@@ -31,7 +31,7 @@
  */
 'use strict';
 
-const {spawn, spawnSync} = require('child_process');
+const {spawn, spawnSync, execFile, execFileSync} = require('child_process');
 const ncp = require('ncp');
 const fs = require('fs');
 const path = require('path');
@@ -87,12 +87,13 @@ function copyCompilerBinaries() {
   ]);
 }
 
+const mvnCmd = process.platform !== 'win32' ? 'mvn' : 'c:\\Program Files\\Apache Maven\\bin\\mvn.cmd';
+
 if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
   const extraMvnArgs = process.env.TRAVIS ? ['-Dstyle.color=always'] : [];
-
-  spawnSync('mvn', extraMvnArgs.concat(['clean']), {cwd: './compiler', stdio: 'inherit'});
+  spawnSync(mvnCmd, extraMvnArgs.concat(['clean']), {cwd: './compiler', stdio: 'inherit'});
   const compilerBuild = spawn(
-      'mvn',
+      mvnCmd,
       extraMvnArgs.concat([
         '-DskipTests',
         '-pl',
@@ -101,7 +102,7 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
       ]),
       {
         cwd: './compiler',
-        stdio: 'inherit',
+        stdio: 'inherit'
       });
   compilerBuild.on('error', err => {
     throw err;

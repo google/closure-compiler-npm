@@ -9,11 +9,13 @@ branches:
   only:
     - master
 
+filter_secrets: false
+
 env:
   # Force maven to use colorized output
   MAVEN_OPTS="-Djansi.force=true"
 
-#before_install:
+before_install:
   - echo $TRAVIS_OS_NAME
   # On Windows, install openjdk8 and maven
   - choco install adoptopenjdk8 --version 8.212

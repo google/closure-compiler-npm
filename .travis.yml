@@ -1,7 +1,6 @@
 language: node_js
 
-os:
- - windows
+os: windows
 
 node_js: '10'
 
@@ -10,30 +9,20 @@ branches:
   only:
     - master
 
+filter_secrets: false
+
 env:
   # Force maven to use colorized output
   MAVEN_OPTS="-Djansi.force=true"
 
 #before_install:
-#  - echo $TRAVIS_OS_NAME
-#  # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
-#  # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
-#  # https://stackoverflow.com/a/36982050/1211524
-#  - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
-#  # On Windows, install openjdk8 and maven
-#  - if [ $TRAVIS_OS_NAME = "windows" ]; then choco install adoptopenjdk8 --version 8.212; choco install maven; fi
-#  # Install yarn version 1.10 by downloading its install script and executing it in bash
-#  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
-#  - export PATH="$HOME/.yarn/bin:$PATH"
-#  # For a cron job on travis, test the latest commit on the compiler submodule branch.
-#  # Disables tests ensuring the submodule is on a tagged commit.
-#  # Move the submodule pointer to the latest master branch commit.
-#  # Pipe the latest commit output through cat to log it to the console for debugging
-#  - if [ $TRAVIS_EVENT_TYPE = "cron" ]; then
-#      export COMPILER_NIGHTLY=1;
-#      cd compiler && git checkout master && git pull origin master && git log -1 | cat;
-#      cd ..;
-#    fi
+  - echo $TRAVIS_OS_NAME
+  # On Windows, install openjdk8 and maven
+  - choco install adoptopenjdk8 --version 8.212
+  - choco install maven
+  # Install yarn version 1.10 by downloading its install script and executing it in bash
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
+  - export PATH="$HOME/.yarn/bin:$PATH"
 
 install: yarn install --colors=always
 

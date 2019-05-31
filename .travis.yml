@@ -1,8 +1,7 @@
 language: node_js
 
 os:
- - linux
- - osx
+ - windows
 
 # Use Java 8
 osx_image: xcode9.3
@@ -33,10 +32,13 @@ cache:
     - $HOME/.m2
 
 before_install:
+  - echo $TRAVIS_OS_NAME
   # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
   # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
   # https://stackoverflow.com/a/36982050/1211524
   - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
+  # On Windows, install openjdk8 and maven
+  - if [ $TRAVIS_OS_NAME = "windows" ]; then choco install adoptopenjdk8 --version 8.212; choco install maven; fi
   # Install yarn version 1.10 by downloading its install script and executing it in bash
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
   - export PATH="$HOME/.yarn/bin:$PATH"

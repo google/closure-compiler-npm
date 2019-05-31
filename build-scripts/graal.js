@@ -96,6 +96,11 @@ const NATIVE_IMAGE_BUILD_ARGS = [
 let buildSteps = Promise.resolve();
 // Download Graal
 const GRAAL_ARCHIVE_FILE = `${GRAAL_FOLDER}.tar.gz`;
+// Build the compiler native image.
+const GRAAL_BIN_FOLDER = path.resolve(
+    TEMP_PATH,
+    `graalvm-ce-${GRAAL_VERSION}`,
+    ...(GRAAL_OS === 'macos' ? ['Contents', 'Home'] : []).concat(['bin']));
 if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
   buildSteps = buildSteps
       .then(() => {
@@ -106,14 +111,19 @@ if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
               {cwd: TEMP_PATH});
         }
       })
+      .then(() => {
+        if (GRAAL_OS === 'windows') {
+          return Promise.resolve();
+        }
+        return runCommand('gu install native-image', {cwd: GRAAL_BIN_FOLDER})
+      })
       .then(() => runCommand(`tar -xzf ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH}));
 }
 
 // Build the compiler native image.
 const GRAAL_NATIVE_IMAGE_PATH = path.resolve(
-    TEMP_PATH,
-    `graalvm-ce-${GRAAL_VERSION}`,
-    ...(GRAAL_OS === 'macos' ? ['Contents', 'Home'] : []).concat(['bin', 'native-image']));
+    GRAAL_BIN_FOLDER,
+    'native-image');
 
 // Unlike the mx launched version, the native binary must not have quotes around arguments
 buildSteps = buildSteps.then(

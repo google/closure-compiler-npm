@@ -100,8 +100,9 @@ const GRAAL_ARCHIVE_FILE = `${GRAAL_FOLDER}.tar.gz`;
 const GRAAL_BIN_FOLDER = path.resolve(
     TEMP_PATH,
     `graalvm-ce-${GRAAL_VERSION}`,
-    ...(GRAAL_OS === 'macos' ? ['Contents', 'Home'] : []).concat(['bin']));
+    ...(GRAAL_OS === 'darwin' ? ['Contents', 'Home'] : []).concat(['bin']));
 if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
+  const GRAAL_GU_PATH = path.resolve(GRAAL_BIN_FOLDER, 'gu');
   buildSteps = buildSteps
       .then(() => {
         // Download graal and extract the contents
@@ -111,13 +112,13 @@ if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
               {cwd: TEMP_PATH});
         }
       })
+      .then(() => runCommand(`tar -xzf ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH}))
       .then(() => {
         if (GRAAL_OS === 'windows') {
           return Promise.resolve();
         }
-        return runCommand('gu install native-image', {cwd: GRAAL_BIN_FOLDER})
-      })
-      .then(() => runCommand(`tar -xzf ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH}));
+        return runCommand(`${GRAAL_GU_PATH} install native-image`);
+      });
 }
 
 // Build the compiler native image.

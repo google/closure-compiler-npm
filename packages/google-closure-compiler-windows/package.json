@@ -1,0 +1,32 @@
+{
+  "name": "google-closure-compiler-windows",
+  "version": "20190528.0.0",
+  "description": "Check, compile, optimize and compress Javascript with Closure-Compiler using Java",
+  "main": "index.js",
+  "repository": "https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-windows",
+  "homepage": "https://developers.google.com/closure/compiler/",
+  "author": "Chad Killingsworth <chadkillingsworth@gmail.com>",
+  "license": "Apache-2.0",
+  "keywords": [
+    "javascript",
+    "compiler",
+    "optimizer",
+    "minifier",
+    "closure",
+    "java"
+  ],
+  "files": [
+    "compiler",
+    "index.js",
+    "package.json",
+    "readme.md"
+  ],
+  "cpu": [
+    "x64",
+    "x86"
+  ],
+  "scripts": {
+    "build": "./build-image.js",
+    "test": "./test.js"
+  }
+}

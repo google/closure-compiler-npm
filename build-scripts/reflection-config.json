@@ -37,7 +37,13 @@
     "name" : "com.google.javascript.jscomp.AbstractCommandLineRunner$JsonFileSpec",
     "allDeclaredConstructors" : true,
     "allDeclaredMethods": true,
-    "allDeclaredFields": true
+    "allDeclaredFields": true,
+    "fields" : [
+      { "name" : "src", "allowWrite" : true },
+      { "name" : "path", "allowWrite" : true },
+      { "name" : "sourceMap", "allowWrite" : true },
+      { "name" : "webpackId", "allowWrite" : true }
+    ]
   },
   {
     "name" : "org.kohsuke.args4j.CmdLineParser",

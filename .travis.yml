@@ -1,8 +1,9 @@
 jobs:
+  allow_failures:
+    - os: windows
   include:
     - os: windows
       language: sh
-      filter_secrets: false
       node_js: '10'
 
 # safelist

@@ -27,6 +27,7 @@ before_install:
 install: yarn install --colors=always
 
 before_script:
+  - echo $JAVA_HOME
   - export MVN_PATH="$(which mvn)"
   - node ./build-scripts/build_compiler.js
 

@@ -1,8 +1,9 @@
-language: node_js
-
-os: windows
-
-node_js: '10'
+jobs:
+  include:
+    - os: windows
+      language: sh
+      filter_secrets: false
+      node_js: '10'
 
 # safelist
 branches:

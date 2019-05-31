@@ -16,6 +16,8 @@ matrix:
       node_js: '10'
     - os: linux
       node_js: '6'
+    - os: windows
+        node_js: '6'
 
 # safelist
 branches:

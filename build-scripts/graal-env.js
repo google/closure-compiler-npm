@@ -15,8 +15,7 @@
  */
 'use strict';
 
-const GRAAL_OS = process.platform === 'darwin' ? 'macos' :
-    (process.platform === 'win32' ? 'windows' : process.platform);
+const GRAAL_OS = process.platform === 'win32' ? 'windows' : process.platform;
 const GRAAL_VERSION = process.env.GRAAL_VERSION || '19.0.0';
 const GRAAL_FOLDER = `graalvm-ce-${GRAAL_OS}-amd64-${GRAAL_VERSION}`;
 const GRAAL_URL = process.env.GRAAL_URL ||

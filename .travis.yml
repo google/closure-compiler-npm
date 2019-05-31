@@ -1,17 +1,13 @@
-jobs:
-  allow_failures:
-    - os: windows
-  include:
-    - os: windows
-      language: sh
-      node_js: '10'
+language: node_js
+
+os: windows
+
+node_js: '10'
 
 # safelist
 branches:
   only:
     - master
-
-filter_secrets: false
 
 env:
   # Force maven to use colorized output

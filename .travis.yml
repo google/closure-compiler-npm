@@ -14,26 +14,26 @@ env:
   # Force maven to use colorized output
   MAVEN_OPTS="-Djansi.force=true"
 
-before_install:
-  - echo $TRAVIS_OS_NAME
-  # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
-  # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
-  # https://stackoverflow.com/a/36982050/1211524
-  - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
-  # On Windows, install openjdk8 and maven
-  - if [ $TRAVIS_OS_NAME = "windows" ]; then choco install adoptopenjdk8 --version 8.212; choco install maven; fi
-  # Install yarn version 1.10 by downloading its install script and executing it in bash
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
-  - export PATH="$HOME/.yarn/bin:$PATH"
-  # For a cron job on travis, test the latest commit on the compiler submodule branch.
-  # Disables tests ensuring the submodule is on a tagged commit.
-  # Move the submodule pointer to the latest master branch commit.
-  # Pipe the latest commit output through cat to log it to the console for debugging
-  - if [ $TRAVIS_EVENT_TYPE = "cron" ]; then
-      export COMPILER_NIGHTLY=1;
-      cd compiler && git checkout master && git pull origin master && git log -1 | cat;
-      cd ..;
-    fi
+#before_install:
+#  - echo $TRAVIS_OS_NAME
+#  # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
+#  # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
+#  # https://stackoverflow.com/a/36982050/1211524
+#  - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
+#  # On Windows, install openjdk8 and maven
+#  - if [ $TRAVIS_OS_NAME = "windows" ]; then choco install adoptopenjdk8 --version 8.212; choco install maven; fi
+#  # Install yarn version 1.10 by downloading its install script and executing it in bash
+#  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
+#  - export PATH="$HOME/.yarn/bin:$PATH"
+#  # For a cron job on travis, test the latest commit on the compiler submodule branch.
+#  # Disables tests ensuring the submodule is on a tagged commit.
+#  # Move the submodule pointer to the latest master branch commit.
+#  # Pipe the latest commit output through cat to log it to the console for debugging
+#  - if [ $TRAVIS_EVENT_TYPE = "cron" ]; then
+#      export COMPILER_NIGHTLY=1;
+#      cd compiler && git checkout master && git pull origin master && git log -1 | cat;
+#      cd ..;
+#    fi
 
 install: yarn install --colors=always
 
@@ -41,16 +41,16 @@ before_script: yarn run build --colors=always
 
 script: yarn test --colors
 
-before_deploy:
-  # The linux and osx packages need OS restrictions added to their package.json files.
-  # This cannot be added before now or the workspace install breaks.
-  - build-scripts/add-os-restrictions.js
-  # If this is the daily cron job, create a nightly release version
-  - if [ $COMPILER_NIGHTLY = "1" ]; then build-scripts/create-nightly-version.js; fi
-
-deploy:
-  skip_cleanup: true
-  provider: script
-  script: build-scripts/lerna-publish.js publish-travis --npm-client ${TRAVIS_BUILD_DIR}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes
-  on:
-    branch: master
+#before_deploy:
+#  # The linux and osx packages need OS restrictions added to their package.json files.
+#  # This cannot be added before now or the workspace install breaks.
+#  - build-scripts/add-os-restrictions.js
+#  # If this is the daily cron job, create a nightly release version
+#  - if [ $COMPILER_NIGHTLY = "1" ]; then build-scripts/create-nightly-version.js; fi
+#
+#deploy:
+#  skip_cleanup: true
+#  provider: script
+#  script: build-scripts/lerna-publish.js publish-travis --npm-client ${TRAVIS_BUILD_DIR}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes
+#  on:
+#    branch: master

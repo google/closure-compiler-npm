@@ -19,7 +19,7 @@ before_install:
   - echo $TRAVIS_OS_NAME
   # On Windows, install openjdk8 and maven
   - choco install adoptopenjdk8 --version 8.212
-  - which java
+  - export JAVA_HOME="C:\\Program\ Files\\AdoptOpenJDK\\$(ls -l1 C:\\Program\ Files\\AdoptOpenJD | head -1)"
   - choco install maven
   # Install yarn version 1.10 by downloading its install script and executing it in bash
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1

@@ -87,7 +87,7 @@ function copyCompilerBinaries() {
   ]);
 }
 
-const mvnCmd = process.platform !== 'win32' ? 'mvn' : 'c:\\Program Files\\Apache Maven\\bin\\mvn.cmd';
+const mvnCmd = process.env.MVN_PATH || process.platform !== 'win32' ? 'mvn' : 'c:\\Program Files\\Apache Maven\\bin\\mvn.cmd';
 
 if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
   const extraMvnArgs = process.env.TRAVIS ? ['-Dstyle.color=always'] : [];

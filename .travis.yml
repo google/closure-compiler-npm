@@ -26,7 +26,7 @@ before_install:
 
 install: yarn install --colors=always
 
-before_script: yarn run build --colors=always
+before_script: ./build/build_compiler.sh
 
 script: yarn test --colors
 

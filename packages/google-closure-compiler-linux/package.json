@@ -26,7 +26,7 @@
     "x86"
   ],
   "scripts": {
-    "build": "node ./build-image.js",
+    "build": "./build-image.js",
     "test": "./test.js"
   }
 }

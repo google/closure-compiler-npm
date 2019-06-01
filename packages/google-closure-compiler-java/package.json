@@ -22,7 +22,7 @@
     "readme.md"
   ],
   "scripts": {
-    "build": "node ./build.js",
+    "build": "./build.js",
     "test": "./test.js"
   }
 }

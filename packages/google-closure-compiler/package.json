@@ -61,7 +61,7 @@
     "stream-assert": "^2.0.3"
   },
   "scripts": {
-    "build": "build.js",
+    "build": "./build.js",
     "test": "mocha"
   },
   "engines": {

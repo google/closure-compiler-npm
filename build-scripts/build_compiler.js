@@ -53,7 +53,7 @@ let compilerVersion = getCompilerVersionFromPomXml();
 const compilerJavaBinaryPath = `./compiler/target/closure-compiler-${compilerVersion}.jar`;
 const compilerJsBinaryPath = `./compiler/target/closure-compiler-gwt-${compilerVersion}/jscomp/jscomp.js`;
 
-console.log(process.platform, process.arch, compilerVersion);
+console.log(process.platform, process.arch, compilerVersion, process.env.JAVA_HOME);
 
 /**
  * @param {string} src path to source file or folder
@@ -87,13 +87,11 @@ function copyCompilerBinaries() {
   ]);
 }
 
-const mvnCmd = process.env.MVN_PATH || process.platform !== 'win32' ? 'mvn' : 'c:\\Program Files\\Apache Maven\\bin\\mvn.cmd';
-
 if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
   const extraMvnArgs = process.env.TRAVIS ? ['-Dstyle.color=always'] : [];
-  spawnSync(mvnCmd, extraMvnArgs.concat(['clean']), {cwd: './compiler', stdio: 'inherit'});
+  spawnSync('mvn', extraMvnArgs.concat(['clean']), {cwd: './compiler', stdio: 'inherit'});
   const compilerBuild = spawn(
-      mvnCmd,
+      'mvn',
       extraMvnArgs.concat([
         '-DskipTests',
         '-pl',

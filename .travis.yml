@@ -56,7 +56,9 @@ before_install:
 
 install: yarn install --colors=always
 
-before_script: yarn run build --colors=always
+before_script:
+  - ./build-scripts/build_compiler.js --colors=always
+  - yarn workspaces run build --colors=always
 
 script: echo "done"
 

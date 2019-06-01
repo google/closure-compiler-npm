@@ -29,7 +29,10 @@ install: yarn install --colors=always
 
 before_script:
   - echo $JAVA_HOME
-  - export MVN_PATH="$(which mvn)"
+  - cd compiler
+  - mvn -Dstyle.color=always clean
+  - mvn -Dstyle.color=always -DskipTests -pl externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml install
+  - cd ..
   - node ./build-scripts/build_compiler.js
 
 script: yarn test --colors

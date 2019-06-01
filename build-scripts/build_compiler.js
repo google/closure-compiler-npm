@@ -31,7 +31,7 @@
  */
 'use strict';
 
-const {spawn, spawnSync, execFile, execFileSync} = require('child_process');
+const {spawn, spawnSync} = require('child_process');
 const ncp = require('ncp');
 const fs = require('fs');
 const path = require('path');
@@ -53,7 +53,7 @@ let compilerVersion = getCompilerVersionFromPomXml();
 const compilerJavaBinaryPath = `./compiler/target/closure-compiler-${compilerVersion}.jar`;
 const compilerJsBinaryPath = `./compiler/target/closure-compiler-gwt-${compilerVersion}/jscomp/jscomp.js`;
 
-console.log(process.platform, process.arch, compilerVersion, process.env.JAVA_HOME);
+console.log(process.platform, process.arch, compilerVersion);
 
 /**
  * @param {string} src path to source file or folder
@@ -89,6 +89,7 @@ function copyCompilerBinaries() {
 
 if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
   const extraMvnArgs = process.env.TRAVIS ? ['-Dstyle.color=always'] : [];
+
   spawnSync('mvn', extraMvnArgs.concat(['clean']), {cwd: './compiler', stdio: 'inherit'});
   const compilerBuild = spawn(
       'mvn',
@@ -100,7 +101,7 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
       ]),
       {
         cwd: './compiler',
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
   compilerBuild.on('error', err => {
     throw err;

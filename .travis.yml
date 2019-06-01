@@ -26,13 +26,7 @@ before_install:
 
 install: yarn install --colors=always
 
-before_script:
-#  - cd compiler
-#  - which mvn
-#  - mvn -Dstyle.color=always clean
-#  - mvn -Dstyle.color=always -DskipTests -pl externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml install
-#  - cd ..
-  - node ./build-scripts/build_compiler.js
+before_script: yarn run build --colors=always
 
 script: yarn test --colors
 

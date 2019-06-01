@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
  * Copyright 2019 The Closure Compiler Authors.
  *
@@ -14,5 +15,4 @@
  * limitations under the License.
  */
 
-const path = require('path');
-module.exports = path.resolve(__dirname, 'compiler');
+process.stdout.write('google-closure-compiler-java build\n');

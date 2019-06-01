@@ -22,7 +22,7 @@
     "readme.md"
   ],
   "scripts": {
-    "build": "echo \"google-closure-compiler-java build\"",
+    "build": "./build.js",
     "test": "./test.js"
   }
 }

@@ -20,7 +20,7 @@
     "readme.md"
   ],
   "scripts": {
-    "build": "echo \"google-closure-compiler-js build\"",
+    "build": "./build.js",
     "test": "./test.js"
   }
 }

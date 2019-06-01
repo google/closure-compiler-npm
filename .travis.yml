@@ -35,6 +35,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
   # On Windows, install jdk, maven and configure yarn/npm to use bash
   - if [ $TRAVIS_OS_NAME = "windows" ]; then
+      choco install git;
       choco install maven;
       export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";
       ls -l "C:\\Program Files\\git";

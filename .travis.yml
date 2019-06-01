@@ -37,8 +37,8 @@ before_install:
   - if [ $TRAVIS_OS_NAME = "windows" ]; then
       choco install maven;
       export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";
-      ls C:\\Program Files\\Git
-      ls C:\\Program Files\\Git\\bin
+      ls C:\\Program\ Files\\Git
+      ls C:\\Program\ Files\\Git\\bin
       npm config set script-shell "C:\\Program Files\\Git\\git-bash.exe";
     fi
   # Install yarn version 1.10 by downloading its install script and executing it in bash

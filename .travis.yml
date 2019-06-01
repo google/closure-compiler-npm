@@ -27,6 +27,7 @@ cache:
   yarn: true
   directories:
     - $HOME/.m2
+    - $LOCALAPPDATA/Yarn/config/global # windows only
 
 before_install:
   # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
@@ -55,6 +56,9 @@ before_install:
 install: yarn install --colors=always
 
 before_script:
+  - cd packages/google-closure-compiler
+  - yarn run build
+  - cd ../..
   - ./build-scripts/build_compiler.js --colors=always
   - yarn workspaces run build --colors=always
 

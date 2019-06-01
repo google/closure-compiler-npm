@@ -31,9 +31,13 @@ before_install:
 
 install: yarn install --colors=always
 
-before_script: ./build-scripts/build_compiler.js --colors=always && yarn workspaces run build --colors=always
+before_script:
+  - node ./build-scripts/build_compiler.js --colors=always
+  - yarn workspaces run build --colors=always
 
-script: yarn test --colors
+script:
+   - yarn workspaces run test --colors
+  - ./node_modules/.bin/mocha --colors
 
 #before_deploy:
 #  # The linux and osx packages need OS restrictions added to their package.json files.

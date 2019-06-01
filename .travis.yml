@@ -2,6 +2,9 @@ language: node_js
 
 os: windows
 
+# Use Java 8
+osx_image: xcode9.3
+
 node_js: '10'
 
 # safelist
@@ -9,6 +12,11 @@ branches:
   only:
     - master
 
+# !!! WARNING !!!
+# Secret filtering is currently not supported on windows and will break builds.
+# Great care must be taken to ensure that the secret tokens are not accidentally logged
+# as Travis will not sanitize them. If the secrets do get logged, contact Chad Killingsworth
+# immediately to de-authorize the tokens.
 filter_secrets: false
 
 env:
@@ -21,14 +29,25 @@ cache:
     - $HOME/.m2
 
 before_install:
-  - echo $TRAVIS_OS_NAME
+  # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
+  # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
+  # https://stackoverflow.com/a/36982050/1211524
+  - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
   # On Windows, install maven
-  - choco install maven
-  - export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)"
+  - if [ $TRAVIS_OS_NAME = "windows" ]; then choco install maven; export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)"; fi
   # Install yarn version 1.10 by downloading its install script and executing it in bash
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
   - export PATH="$HOME/.yarn/bin:$PATH"
-  - npm config set script-shell "C:\\Program Files\\Git\\bin\\git-bash.exe"
+  - if [ $TRAVIS_OS_NAME = "windows" ]; npm config set script-shell "C:\\Program Files\\Git\\bin\\git-bash.exe"; fi
+  # For a cron job on travis, test the latest commit on the compiler submodule branch.
+  # Disables tests ensuring the submodule is on a tagged commit.
+  # Move the submodule pointer to the latest master branch commit.
+  # Pipe the latest commit output through cat to log it to the console for debugging
+  - if [ $TRAVIS_EVENT_TYPE = "cron" ]; then
+      export COMPILER_NIGHTLY=1;
+      cd compiler && git checkout master && git pull origin master && git log -1 | cat;
+      cd ..;
+    fi
 
 install: yarn install --colors=always
 

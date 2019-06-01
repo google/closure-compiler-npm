@@ -36,7 +36,7 @@ before_script:
   - yarn workspaces run build --colors=always
 
 script:
-   - yarn workspaces run test --colors
+  - yarn workspaces run test --colors
   - ./node_modules/.bin/mocha --colors
 
 #before_deploy:

@@ -28,12 +28,13 @@ before_install:
   # Install yarn version 1.10 by downloading its install script and executing it in bash
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
   - export PATH="$HOME/.yarn/bin:$PATH"
+  - npm config set script-shell "C:\\Program Files\\Git\\bin\\git-bash.exe"
 
 install: yarn install --colors=always
 
 before_script:
   - ./build-scripts/build_compiler.js --colors=always
-#  - yarn workspaces run build --colors=always
+  - yarn workspaces run build --colors=always
 
 #script:
 #  - yarn workspaces run test --colors

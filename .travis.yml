@@ -14,12 +14,13 @@ filter_secrets: false
 env:
   # Force maven to use colorized output
   MAVEN_OPTS="-Djansi.force=true"
-  JAVA_HOME="C:\Program\ Files\Java\jdk1.8.0_211"
+#  JAVA_HOME="C:\Program Files\Java\jdk1.8.0_211"
 
 before_install:
   - echo $TRAVIS_OS_NAME
   # On Windows, install maven
   - choco install maven
+  - export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)"
   # Install yarn version 1.10 by downloading its install script and executing it in bash
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
   - export PATH="$HOME/.yarn/bin:$PATH"
@@ -29,6 +30,8 @@ install: yarn install --colors=always
 before_script:
   - echo $JAVA_HOME
   - cd compiler
+  - ls
+  - which mvn
   - mvn -Dstyle.color=always clean
   - mvn -Dstyle.color=always -DskipTests -pl externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml install
   - cd ..

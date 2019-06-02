@@ -63,7 +63,7 @@ install: yarn install --colors=always
 
 before_script:
   # - ./build-scripts/build_compiler.js --colors=always
-   - node ./build-scripts/build-workspaces.js
+   - cmd /c "node ./build-scripts/build-workspaces.js"
 #  - yarn workspaces run build --colors=always
 
 script: echo "done"

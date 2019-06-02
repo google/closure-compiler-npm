@@ -24,9 +24,10 @@ env:
   MAVEN_OPTS="-Djansi.force=true"
 
 cache:
-  yarn: true
+  yarn: false
   directories:
     - $HOME/.m2
+    - $HOME/AppData/Local/Yarn/Cache
 
 before_install:
   # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
@@ -38,8 +39,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME = "windows" ]; then
       choco install maven;
       export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";
-      yarn config set script-shell "C:\\Program\ Files\\git\\bin\\bash.exe";
-      yarn cache dir;
+      # yarn config set script-shell "C:\\Program\ Files\\git\\bin\\bash.exe";
     fi
   # Install yarn version 1.10 by downloading its install script and executing it in bash
   - if [ $TRAVIS_OS_NAME != "windows" ]; then
@@ -60,8 +60,8 @@ install: yarn install --colors=always
 
 before_script:
   # - ./build-scripts/build_compiler.js --colors=always
-  - node ./build-scripts/build-workspaces.js
-  # - yarn workspaces run build --colors=always
+  # - node ./build-scripts/build-workspaces.js
+  - cmd.exe /C 'yarn workspaces run build --colors=always'
 
 script: echo "done"
 

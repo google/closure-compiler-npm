@@ -39,7 +39,7 @@ function buildEachWorkspace(workspaces) {
   if (workspaceKeys.length === 0) {
     return Promise.resolve();
   }
-  return runCommand('yarn run build', {cwd: workspaces[workspaceKeys[0]].location})
+  return runCommand('yarn run build', {cwd: workspaces[workspaceKeys[0]].location, shell: true})
       .then(() => {
         const remainingKeys = {};
         workspaceKeys.slice(1).forEach(remainingKey => {
@@ -53,7 +53,7 @@ function buildEachWorkspace(workspaces) {
       })
 }
 
-runCommand('yarn --json workspaces info', {stdio: 'pipe'})
+runCommand('yarn --json workspaces info', {stdio: 'pipe', shell: true})
     .then(({stdout, stderr, exitCode}) => buildEachWorkspace(JSON.parse(JSON.parse(stdout).data)))
     .catch(e => {
       console.error(e);

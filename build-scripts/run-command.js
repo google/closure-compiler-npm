@@ -51,7 +51,14 @@ function runCommand(cmd, args, spawnOpts) {
 
     const externalProcess = spawn(cmd, args, spawnOpts);
     externalProcess.on('error', err => {
-      reject({stdout, stderr, exitCode: -1});
+      if (!err) {
+        err = new Error(stderr || 'external process error');
+      } else if (!(err instanceof Error)) {
+        err = new Error(err);
+      }
+      err.stdout = stdout;
+      err.stderr = stderr;
+      reject(err);
     });
     externalProcess.on('close', exitCode => {
       if (exitCode != 0) {

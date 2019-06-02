@@ -31,10 +31,10 @@
  */
 'use strict';
 
-const {spawn, spawnSync} = require('child_process');
 const ncp = require('ncp');
 const fs = require('fs');
 const path = require('path');
+const runCommand = require('./run-command');
 
 /**
  * Retrieves the compiler version that will be built by reading the contents of ./compiler/pom.xml.
@@ -90,34 +90,26 @@ function copyCompilerBinaries() {
 if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
   const extraMvnArgs = process.env.TRAVIS ? ['-Dstyle.color=always'] : [];
 
-  spawnSync('mvn', extraMvnArgs.concat(['clean']), {cwd: './compiler', stdio: 'inherit'});
-  const compilerBuild = spawn(
-      'mvn',
-      extraMvnArgs.concat([
-        '-DskipTests',
-        '-pl',
-        'externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml',
-        'install'
-      ]),
-      {
-        cwd: './compiler',
-        stdio: 'inherit',
-      });
-  compilerBuild.on('error', err => {
-    throw err;
-  });
-  compilerBuild.on('close', exitCode => {
-    if (exitCode != 0) {
-      process.exit(1);
-      return;
-    }
-    // Add a license header to the gwt version jscomp.js file since the compiler build omits this.
-    // If the gwt version ever has a source map, the source mappings will need updated to account for the
-    // prepended lines.
-    const jscompFileContents = fs.readFileSync(compilerJsBinaryPath, 'utf8');
-    fs.writeFileSync(
-        compilerJsBinaryPath,
-        `/*
+  runCommand('mvn', extraMvnArgs.concat(['clean']), {cwd: './compiler'})
+      .then(({exitCode}) => {
+        if (exitCode !== 0) {
+          process.exit(exitCode);
+          return;
+        }
+        return runCommand('mvn', extraMvnArgs.concat(['clean']), {cwd: './compiler'});
+      })
+      .then(({exitCode}) => {
+        if (exitCode !== 0) {
+          process.exit(exitCode);
+          return;
+        }
+        // Add a license header to the gwt version jscomp.js file since the compiler build omits this.
+        // If the gwt version ever has a source map, the source mappings will need updated to account for the
+        // prepended lines.
+        const jscompFileContents = fs.readFileSync(compilerJsBinaryPath, 'utf8');
+        fs.writeFileSync(
+            compilerJsBinaryPath,
+            `/*
  * Copyright 2018 The Closure Compiler Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -133,9 +125,13 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
  * limitations under the License.
  */
  ${jscompFileContents}`,
-        'utf8');
-    copyCompilerBinaries();
-  });
+            'utf8');
+        copyCompilerBinaries();
+      })
+      .catch(e => {
+        console.error(e);
+        process.exit(1);
+      });
 } else {
   copyCompilerBinaries();
 }

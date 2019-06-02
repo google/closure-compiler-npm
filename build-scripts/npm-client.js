@@ -27,9 +27,9 @@
  *       Allows Travis to publish on every commit.
  */
 
-const {spawn} = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const runCommand = require('./run-command');
 
 // This script should catch and handle all rejected promises.
 // If it ever fails to do so, report that and exit immediately.
@@ -49,40 +49,6 @@ const logMessageQueue = [];
 function logToFile(message) {
   fs.writeFileSync(path.resolve(__dirname, '..', 'publish-log.txt'), `${message}\n`, {
     flag: 'a' // Append to file
-  });
-}
-
-/**
- * Execute a shell command as a promise which resolves to an Array of the form
- *     [standardOut: string, standardError: string, exitCode: number]
- *
- * @param {string} cmd
- * @param {!Array<strings>} args
- * @return {!Promise<!{stdout: string, stderr: string, exitCode: number}>}
- */
-function runCommand(cmd, args) {
-  return new Promise((resolve, reject) => {
-    let stdout = '';
-    let stderr = '';
-
-    const externalProcess = spawn(cmd, args, {
-      stdio: 'pipe'
-    });
-    externalProcess.on('error', err => {
-      reject({stdout, stderr, exitCode: -1});
-    });
-    externalProcess.on('close', exitCode => {
-      if (exitCode != 0) {
-        reject({stdout, stderr, exitCode});
-      }
-      resolve({stdout, stderr, exitCode});
-    });
-    externalProcess.stdout.on('data', data => {
-      stdout += data.toString();
-    });
-    externalProcess.stderr.on('data', data => {
-      stderr += data.toString();
-    });
   });
 }
 

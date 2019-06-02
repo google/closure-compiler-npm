@@ -22,10 +22,8 @@
  * Intended to be run with a working directory of the intended package.
  */
 
-const {spawn} = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const ncp = require('ncp');
 const {
   GRAAL_OS,
   GRAAL_FOLDER,
@@ -33,6 +31,7 @@ const {
   GRAAL_URL
 } = require('./graal-env');
 const TEMP_PATH = path.resolve(__dirname, '../temp');
+const runCommand = require('./run-command');
 
 // This script should catch and handle all rejected promises.
 // If it ever fails to do so, report that and exit immediately.
@@ -40,40 +39,6 @@ process.on('unhandledRejection', error => {
   console.error(error);
   process.exit(1);
 });
-
-/**
- * Simple wrapper for the NodeJS spawn command to use promises
- *
- * @param {string} command
- * @param {Object=} spawnOpts
- * @return {!Promise<undefined>}
- */
-function runCommand(command, spawnOpts = {}) {
-  // log command being executed to stdout for debugging
-  process.stdout.write(`${command}\n`);
-  return new Promise((resolve, reject) => {
-    // TODO(ChadKillingsworth): Not really safe in general, since this could split in the middle of quoted strings.
-    // This is good enough for the purposes of this script.
-    const commandParts = command.split(/\s+/);
-    // child process should inherit stdin/out/err from this process unless spawnOpts says otherwise
-    const opts = Object.assign({}, {
-      stdio: 'inherit'
-    }, spawnOpts);
-    const externalProcess = spawn(commandParts[0], commandParts.slice(1), opts);
-    externalProcess.on('error', err => {
-      process.stderr.write(`${err.toString()}\n`);
-      reject(err);
-    });
-    externalProcess.on('close', exitCode => {
-      if (exitCode != 0) {
-        process.stderr.write(`non zero exit code ${exitCode}\n`);
-        process.exit(1);
-        reject();
-      }
-      resolve();
-    });
-  });
-}
 
 // Build graal from source
 if (!fs.existsSync(TEMP_PATH)) {

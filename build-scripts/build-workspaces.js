@@ -56,7 +56,10 @@ function buildEachWorkspace(workspaces) {
 }
 
 runCommand('yarn --json workspaces info', {stdio: 'pipe', shell: true, env: process.env})
-    .then(({stdout, stderr, exitCode}) => buildEachWorkspace(JSON.parse(JSON.parse(stdout).data)))
+    .then(({stdout, stderr, exitCode}) => {
+      console.log(stdout);
+      return buildEachWorkspace(JSON.parse(JSON.parse(stdout).data));
+    })
     .catch(e => {
       console.error(e);
       process.exit(1);

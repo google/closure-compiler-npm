@@ -24,6 +24,13 @@
 
 const runCommand = require('./run-command');
 
+// This script should catch and handle all rejected promises.
+// If it ever fails to do so, report that and exit immediately.
+process.on('unhandledRejection', error => {
+  console.error(error);
+  process.exit(1);
+});
+
 function buildEachWorkspace(workspaces) {
   if (!workspaces || workspaces.length < 1) {
     return Promise.resolve();

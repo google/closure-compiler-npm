@@ -23,7 +23,6 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 
 const yarnContents = fs.readFileSync(process.argv[2], 'utf8');
 const newYarn = yarnContents.replace(

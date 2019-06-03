@@ -28,7 +28,7 @@ const yarnContents = fs.readFileSync(process.argv[2], 'utf8');
 const newYarn = yarnContents.replace(
     /([ \t]+)\*MSYS\*\) basedir=`cygpath -w "\$basedir"`;;/,
     '$&\n$1*MINGW*) basedir=`cygpath -w "$basedir"`;;'
-).replace(/case /, 'echo "$(uname -s)"\n$&');
+); // .replace(/case /, 'echo "$(uname -s)"\n$&');
 process.stdout.write(`${newYarn}
 `);
 fs.writeFileSync(process.argv[2], newYarn, 'utf8');

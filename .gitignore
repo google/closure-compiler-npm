@@ -8,6 +8,8 @@ yarn-error.log
 /packages/google-closure-compiler-linux/compiler
 /packages/google-closure-compiler-osx/compiler.jar
 /packages/google-closure-compiler-osx/compiler
+/packages/google-closure-compiler-windows/compiler.jar
+/packages/google-closure-compiler-windows/compiler
 /packages/google-closure-compiler-js/jscomp.js
 /temp
 /publish-log.txt

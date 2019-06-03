@@ -39,9 +39,8 @@ function buildEachWorkspace(workspaces) {
   if (workspaceKeys.length === 0) {
     return Promise.resolve();
   }
-  return runCommand('yarn run build', {
+  return runCommand('cmd /c "yarn run build"', {
       cwd: workspaces[workspaceKeys[0]].location,
-      shell: 'C:\\Program Files\\git\\bin\\bash.exe'
     })
     .then(() => {
       const remainingKeys = {};

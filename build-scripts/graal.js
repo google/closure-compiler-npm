@@ -61,7 +61,7 @@ const NATIVE_IMAGE_BUILD_ARGS = [
 ];
 let buildSteps = Promise.resolve();
 // Download Graal
-const GRAAL_ARCHIVE_FILE = `${GRAAL_FOLDER}.tar.gz`;
+const GRAAL_ARCHIVE_FILE = `${GRAAL_FOLDER}.${GRAAL_PACKAGE_SUFFIX}`;
 // Build the compiler native image.
 const GRAAL_BIN_FOLDER = path.resolve(
     TEMP_PATH,

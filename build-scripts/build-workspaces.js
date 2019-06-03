@@ -31,7 +31,7 @@ process.on('unhandledRejection', error => {
   process.exit(1);
 });
 
-process.env.ComSpec = 'C:\\Program Files\\git\\bin\\bash.exe';
+// process.env.ComSpec = 'C:\\Program Files\\git\\bin\\bash.exe';
 
 function buildEachWorkspace(workspaces) {
   if (!workspaces || workspaces.length < 1) {
@@ -57,8 +57,12 @@ function buildEachWorkspace(workspaces) {
 
 runCommand('yarn --json workspaces info', {stdio: 'pipe', shell: true, env: process.env})
     .then(({stdout, stderr, exitCode}) => {
-      console.log(stdout);
-      return buildEachWorkspace(JSON.parse(JSON.parse(stdout).data));
+      let data = JSON.parse(stdout);
+      if (data.type && data.data) {
+        data = JSON.parse(data.data);
+      }
+      console.log(data);
+      return buildEachWorkspace(data);
     })
     .catch(e => {
       console.error(e);

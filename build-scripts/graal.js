@@ -46,27 +46,30 @@ if (!fs.existsSync(TEMP_PATH)) {
   fs.mkdirSync(TEMP_PATH);
 }
 
-const NATIVE_IMAGE_BUILD_ARGS = [
-  '-H:+JNI',
-  '--no-server',
+const NATIVE_IMAGE_BUILD_ARGS = [ '-H:+JNI'].concat(GRAAL_OS !== 'windows' ? ['--no-server'] : []).concat([
   '-H:+ReportUnsupportedElementsAtRuntime',
   '-H:IncludeResourceBundles=com.google.javascript.rhino.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
   '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
   `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
-  '-H:IncludeResources=(externs.zip)|(.*(js|txt))',
+  '-H:IncludeResources=(externs.zip)^^^|(.*(js^^^|txt))',
   '-jar',
   path.resolve(process.cwd(), 'compiler.jar')
-];
+]);
 let buildSteps = Promise.resolve();
 // Download Graal
 const GRAAL_ARCHIVE_FILE = `${GRAAL_FOLDER}.${GRAAL_PACKAGE_SUFFIX}`;
 // Build the compiler native image.
-const GRAAL_BIN_FOLDER = path.resolve(
-    TEMP_PATH,
-    `graalvm-ce-${GRAAL_VERSION}`,
-    ...(GRAAL_OS === 'darwin' ? ['Contents', 'Home'] : []).concat(['bin']));
+let pathParts = [TEMP_PATH, `graalvm-ce-${GRAAL_VERSION}`];
+if (GRAAL_OS === 'windows') {
+  pathParts.push('jre', 'lib', 'svm', 'bin');
+} else if (GRAAL_OS === 'darwin') {
+  pathParts.push('Contents', 'Home', 'bin');
+} else {
+  pathParts.push('bin');
+}
+const GRAAL_BIN_FOLDER = path.resolve.apply(null, pathParts);
 if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
   const GRAAL_GU_PATH = path.resolve(GRAAL_BIN_FOLDER, 'gu');
   buildSteps = buildSteps
@@ -94,10 +97,13 @@ if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
 }
 
 // Build the compiler native image.
+console.log(GRAAL_OS);
 const GRAAL_NATIVE_IMAGE_PATH = path.resolve(
     GRAAL_BIN_FOLDER,
-    'native-image');
+    `native-image${GRAAL_OS === 'windows' ? '.cmd' : ''}`);
+console.log(GRAAL_NATIVE_IMAGE_PATH);
 
 // Unlike the mx launched version, the native binary must not have quotes around arguments
 buildSteps = buildSteps.then(
-    () => runCommand(`${GRAAL_NATIVE_IMAGE_PATH} ${NATIVE_IMAGE_BUILD_ARGS.join(' ')}`));
+    () => runCommand(
+      `${GRAAL_NATIVE_IMAGE_PATH} ${NATIVE_IMAGE_BUILD_ARGS.join(' ')}`));

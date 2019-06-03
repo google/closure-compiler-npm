@@ -27,7 +27,7 @@ cache:
   yarn: false
   directories:
     - $HOME/.m2
-    - $HOME/AppData/Local/Yarn/Cache
+#    - $HOME/AppData/Local/Yarn/Cache
 
 before_install:
   # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.

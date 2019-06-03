@@ -56,8 +56,6 @@ const newEnv = {
   WindowsSDKDir: 'C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\',
   WindowsSDKVersionOverride: 'v7.1'
 };
-console.log(newEnv);
-Object.assign(process.env, newEnv);
 
 runCommand('node ../../build-scripts/graal.js',{stdio: 'inherit'})
     .catch(e => {

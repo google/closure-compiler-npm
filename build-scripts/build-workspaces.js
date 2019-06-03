@@ -31,8 +31,6 @@ process.on('unhandledRejection', error => {
   process.exit(1);
 });
 
-process.env.ComSpec = 'C:\\Program Files\\git\\bin\\bash.exe';
-
 function buildEachWorkspace(workspaces) {
   if (!workspaces || workspaces.length < 1) {
     return Promise.resolve();
@@ -41,21 +39,30 @@ function buildEachWorkspace(workspaces) {
   if (workspaceKeys.length === 0) {
     return Promise.resolve();
   }
-  return runCommand('yarn run build', {cwd: workspaces[workspaceKeys[0]].location, shell: true, env: process.env})
-      .then(() => {
-        const remainingKeys = {};
-        workspaceKeys.slice(1).forEach(remainingKey => {
-          remainingKeys[remainingKey] = workspaces[remainingKey];
-        });
-        return buildEachWorkspace(remainingKeys);
-      })
-      .catch(e => {
-        console.error(e);
-        process.exit(1);
+  return runCommand('yarn run build', {
+      cwd: workspaces[workspaceKeys[0]].location,
+      shell: 'C:\\Program Files\\git\\bin\\bash.exe'
+    })
+    .then(() => {
+      const remainingKeys = {};
+      workspaceKeys.slice(1).forEach(remainingKey => {
+        remainingKeys[remainingKey] = workspaces[remainingKey];
       });
+      return buildEachWorkspace(remainingKeys);
+    })
+    .catch(e => {
+      console.error(e);
+      process.exit(1);
+    });
 }
 
-runCommand('yarn --json workspaces info', {stdio: 'pipe', shell: true, env: process.env})
+runCommand(
+    'yarn --json workspaces info',
+    {
+      stdio: 'pipe',
+      shell: 'C:\\Program Files\\git\\bin\\bash.exe'
+      }
+    )
     .then(({stdout, stderr, exitCode}) => buildEachWorkspace(JSON.parse(JSON.parse(stdout).data)))
     .catch(e => {
       console.error(e);

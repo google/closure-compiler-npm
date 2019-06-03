@@ -28,6 +28,7 @@ const {
   GRAAL_OS,
   GRAAL_FOLDER,
   GRAAL_VERSION,
+  GRAAL_PACKAGE_SUFFIX,
   GRAAL_URL
 } = require('./graal-env');
 const TEMP_PATH = path.resolve(__dirname, '../temp');
@@ -78,7 +79,12 @@ if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
               {cwd: TEMP_PATH});
         }
       })
-      .then(() => runCommand(`tar -xzf ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH}))
+      .then(() => {
+        if (GRAAL_PACKAGE_SUFFIX === 'tar.gz') {
+          return runCommand(`tar -xzf ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH});
+        }
+        return runCommand(`7z e ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH});
+      })
       .then(() => {
         if (GRAAL_OS === 'windows') {
           return Promise.resolve();

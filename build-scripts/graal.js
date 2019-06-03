@@ -90,8 +90,6 @@ if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
       })
       .then(() => {
         if (GRAAL_OS === 'windows') {
-          console.log(fs.readdirSync(TEMP_PATH));
-          console.log(fs.readdirSync(TEMP_PATH, `graalvm-ce-${GRAAL_VERSION}`));
           return Promise.resolve();
         }
         return runCommand(`${GRAAL_GU_PATH} install native-image`);
@@ -99,11 +97,9 @@ if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
 }
 
 // Build the compiler native image.
-console.log(GRAAL_OS);
 const GRAAL_NATIVE_IMAGE_PATH = path.resolve(
     GRAAL_BIN_FOLDER,
     `native-image${GRAAL_OS === 'windows' ? '.cmd' : ''}`);
-console.log(GRAAL_NATIVE_IMAGE_PATH);
 
 // Unlike the mx launched version, the native binary must not have quotes around arguments
 buildSteps = buildSteps.then(

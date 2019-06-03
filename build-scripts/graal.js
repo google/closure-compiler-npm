@@ -72,6 +72,7 @@ if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
       .then(() => {
         // Download graal and extract the contents
         if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_ARCHIVE_FILE))) {
+          process.stdout.write(`Downloading graal from ${GRAAL_URL}\n`);
           return runCommand(
               `curl --fail --show-error --location --progress-bar --output ${GRAAL_ARCHIVE_FILE} ${GRAAL_URL}`,
               {cwd: TEMP_PATH});

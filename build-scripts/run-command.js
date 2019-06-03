@@ -62,7 +62,10 @@ function runCommand(cmd, args, spawnOpts) {
     });
     externalProcess.on('close', exitCode => {
       if (exitCode != 0) {
-        reject({stdout, stderr, exitCode});
+        const err = new Error(`non-zero exit code ${exitCode}`);
+        err.stdout = stdout;
+        err.stderr = stderr;
+        reject(err);
       }
       resolve({stdout, stderr, exitCode});
     });

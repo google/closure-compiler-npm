@@ -39,7 +39,7 @@ function buildEachWorkspace(workspaces) {
   if (workspaceKeys.length === 0) {
     return Promise.resolve();
   }
-  return runCommand('cmd /c "yarn run build"', {
+  return runCommand('yarn run build', {
       cwd: workspaces[workspaceKeys[0]].location,
     })
     .then(() => {

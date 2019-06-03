@@ -59,6 +59,7 @@ const NATIVE_IMAGE_BUILD_ARGS = [ '-H:+JNI'].concat(GRAAL_OS !== 'windows' ? ['-
     }
     return '|';
   }),
+  '-H:+ReportExceptionStackTraces',
   '-jar',
   path.resolve(process.cwd(), 'compiler.jar')
 ]);

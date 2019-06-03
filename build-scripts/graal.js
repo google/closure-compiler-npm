@@ -90,6 +90,8 @@ if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
       })
       .then(() => {
         if (GRAAL_OS === 'windows') {
+          console.log(fs.readdirSync(TEMP_PATH));
+          console.log(fs.readdirSync(TEMP_PATH, `graalvm-ce-${GRAAL_VERSION}`));
           return Promise.resolve();
         }
         return runCommand(`${GRAAL_GU_PATH} install native-image`);

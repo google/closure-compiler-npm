@@ -24,7 +24,7 @@
 const fs = require('fs');
 const path = require('path');
 const {DIM, RESET} = require('../../build-scripts/colors');
-const {spawn} = require('child_process');
+const runCommand = require('../../build-scripts/run-command');
 
 if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
   process.stdout.write(`  ${DIM}google-closure-compiler-windows binary already exists${RESET}\n`);
@@ -32,5 +32,9 @@ if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
   process.stdout.write(`  ${DIM}google-closure-compiler-windows build wrong platform${RESET}\n`);
 } else {
   process.stdout.write(`  ${DIM}google-closure-compiler-windows building image${RESET}\n`);
-  spawn('../../build-scripts/graal.js', [], {stdio: 'inherit'});
+  runCommand('node ../../build-scripts/graal.js',{stdio: 'inherit'})
+      .catch(e => {
+        console.error(e);
+        process.exit(1);
+      });;
 }

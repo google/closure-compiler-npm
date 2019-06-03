@@ -29,7 +29,7 @@ if (process.platform !== 'win32') {
   new Promise(
       (resolve, reject) => {
         const compilerTest = spawn(
-            path.resolve(__dirname, 'compiler'),
+          nativeImagePath,
             ['--version'],
             {stdio: 'inherit'});
         compilerTest.on('error', err => {
@@ -46,7 +46,7 @@ if (process.platform !== 'win32') {
       })
       .then(() => new Promise((resolve, reject) => {
         const compilerTest = spawn(
-            path.resolve(__dirname, 'compiler'),
+          nativeImagePath,
             ['--help'],
             {stdio: 'inherit'});
         compilerTest.on('error', err => {

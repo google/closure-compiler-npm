@@ -53,7 +53,12 @@ const NATIVE_IMAGE_BUILD_ARGS = [ '-H:+JNI'].concat(GRAAL_OS !== 'windows' ? ['-
   '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
   '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
   `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
-  '-H:IncludeResources=(externs.zip)^^^|(.*(js^^^|txt))',
+  '-H:IncludeResources=(externs.zip)|(.*(js|txt))'.replace(/\|/g, () => {
+    if (GRAAL_OS === 'windows') {
+      return '^^^|';
+    }
+    return '|';
+  }),
   '-jar',
   path.resolve(process.cwd(), 'compiler.jar')
 ]);
@@ -101,7 +106,9 @@ const GRAAL_NATIVE_IMAGE_PATH = path.resolve(
     GRAAL_BIN_FOLDER,
     `native-image${GRAAL_OS === 'windows' ? '.cmd' : ''}`);
 
-// Unlike the mx launched version, the native binary must not have quotes around arguments
-buildSteps = buildSteps.then(
-    () => runCommand(
-      `${GRAAL_NATIVE_IMAGE_PATH} ${NATIVE_IMAGE_BUILD_ARGS.join(' ')}`));
+buildSteps = buildSteps
+    .then(() => runCommand(GRAAL_NATIVE_IMAGE_PATH, NATIVE_IMAGE_BUILD_ARGS))
+    .catch(e => {
+      console.error(e);
+      process.exit(1);
+    });

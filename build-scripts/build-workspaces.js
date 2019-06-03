@@ -52,12 +52,12 @@ function buildEachWorkspace(workspaces) {
       .catch(e => {
         console.error(e);
         process.exit(1);
-      })
+      });
 }
 
 runCommand('yarn --json workspaces info', {stdio: 'pipe', shell: true, env: process.env})
     .then(({stdout, stderr, exitCode}) => {
-      console.log(stdout, stdout.data);
+      console.log(stdout, stdout.indexOf('{'), stdout.lastIndexOf('}'), stdout.length);
       let data = JSON.parse(stdout.trim());
       if (data.type && data.data) {
         data = JSON.parse(data.data);

@@ -97,7 +97,15 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
           process.exit(exitCode);
           return;
         }
-        return runCommand('mvn', extraMvnArgs.concat(['clean']), {cwd: './compiler'});
+        return runCommand(
+            'mvn',
+            extraMvnArgs.concat([
+              '-DskipTests',
+              '-pl',
+              'externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml',
+              'install'
+            ]),
+            {cwd: './compiler'});
       })
       .then(({exitCode}) => {
         if (exitCode !== 0) {

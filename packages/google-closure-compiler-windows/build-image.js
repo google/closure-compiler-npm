@@ -36,5 +36,5 @@ if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
       .catch(e => {
         console.error(e);
         process.exit(1);
-      });;
+      });
 }

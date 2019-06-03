@@ -22,6 +22,7 @@
  * See https://github.com/yarnpkg/yarn/issues/5349
  */
 
+const path = require('path');
 const runCommand = require('./run-command');
 
 // This script should catch and handle all rejected promises.
@@ -39,8 +40,16 @@ function buildEachWorkspace(workspaces) {
   if (workspaceKeys.length === 0) {
     return Promise.resolve();
   }
-  return runCommand('yarn run build', {
-      cwd: workspaces[workspaceKeys[0]].location,
+  const workingDir = path.resolve(process.cwd(), workspaces[workspaceKeys[0]].location);
+  const pkgJson = require(path.resolve(workingDir, 'package.json'));
+  if (!pkgJson.scripts || !pkgJson.scripts.build) {
+    return Promise.resolve();
+  } else if (/echo\s/.test(pkgJson.scripts.build)) {
+    process.stdout.write(`${pkgJson.name} build\n`);
+    return Promise.resolve();
+  }
+  return runCommand(`node ${pkgJson.scripts.build}`, {
+      cwd: workingDir,
     })
     .then(() => {
       const remainingKeys = {};

@@ -108,7 +108,10 @@ const GRAAL_NATIVE_IMAGE_PATH = path.resolve(
     `native-image${GRAAL_OS === 'windows' ? '.cmd' : ''}`);
 
 buildSteps = buildSteps
-    .then(() => runCommand(GRAAL_NATIVE_IMAGE_PATH, NATIVE_IMAGE_BUILD_ARGS))
+    .then(() => {
+      console.log(GRAAL_NATIVE_IMAGE_PATH, fs.statSync(GRAAL_NATIVE_IMAGE_PATH));
+      return runCommand(GRAAL_NATIVE_IMAGE_PATH, NATIVE_IMAGE_BUILD_ARGS);
+    })
     .catch(e => {
       console.error(e);
       process.exit(1);

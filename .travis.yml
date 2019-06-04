@@ -42,6 +42,7 @@ before_install:
       choco install maven;
       export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";
       choco install windows-sdk-7.1;
+      npm -g --vs2015 --vcc-build-tools-parameters='[""--allWorkloads""]' install --global windows-build-tools;
       node -e "console.log(process.env);";
     fi
 #  ./build-scripts/patch-yarn.js "$(which yarn)";

@@ -40,8 +40,7 @@ try {
   fs.mkdirSync('..\\..\\temp');
 } catch (e) {}
 fs.writeFileSync('..\\..\\temp\\build-image.cmd', `${setEnvCmd}
-@echo on
-SET
+node -e "console.log(process.env);"
 node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
 `, {
   encoding: 'utf8',

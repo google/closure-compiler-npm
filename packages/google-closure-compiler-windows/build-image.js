@@ -40,7 +40,7 @@ const newEnv = {
   APPVER: '6.1',
   CL: `/AI C:\\WINDOWS\\Microsoft.NET\\Framework64\\${NET_FRAMEWORK_VERSION}`,
   CommandPromptType: 'Native',
-  Configuration: 'Debug',
+  Configuration: 'Release',
   CURRENT_CPU: 'x64',
   FrameworkVersion: NET_FRAMEWORK_VERSION,
   INCLUDE: 'C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\INCLUDE;C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\INCLUDE;C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\INCLUDE\\gl;',
@@ -56,6 +56,7 @@ const newEnv = {
   WindowsSDKDir: 'C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\',
   WindowsSDKVersionOverride: 'v7.1'
 };
+Object.assign(process.env, newEnv);
 
 runCommand('node ../../build-scripts/graal.js',{stdio: 'inherit'})
     .catch(e => {

@@ -60,7 +60,6 @@ const NATIVE_IMAGE_BUILD_ARGS = [ '-H:+JNI'].concat(GRAAL_OS !== 'windows' ? ['-
     return '|';
   }),
   '-H:+ReportExceptionStackTraces',
-  '--initialize-at-build-time',
   '-jar',
   path.resolve(process.cwd(), 'compiler.jar')
 ]);
@@ -80,21 +79,21 @@ const GRAAL_BIN_FOLDER = path.resolve.apply(null, pathParts);
 if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
   const GRAAL_GU_PATH = path.resolve(GRAAL_BIN_FOLDER, 'gu');
   buildSteps = buildSteps
-      // .then(() => {
-      //   // Download graal and extract the contents
-      //   if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_ARCHIVE_FILE))) {
-      //     process.stdout.write(`Downloading graal from ${GRAAL_URL}\n`);
-      //     return runCommand(
-      //         `curl --fail --show-error --location --progress-bar --output ${GRAAL_ARCHIVE_FILE} ${GRAAL_URL}`,
-      //         {cwd: TEMP_PATH});
-      //   }
-      // })
-      // .then(() => {
-      //   if (GRAAL_PACKAGE_SUFFIX === 'tar.gz') {
-      //     return runCommand(`tar -xzf ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH});
-      //   }
-      //   return runCommand(`7z x -y ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH});
-      // })
+      .then(() => {
+        // Download graal and extract the contents
+        if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_ARCHIVE_FILE))) {
+          process.stdout.write(`Downloading graal from ${GRAAL_URL}\n`);
+          return runCommand(
+              `curl --fail --show-error --location --progress-bar --output ${GRAAL_ARCHIVE_FILE} ${GRAAL_URL}`,
+              {cwd: TEMP_PATH});
+        }
+      })
+      .then(() => {
+        if (GRAAL_PACKAGE_SUFFIX === 'tar.gz') {
+          return runCommand(`tar -xzf ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH});
+        }
+        return runCommand(`7z x -y ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH});
+      })
       .then(() => {
         if (GRAAL_OS === 'windows') {
           return Promise.resolve();

@@ -45,11 +45,12 @@ function runCommand(cmd, args, spawnOpts) {
     stdio: 'inherit'
   }, spawnOpts);
 
-  return new Promise((resolve, reject) => {
+  let externalProcess;
+  const promise = new Promise((resolve, reject) => {
     let stdout = '';
     let stderr = '';
 
-    const externalProcess = spawn(cmd, args, spawnOpts);
+    externalProcess = spawn(cmd, args, spawnOpts);
     externalProcess.on('error', err => {
       if (!err) {
         err = new Error(stderr || 'external process error');
@@ -58,6 +59,7 @@ function runCommand(cmd, args, spawnOpts) {
       }
       err.stdout = stdout;
       err.stderr = stderr;
+      err.exitCode = exitCode;
       reject(err);
     });
     externalProcess.on('close', exitCode => {
@@ -65,6 +67,7 @@ function runCommand(cmd, args, spawnOpts) {
         const err = new Error(`non-zero exit code ${exitCode}`);
         err.stdout = stdout;
         err.stderr = stderr;
+        err.exitCode = exitCode;
         reject(err);
       }
       resolve({stdout, stderr, exitCode});
@@ -80,6 +83,8 @@ function runCommand(cmd, args, spawnOpts) {
       });
     }
   });
+  promise.childProcess = externalProcess;
+  return promise;
 }
 
 module.exports = runCommand;

@@ -32,11 +32,11 @@ process.on('unhandledRejection', e => { throw e; });
 describe('closure-compiler node bindings', () => {
   describe('java version', () => {
     it('should have a static property for the jar path', () => {
-      Compiler.COMPILER_PATH.should.endWith('/compiler.jar');
+      Compiler.COMPILER_PATH.should.match(/[\/\\]compiler\.jar$/);
     });
 
     it('should have a static property for the contrib folder', () => {
-      Compiler.CONTRIB_PATH.should.endWith('/contrib');
+      Compiler.CONTRIB_PATH.should.match(/[\/\\]contrib$/);
     });
 
     it('should error when java is not in the path', function (done) {
@@ -122,7 +122,7 @@ describe('closure-compiler node bindings', () => {
 
   describe('javascript version', () => {
     it('should have a static property for the contrib folder', () => {
-      jsCompiler.CONTRIB_PATH.should.endWith('/contrib');
+      jsCompiler.CONTRIB_PATH.should.match(/[\/\\]contrib$/);
     });
 
     it('should normalize arguments to camel case', () => {

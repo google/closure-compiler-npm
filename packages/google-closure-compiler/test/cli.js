@@ -23,7 +23,7 @@
 'use strict';
 
 const should = require('should');
-const spawn = require('child_process').spawn;
+const runCommand = require('../../../build-scripts/run-command');
 require('mocha');
 
 process.on('unhandledRejection', e => { throw e; });
@@ -32,145 +32,122 @@ describe('command line interface', function() {
   this.timeout(30000);
   this.slow(10000);
 
-  const cliPath = require.resolve('../cli.js');
-  let stdOut = '';
-  let stdError = '';
-  let exitCode;
-  function runCmd(cmd, args, stdInData) {
-    return new Promise((resolve, reject) => {
-      const compilationProcess = spawn(cmd, args);
-      compilationProcess.stdout.setEncoding('utf8');
-      compilationProcess.stdout.on('data', data => {
-        stdOut += data;
-      });
-      compilationProcess.stdout.on('error', err => {
-        stdError += err.toString();
-      });
-
-      compilationProcess.stderr.setEncoding('utf8');
-      compilationProcess.stderr.on('data', data => {
-        stdError += data;
-      });
-
-      compilationProcess.on('close', code => {
-        exitCode = code;
-        if (code !== 0) {
-          reject();
-        }
-
-        resolve();
-      });
-
-      compilationProcess.on('error', err => {
-        reject(err);
-      });
-
-      if (stdInData) {
-        compilationProcess.stdin.setEncoding('utf8');
-        compilationProcess.stdin.end(stdInData);
-      }
-    });
+  let cliPath = require.resolve('../cli.js');
+  if (process.platform === 'win32') {
+    cliPath = `node ${cliPath}`;
   }
 
   it('chooses an acceptable platform automatically', done => {
-    function complete() {
+    function complete(arg) {
+      should(arg).not.be.instanceof(Error);
+      const {stdout, sderr, exitCode} = arg;
       should(exitCode).equal(0);
-      should(stdOut.length).above(0);
+      should(stdout.length).above(0);
       done();
     }
 
-    runCmd(cliPath, ['--js', 'test/fixtures/one.js'])
+    runCommand(`${cliPath} --js test/fixtures/one.js`, {stdio: 'pipe'})
       .then(complete)
       .catch(complete);
   });
 
   ['java', 'native', 'javascript'].forEach(platform => {
     describe(`${platform} version`, function() {
-      beforeEach(() => {
-        stdOut = '';
-        stdError = '';
-      });
       it('--help flag', done => {
-        function complete() {
-          should(stdOut.length).above(0);
+        function complete(arg) {
+          should(arg).not.be.instanceof(Error);
+          const {stdout, sderr, exitCode} = arg;
+          should(stdout.length).above(0);
           should(exitCode).equal(0);
           done();
         }
 
-        runCmd(cliPath, [`--platform=${platform}`, '--help'])
+        runCommand(`${cliPath} --platform=${platform} --help`, {stdio: 'pipe'})
           .then(complete)
           .catch(complete);
       });
 
       it('invalid flag', done => {
-        function complete() {
-          should(exitCode).not.equal(0);
+        function complete(arg) {
+          should(arg).be.instanceof(Error);
+          should.exist(arg.exitCode);
+          should(arg.exitCode).not.equal(0);
           done();
         }
 
-        runCmd(cliPath, [`--platform=${platform}`, '--foo=bar', '--js=test/fixtures/one.js'])
+        runCommand(`${cliPath} --platform=${platform} --foo=bar --js=test/fixtures/one.js`, {stdio: 'pipe'})
           .then(complete)
           .catch(complete);
       });
 
       it('compile successfully', done => {
-        function complete() {
-          if (exitCode != 0 || stdError.length > 0) {
-            console.error(stdError);
+        function complete(arg) {
+          if (arg instanceof Error) {
+            console.error(arg);
           }
+          should(arg).not.be.instanceof(Error);
+          const {stdout, sderr, exitCode} = arg;
           should(exitCode).equal(0);
-          should(stdOut.length).above(0);
-          should(stdOut.indexOf("console.log")).above(-1);
+          should(stdout.length).above(0);
+          should(stdout.indexOf("console.log")).above(-1);
           done();
         }
 
-        runCmd(cliPath, [`--platform=${platform}`, '--js=test/fixtures/one.js', '--use_types_for_optimization'])
+        runCommand(`${cliPath} --platform=${platform} --js=test/fixtures/one.js --use_types_for_optimization`, {stdio: 'pipe'})
           .then(complete)
           .catch(complete);
       });
 
       it('accept piped input', done => {
-        function complete() {
+        function complete(arg) {
+          should(arg).not.be.instanceof(Error);
+          const {stdout, sderr, exitCode} = arg;
           should(exitCode).equal(0);
-          should(stdOut.length).above(0);
-          should(stdOut.indexOf('alert("hello world")')).above(-1);
+          should(stdout.length).above(0);
+          should(stdout.indexOf('alert("hello world")')).above(-1);
           done();
         }
 
-        runCmd(cliPath, [`--platform=${platform}`], 'alert("hello world")')
+        const cmd = runCommand(`${cliPath} --platform=${platform}`, {stdio: 'pipe'});
+        cmd
           .then(complete)
           .catch(complete);
+
+        cmd.childProcess.stdin.setEncoding('utf8');
+        cmd.childProcess.stdin.end('alert("hello world")');
       });
 
       it('read input js files', done => {
-        function complete() {
+        function complete(arg) {
+          should(arg).not.be.instanceof(Error);
+          const {stdout, sderr, exitCode} = arg;
           should(exitCode).equal(0);
-          should(stdOut.length).above(0);
-          should(stdOut.indexOf('console.log')).above(-1);
+          should(stdout.length).above(0);
+          should(stdout.indexOf('console.log')).above(-1);
           done();
         }
 
-        runCmd(cliPath, [`--platform=${platform}`, '--js=test/fixtures/one.js'])
+        runCommand(`${cliPath} --platform=${platform} --js=test/fixtures/one.js`, {stdio: 'pipe'})
           .then(complete, complete);
       });
 
       it('read extern files', done => {
-        function complete() {
+        function complete(arg) {
+          should(arg).not.be.instanceof(Error);
+          const {stdout, sderr, exitCode} = arg;
           should(exitCode).equal(0);
-          should(stdOut.length).above(0);
-          should(stdOut.indexOf('externalMethod')).above(-1);
+          should(stdout.length).above(0);
+          should(stdout.indexOf('externalMethod')).above(-1);
           done();
         }
 
-        runCmd(
-            cliPath,
-            [
-              `--platform=${platform}`,
-              '--warning_level=VERBOSE',
-              '--externs=test/fixtures/extern.js'
-            ],
-            'externalMethod("foo")')
-          .then(complete, complete);
+        const cmd = runCommand(
+            `${cliPath} --platform=${platform} --warning_level=VERBOSE --externs=test/fixtures/extern.js`,
+            {stdio: 'pipe'});
+        cmd.then(complete, complete);
+
+        cmd.childProcess.stdin.setEncoding('utf8');
+        cmd.childProcess.stdin.end('externalMethod("foo")');
       });
     });
   });

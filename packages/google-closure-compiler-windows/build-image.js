@@ -35,30 +35,21 @@ if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
 }
 process.stdout.write(`  ${DIM}google-closure-compiler-windows building image${RESET}\n`);
 
-const NET_FRAMEWORK_VERSION = fs.readdirSync('C:\\WINDOWS\\Microsoft.NET\\Framework64', 'utf8').find(filepath => /^v4/.test(filepath));
-const newEnv = {
-  APPVER: '6.1',
-  CL: `/AI C:\\WINDOWS\\Microsoft.NET\\Framework64\\${NET_FRAMEWORK_VERSION}`,
-  CommandPromptType: 'Native',
-  Configuration: 'Release',
-  CURRENT_CPU: 'x64',
-  FrameworkVersion: NET_FRAMEWORK_VERSION,
-  INCLUDE: 'C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\INCLUDE;C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\INCLUDE;C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\INCLUDE\\gl;',
-  LIB: 'C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\Lib\\amd64;C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Lib\\X64;',
-  LIBPATH: `C:\\WINDOWS\\Microsoft.NET\\Framework64\\${NET_FRAMEWORK_VERSION};C:\\WINDOWS\\Microsoft.NET\\Framework\\${NET_FRAMEWORK_VERSION};C:\\WINDOWS\\Microsoft.NET\\Framework64\\v3.5;C:\\WINDOWS\\Microsoft.NET\\Framework\\v3.5;C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\Lib\\amd64;`,
-  Path: `C:\\WINDOWS\\Microsoft.NET\\Framework64\\${NET_FRAMEWORK_VERSION};C:\\WINDOWS\\Microsoft.NET\\Framework\\${NET_FRAMEWORK_VERSION};C:\\WINDOWS\\Microsoft.NET\\Framework64\\v3.5;C:\\WINDOWS\\Microsoft.NET\\Framework\\v3.5;C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\Common7\\IDE;C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\Common7\\Tools;C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\Bin\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\Bin\\VCPackages;C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Bin\\NETFX 4.0 Tools\\x64;C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Bin\\x64;C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Bin;`
-    + process.env.PATH,
-  PlatformToolset: 'Windows7.1SDK',
-  sdkdir: 'C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\',
-  TARGET_CPU: 'x86',
-  TARGET_PLATFORM: 'WIN7',
-  ToolsVersion: '4.0',
-  WindowsSDKDir: 'C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\',
-  WindowsSDKVersionOverride: 'v7.1'
-};
-Object.assign(process.env, newEnv);
+const setEnvCmd = fs.readFileSync('C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Bin\\SetEnv.cmd')
+fs.writeFileSync('..\\..\\temp\\build-image.cmd', `${setEnvCmd}
+node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
+`, {
+  encoding: 'utf8',
+  mode: fs.constants.IRWXO
+});
 
-runCommand('node ../../build-scripts/graal.js',{stdio: 'inherit'})
+runCommand(
+  'cmd.exe',
+  ['/c', `"${path.resolve(__dirname, '..', '..', 'temp', 'build-image.cmd')}"`],
+  {
+    shell: 'c:\\windows\\system32\\cmd.exe',
+    stdio: 'inherit'
+  })
     .catch(e => {
       console.error(e);
       process.exit(1);

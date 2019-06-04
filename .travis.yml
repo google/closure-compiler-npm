@@ -2,9 +2,6 @@ language: node_js
 
 os: windows
 
-# Use Java 8
-osx_image: xcode9.3
-
 node_js: '12'
 
 # safelist
@@ -39,9 +36,10 @@ before_install:
   # On Windows, install jdk, maven and configure yarn/npm to use bash
   # Also have to patch yarn to properly run within git-bash
   - if [ $TRAVIS_OS_NAME = "windows" ]; then
+      ls -la /c/Program\ Files\ \(x86\);
       choco install maven;
       export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";
-      choco install windows-sdk-8.0;
+      choco install windows-sdk-7.1;
       node -e "console.log(process.env);";
     fi
 #  ./build-scripts/patch-yarn.js "$(which yarn)";

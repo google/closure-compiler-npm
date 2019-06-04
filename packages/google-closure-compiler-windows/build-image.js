@@ -40,6 +40,10 @@ try {
   fs.mkdirSync('..\\..\\temp');
 } catch (e) {}
 fs.writeFileSync('..\\..\\temp\\build-image.cmd', `${setEnvCmd}
+SET VS100COMNTOOLS=%VS140COMNTOOLS%
+SET VS110COMNTOOLS=%VS140COMNTOOLS%
+SET VS120COMNTOOLS=%VS140COMNTOOLS%
+
 node -e "console.log(process.env);"
 node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
 `, {

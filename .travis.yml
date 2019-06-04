@@ -36,7 +36,7 @@ before_install:
   # On Windows, install jdk, maven and configure yarn/npm to use bash
   # Also have to patch yarn to properly run within git-bash
   - if [ $TRAVIS_OS_NAME = "windows" ]; then
-      choco install visualstudio2017buildtools --package-parameters "--allWorkloads --includeRecommended --includeOptional --passive --locale en-US";
+      choco install --force visualstudio2017buildtools --package-parameters "--allWorkloads --includeRecommended --includeOptional --passive --locale en-US";
       ls -la /c/Program\ Files\ \(x86\);
       choco install maven;
       export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";

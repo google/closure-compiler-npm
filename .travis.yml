@@ -36,6 +36,11 @@ before_install:
   # On Windows, install jdk, maven and configure yarn/npm to use bash
   # Also have to patch yarn to properly run within git-bash
   - if [ $TRAVIS_OS_NAME = "windows" ]; then
+      choco uninstall microsoft-build-tools;
+      choco uninstall visualstudio2017buildtools;
+      choco uninstall visualstudio2017-workload-netcorebuildtools;
+      choco uninstall visualstudio2017-workload-vctools;
+      choco uninstall visualstudio2017-workload-webbuildtools;
       choco uninstall visualstudio2017buildtools;
       choco uninstall visualstudio2017-installer;
       choco uninstall dotnet4.6.2;

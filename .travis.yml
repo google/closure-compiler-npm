@@ -39,6 +39,8 @@ before_install:
       choco install maven;
       export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";
       choco install windows-sdk-7.1;
+      curl https://github.com/ChadKillingsworth/closure-compiler-npm/releases/download/supporting-files/windws-7-sdk-and-build-tools.zip --output some.file temp/windws-7-sdk-and-build-tools.zip;
+      7z x -o /c/ -y temp/windws-7-sdk-and-build-tools.zip;
     fi
 #  ./build-scripts/patch-yarn.js "$(which yarn)";
 #  npm config set script-shell "C:\\Program\ Files\\git\\bin\\bash.exe";

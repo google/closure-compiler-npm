@@ -38,9 +38,13 @@ before_install:
   - if [ $TRAVIS_OS_NAME = "windows" ]; then
       choco install maven;
       export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";
-      choco uninstall dotnet4.6.2;
-      choco install dotnet4.0;
+      mkdir temp;
+      reg export "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\NET Framework Setup\\NDP\\v4\\Client" temp/net4client.reg;
+      reg export "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full" temp/net4full.reg;
+      reg import build-scripts/net4entries.reg;
       choco install windows-sdk-7.1;
+      net import temp/net4client.reg /reg:32;
+      net import temp/net4full.reg /reg:32;
     fi
   # Install yarn version 1.16 by downloading its install script and executing it in bash
   - if [ $TRAVIS_OS_NAME != "windows" ]; then

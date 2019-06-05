@@ -41,7 +41,7 @@ before_install:
       choco install windows-sdk-7.1;
       mkdir temp;
       curl -L https://github.com/ChadKillingsworth/closure-compiler-npm/releases/download/supporting-files/windws-7-sdk-and-build-tools.zip --output temp/windws-7-sdk-and-build-tools.zip;
-      7z x -o /c/ -y temp/windws-7-sdk-and-build-tools.zip;
+      7z x -o/c/ -y temp/windws-7-sdk-and-build-tools.zip;
     fi
 #  ./build-scripts/patch-yarn.js "$(which yarn)";
 #  npm config set script-shell "C:\\Program\ Files\\git\\bin\\bash.exe";

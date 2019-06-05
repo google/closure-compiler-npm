@@ -36,10 +36,10 @@ before_install:
   # On Windows, install jdk, maven and configure yarn/npm to use bash
   # Also have to patch yarn to properly run within git-bash
   - if [ $TRAVIS_OS_NAME = "windows" ]; then
-      choco uninstall dotnet4.6.2 --force;
-      choco install dotnet4.0;
+      choco uninstall visualstudio2017-installer --package-parameters "--all";
       choco install maven;
       export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";
+      choco install dotnet4.0;
       choco install windows-sdk-7.1;
     fi
   # Install yarn version 1.16 by downloading its install script and executing it in bash

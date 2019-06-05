@@ -36,7 +36,7 @@ before_install:
   # On Windows, install jdk, maven and configure yarn/npm to use bash
   # Also have to patch yarn to properly run within git-bash
   - if [ $TRAVIS_OS_NAME = "windows" ]; then
-      choco uninstall microsoft-build-tools visualstudio2017-workload-netcorebuildtools visualstudio2017-workload-vctools visualstudio2017-workload-webbuildtools visualstudio2017buildtools visualstudio2017-installer dotnet4.6.2;
+      choco uninstall dotnet4.6.2 --force;
       choco install dotnet4.0;
       choco install maven;
       export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";

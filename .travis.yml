@@ -1,52 +1,36 @@
 language: node_js
 
-os: windows
-
-node_js: '12'
+matrix:
+  include:
+    - os: osx
+      node_js: '10'
+      # Use Java 8
+      osx_image: xcode9.3
+    - os: linux
+      node_js: '8'
 
 # safelist
 branches:
   only:
     - master
 
-# !!! WARNING !!!
-# Secret filtering is currently not supported on windows and will break builds.
-# Great care must be taken to ensure that the secret tokens are not accidentally logged
-# as Travis will not sanitize them. If the secrets do get logged, contact Chad Killingsworth
-# immediately to de-authorize the tokens.
-filter_secrets: false
-
 env:
   # Force maven to use colorized output
   MAVEN_OPTS="-Djansi.force=true"
-  NPM_TOKEN=""
-  WIKI_GH_DEPLOY_KEY=""
 
 cache:
-  yarn: false
+  yarn: true
   directories:
     - $HOME/.m2
-#    - $HOME/AppData/Local/Yarn/Cache
 
 before_install:
   # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
   # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
   # https://stackoverflow.com/a/36982050/1211524
   - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
-  # On Windows, install jdk, maven and configure yarn/npm to use bash
-  # Also have to patch yarn to properly run within git-bash
-  - if [ $TRAVIS_OS_NAME = "windows" ]; then
-      choco uninstall visualstudio2017-installer --package-parameters "--all";
-      choco install maven;
-      export JAVA_HOME="C:\\Program Files\\Java\\$(ls -1 C:\\Program\ Files\\Java)";
-      choco install dotnet4.0;
-      choco install windows-sdk-7.1;
-    fi
-  # Install yarn version 1.16 by downloading its install script and executing it in bash
-  - if [ $TRAVIS_OS_NAME != "windows" ]; then
-      curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0;
-      export PATH="$HOME/.yarn/bin:$PATH";
-    fi
+  # Install yarn version 1.10 by downloading its install script and executing it in bash
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
+  - export PATH="$HOME/.yarn/bin:$PATH"
   # For a cron job on travis, test the latest commit on the compiler submodule branch.
   # Disables tests ensuring the submodule is on a tagged commit.
   # Move the submodule pointer to the latest master branch commit.
@@ -59,26 +43,20 @@ before_install:
 
 install: yarn install --colors=always
 
-before_script:
-   - ./build-scripts/build_compiler.js --colors=always
-   - node ./build-scripts/build-workspaces.js
+before_script: yarn run build --colors=always
 
-script: echo "done"
+script: yarn test --colors
 
-#script:
-#  - yarn workspaces run test --colors
-#  - ./node_modules/.bin/mocha --colors
+before_deploy:
+  # The linux and osx packages need OS restrictions added to their package.json files.
+  # This cannot be added before now or the workspace install breaks.
+  - build-scripts/add-os-restrictions.js
+  # If this is the daily cron job, create a nightly release version
+  - if [ $COMPILER_NIGHTLY = "1" ]; then build-scripts/create-nightly-version.js; fi
 
-#before_deploy:
-#  # The linux and osx packages need OS restrictions added to their package.json files.
-#  # This cannot be added before now or the workspace install breaks.
-#  - build-scripts/add-os-restrictions.js
-#  # If this is the daily cron job, create a nightly release version
-#  - if [ $COMPILER_NIGHTLY = "1" ]; then build-scripts/create-nightly-version.js; fi
-#
-#deploy:
-#  skip_cleanup: true
-#  provider: script
-#  script: build-scripts/lerna-publish.js publish-travis --npm-client ${TRAVIS_BUILD_DIR}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes
-#  on:
-#    branch: master
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: build-scripts/lerna-publish.js publish-travis --npm-client ${TRAVIS_BUILD_DIR}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes
+  on:
+    branch: master

@@ -8,13 +8,10 @@ image: Visual Studio 2015
 
 clone_depth: 50
 
-environment:
-  nodejs_version: "12"
-
 install:
-  - ps: Install-Product node $env:nodejs_version
-  - sh: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
-  - cmd: yarn install --colors=always
+  - cmd: cinst install nodejs
+  - cmd: choco install yarn
+  - cmd: yarn install
 
-build:
-  verbosity: minimal
+build_script:
+  - cmd: yarn run build

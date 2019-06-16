@@ -1,22 +1,16 @@
-language: node_js
-
-os:
- - linux
- - osx
-
-# Use Java 8
-osx_image: xcode9.3
-
-node_js:
-  - '10'
-  - '6'
+language: java
 
 matrix:
-  exclude:
+  include:
     - os: osx
-      node_js: '10'
+      env:
+        - NODE_VERSION=6
+      # Use Java 8
+      osx_image: xcode9.3
     - os: linux
-      node_js: '6'
+      env:
+        - NODE_VERSION=10
+      jdk: openjdk8
 
 # safelist
 branches:
@@ -33,6 +27,7 @@ cache:
     - $HOME/.m2
 
 before_install:
+  - nvm install $NODE_VERSION
   # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
   # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
   # https://stackoverflow.com/a/36982050/1211524

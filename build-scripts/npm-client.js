@@ -27,9 +27,9 @@
  *       Allows Travis to publish on every commit.
  */
 
-const {spawn} = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const runCommand = require('./run-command');
 
 // This script should catch and handle all rejected promises.
 // If it ever fails to do so, report that and exit immediately.
@@ -53,60 +53,7 @@ function logToFile(message) {
 }
 
 /**
- * Execute a shell command as a promise which resolves to an Array of the form
- *     [standardOut: string, standardError: string, exitCode: number]
- *
- * @param {string} cmd
- * @param {!Array<strings>} args
- * @return {!Promise<!{stdout: string, stderr: string, exitCode: number}>}
- */
-function runCommand(cmd, args) {
-  return new Promise((resolve, reject) => {
-    let stdout = '';
-    let stderr = '';
-
-    const externalProcess = spawn(cmd, args, {
-      stdio: 'pipe'
-    });
-    externalProcess.on('error', err => {
-      reject({stdout, stderr, exitCode: -1});
-    });
-    externalProcess.on('close', exitCode => {
-      if (exitCode != 0) {
-        reject({stdout, stderr, exitCode});
-      }
-      resolve({stdout, stderr, exitCode});
-    });
-    externalProcess.stdout.on('data', data => {
-      stdout += data.toString();
-    });
-    externalProcess.stderr.on('data', data => {
-      stderr += data.toString();
-    });
-  });
-}
-
-/**
- * Use the `npm view` command to ensure that a package@version combination
- * has already been published to the registry.
- *
- * @param {string} packageWithVersion as specified in a package.json file "name@version"
- * @return {!Promise<undefined>}
- */
-function checkThatVersionExists(packageWithVersion) {
-  return runCommand('npm', ['view', packageWithVersion])
-      .catch(results => {
-        logMessageQueue.push(results.stderr);
-        return Promise.reject(new Error('version did not exist in registry'));
-      });
-}
-
-/**
  * Publish the package using `npm publish`.
- *
- * Ensure that any dependencies on other packages in this repo have already been published.
- * Allows for the fact that the Graal images are published from separate Travis builds.
- * Whichever run finishes last, publishes the main package.
  *
  * If the publish fails with an error that indicates the package has already been published,
  * resolve the promise.
@@ -115,55 +62,12 @@ function checkThatVersionExists(packageWithVersion) {
  * @return {!Promise<undefined>}
  */
 function npmPublish(packageInfo) {
-  /** @type {!Array<!Promise<undefined>>} */
-  const dependenciesPublishedToRegistry = [];
-  // Check both the "dependencies" and "optionalDependencies" keys
-  ['dependencies', 'optionalDependencies'].forEach(depBlock => {
-    // In a package.json file, the dependencies and optionalDependencies keys have the form:
-    //
-    // "dependencies": {
-    //   "depname": "version-specifier"
-    // }
-    //
-    // With the `npm view` command, we can look to see if a version is published to the registry
-    // using the form:
-    //
-    //    npm view depname@version-specifier
-    //
-    // Loop through all the dependencies and ensure any dependencies which are internal to
-    // this repo (they all start with "google-closure-compiler") have already been published.
-    if (!(depBlock in packageInfo)) {
-      return;
-    }
-    Object.keys(packageInfo[depBlock]).forEach(key => {
-      if (/google-closure-compiler/.test(key)) {
-        const versionSpecifier = packageInfo[depBlock][key];
-        dependenciesPublishedToRegistry.push(checkThatVersionExists(`${key}@${versionSpecifier}`)
-            .catch(() => {
-              throw new Error(`${key}@${versionSpecifier} not found in registry`);
-            }));
-      }
-    });
-  });
-
-  return Promise.all(dependenciesPublishedToRegistry).then(depsInfoResults => {
-    for (let i = 0; i < depsInfoResults.length; i++) {
-      const {stdout} = depsInfoResults[i];
-      if (stdout.trim().length === 0) {
-        return Promise.reject(new Error(`Version does not exist - ${stdout.trim()}`));
-      }
-    }
-  }).then(() => {
-    logMessageQueue.push('    all dependencies published');
-    return runCommand('npm', process.argv.slice(2))
-        .catch(results => {
-          if (!/You cannot publish over the previously published versions/.test(results.stderr)) {
-            return Promise.reject(new Error(`Publish failed ${JSON.stringify(results, null, 2)}`));
-          }
-        });
-  }, err => {
-    logMessageQueue.push(`  ❌ missing dependencies - ${err.message}`);
-  });
+  return runCommand('npm', process.argv.slice(2))
+      .catch(results => {
+        if (!/You cannot publish over the previously published versions/.test(results.stderr)) {
+          return Promise.reject(new Error(`Publish failed ${JSON.stringify(results, null, 2)}`));
+        }
+      });
 }
 
 // Log out what folder we are executing this from and the call arguments
@@ -174,9 +78,10 @@ const pkg = require(path.resolve(process.cwd(), 'package.json'));
 switch (pkg.name) {
   case 'google-closure-compiler-linux':
   case 'google-closure-compiler-osx':
-    // We only want to publish the linux or osx package from a Travis instance running on the correct os
+    // We only want to publish the linux, osx or windows package from a Travis instance running on the correct os
     if (pkg.name === 'google-closure-compiler-linux' && process.platform !== 'linux' ||
-        pkg.name === 'google-closure-compiler-osx' && process.platform !== 'darwin') {
+        pkg.name === 'google-closure-compiler-osx' && process.platform !== 'darwin' ||
+        pkg.name === 'google-closure-compiler-windows' && process.platform !== 'win32') {
       logMessageQueue.push(`    skipping publication of ${pkg.name} - wrong platform`);
       process.exitCode = 0;
     } else {

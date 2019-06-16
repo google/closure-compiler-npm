@@ -107,7 +107,7 @@ describe('gulp-google-closure-compiler', function() {
         });
 
         stream.on('error', err => {
-          err.message.should.startWith('Compilation error');
+          err.message.should.match(/^(gulp-google-closure-compiler: )?Compilation error/);
           done();
         });
         stream.write(fakeFile1);
@@ -336,7 +336,7 @@ describe('gulp-google-closure-compiler', function() {
       }
 
       it('should generate no output without gulp.src files', done => {
-        gulp.src([])
+        gulp.src('test/does-not-exist.js', {allowEmpty: true})
           .pipe(closureCompiler({
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE'
@@ -386,7 +386,7 @@ describe('gulp-google-closure-compiler', function() {
             platform
           }))
           .on('error', err => {
-            err.message.should.eql('Streaming not supported');
+            err.message.should.match(/^(gulp-google-closure-compiler: )?Streaming not supported/);
             done();
           });
       });

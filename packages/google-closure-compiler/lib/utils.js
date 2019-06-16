@@ -23,6 +23,13 @@ function getNativeImagePath() {
       return;
     }
   }
+  if (process.platform === 'win32') {
+    try {
+      return require('google-closure-compiler-windows');
+    } catch (e) {
+      return;
+    }
+  }
   try {
     return require('google-closure-compiler-linux');
   } catch (e) {

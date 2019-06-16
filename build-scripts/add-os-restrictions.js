@@ -28,7 +28,8 @@ const path = require('path');
 // Maps of the os marketing name to the platform name used in package.json os restriction fields
 const osRestrictions = new Map([
     ['osx', 'darwin'],
-    ['linux', 'linux']
+    ['linux', 'linux'],
+    ['windows', 'win32']
 ]);
 
 // Read the package.json files, add the OS restriction, then write it back.

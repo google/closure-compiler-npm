@@ -31,10 +31,10 @@
  */
 'use strict';
 
-const {spawn, spawnSync} = require('child_process');
 const ncp = require('ncp');
 const fs = require('fs');
 const path = require('path');
+const runCommand = require('./run-command');
 
 /**
  * Retrieves the compiler version that will be built by reading the contents of ./compiler/pom.xml.
@@ -82,42 +82,49 @@ function copyCompilerBinaries() {
     copy(compilerJavaBinaryPath, './packages/google-closure-compiler-java/compiler.jar'),
     copy(compilerJavaBinaryPath, './packages/google-closure-compiler-linux/compiler.jar'),
     copy(compilerJavaBinaryPath, './packages/google-closure-compiler-osx/compiler.jar'),
+    copy(compilerJavaBinaryPath, './packages/google-closure-compiler-windows/compiler.jar'),
     copy(compilerJsBinaryPath, './packages/google-closure-compiler-js/jscomp.js'),
     copy('./compiler/contrib', './packages/google-closure-compiler/contrib')
   ]);
 }
 
-if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
-  const extraMvnArgs = process.env.TRAVIS ? ['-Dstyle.color=always'] : [];
+const mvnCmd = `mvn${process.platform === 'win32' ? '.cmd' : ''}`;
 
-  spawnSync('mvn', extraMvnArgs.concat(['clean']), {cwd: './compiler', stdio: 'inherit'});
-  const compilerBuild = spawn(
-      'mvn',
-      extraMvnArgs.concat([
-        '-DskipTests',
-        '-pl',
-        'externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml',
-        'install'
-      ]),
-      {
-        cwd: './compiler',
-        stdio: 'inherit',
-      });
-  compilerBuild.on('error', err => {
-    throw err;
-  });
-  compilerBuild.on('close', exitCode => {
-    if (exitCode != 0) {
-      process.exit(1);
-      return;
-    }
-    // Add a license header to the gwt version jscomp.js file since the compiler build omits this.
-    // If the gwt version ever has a source map, the source mappings will need updated to account for the
-    // prepended lines.
-    const jscompFileContents = fs.readFileSync(compilerJsBinaryPath, 'utf8');
-    fs.writeFileSync(
-        compilerJsBinaryPath,
-        `/*
+if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
+  // Force maven to use colorized output
+  const extraMvnArgs = process.env.TRAVIS || process.env.APPVEYOR ? ['-Dstyle.color=always'] : [];
+  if ((process.env.TRAVIS || process.env.APPVEYOR)) {
+    process.env.MAVEN_OPTS = '-Djansi.force=true';
+  }
+
+  runCommand(mvnCmd, extraMvnArgs.concat(['clean']), {cwd: './compiler'})
+      .then(({exitCode}) => {
+        if (exitCode !== 0) {
+          process.exit(exitCode);
+          return;
+        }
+        return runCommand(
+            mvnCmd,
+            extraMvnArgs.concat([
+              '-DskipTests',
+              '-pl',
+              'externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml',
+              'install'
+            ]),
+            {cwd: './compiler'});
+      })
+      .then(({exitCode}) => {
+        if (exitCode !== 0) {
+          process.exit(exitCode);
+          return;
+        }
+        // Add a license header to the gwt version jscomp.js file since the compiler build omits this.
+        // If the gwt version ever has a source map, the source mappings will need updated to account for the
+        // prepended lines.
+        const jscompFileContents = fs.readFileSync(compilerJsBinaryPath, 'utf8');
+        fs.writeFileSync(
+            compilerJsBinaryPath,
+            `/*
  * Copyright 2018 The Closure Compiler Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -133,9 +140,13 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
  * limitations under the License.
  */
  ${jscompFileContents}`,
-        'utf8');
-    copyCompilerBinaries();
-  });
+            'utf8');
+        copyCompilerBinaries();
+      })
+      .catch(e => {
+        console.error(e);
+        process.exit(1);
+      });
 } else {
   copyCompilerBinaries();
 }

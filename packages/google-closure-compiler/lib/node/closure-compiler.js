@@ -26,7 +26,7 @@
 const spawn = require('child_process').spawn;
 const compilerPath = require('google-closure-compiler-java');
 const path = require('path');
-const contribPath = path.dirname(compilerPath) + '/contrib';
+const contribPath = path.resolve(path.dirname(compilerPath), 'contrib');
 
 class Compiler {
   /**

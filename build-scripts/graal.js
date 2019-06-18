@@ -55,6 +55,8 @@ const NATIVE_IMAGE_BUILD_ARGS = [ '-H:+JNI'].concat(GRAAL_OS !== 'windows' ? ['-
   `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
   '-H:IncludeResources=(externs.zip)|(.*(js|txt))'.replace(/\|/g, () => {
     if (GRAAL_OS === 'windows') {
+      // Escape the '|' character in a  windows batch command
+      // See https://stackoverflow.com/a/16018942/1211524
       return '^^^|';
     }
     return '|';

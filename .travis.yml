@@ -4,7 +4,7 @@ matrix:
   include:
     - os: osx
       env:
-        - NODE_VERSION=6
+        - NODE_VERSION=8
       # Use Java 8
       osx_image: xcode9.3
     - os: linux
@@ -17,23 +17,25 @@ branches:
   only:
     - master
 
-env:
-  # Force maven to use colorized output
-  MAVEN_OPTS="-Djansi.force=true"
-
 cache:
   yarn: true
   directories:
     - $HOME/.m2
 
 before_install:
+  # Trigger an Appveyor windows build every time Travis runs a cron job
+  - >
+      if [ $TRAVIS_EVENT_TYPE = "cron" && $TRAVIS_OS_NAME = "linux" ]; then
+        curl -H "Authorization: Bearer ${APPVEYOR_TOKEN}" -H "Content-Type application\/json" --request POST  --data '{"accountName":"ClosureCompilerProject","projectSlug":"closure-compiler-npm","branch":"master","environmentVariables":{"COMPILER_NIGHTLY":"1"}}' https://ci.appveyor.com/api/builds
+      fi
   - nvm install $NODE_VERSION
+  - if [ $TRAVIS_OS_NAME = "linux" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
   # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
   # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
   # https://stackoverflow.com/a/36982050/1211524
   - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
-  # Install yarn version 1.10 by downloading its install script and executing it in bash
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
+  # Install yarn version 1.16 by downloading its install script and executing it in bash
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
   - export PATH="$HOME/.yarn/bin:$PATH"
   # For a cron job on travis, test the latest commit on the compiler submodule branch.
   # Disables tests ensuring the submodule is on a tagged commit.

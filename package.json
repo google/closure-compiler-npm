@@ -23,12 +23,12 @@
   "homepage": "https://developers.google.com/closure/compiler/",
   "dependencies": {},
   "devDependencies": {
-    "glob": "^7.1.3",
+    "glob": "7.x",
     "lerna": "^3.4.1",
-    "mocha": "5.2.0",
+    "mocha": "6.x",
     "ncp": "^2.0.0",
     "semver": "^5.1.0",
-    "should": "^11.2.0"
+    "should": "^13.2.3"
   },
   "scripts": {
     "build": "./build-scripts/build.sh",

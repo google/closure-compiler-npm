@@ -18,12 +18,14 @@
 const GRAAL_OS = process.platform === 'win32' ? 'windows' : process.platform;
 const GRAAL_VERSION = process.env.GRAAL_VERSION || '19.0.0';
 const GRAAL_FOLDER = `graalvm-ce-${GRAAL_OS}-amd64-${GRAAL_VERSION}`;
+const GRAAL_PACKAGE_SUFFIX = GRAAL_OS === 'windows' ? 'zip' : 'tar.gz';
 const GRAAL_URL = process.env.GRAAL_URL ||
-    `https://github.com/oracle/graal/releases/download/vm-${GRAAL_VERSION}/${GRAAL_FOLDER}.tar.gz`;
+    `https://github.com/oracle/graal/releases/download/vm-${GRAAL_VERSION}/${GRAAL_FOLDER}.${GRAAL_PACKAGE_SUFFIX}`;
 
 module.exports = {
   GRAAL_OS,
   GRAAL_VERSION,
   GRAAL_FOLDER,
+  GRAAL_PACKAGE_SUFFIX,
   GRAAL_URL
 };

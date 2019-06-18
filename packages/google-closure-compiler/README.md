@@ -25,7 +25,7 @@ You may also post in the
 The compiler is distributed as a Java jar and a JavaScript library. Mac OS and Linux also have native binaries.
 
 ### Native Binary Version
-On Mac OS or Linux, optional dependencies will install a native binary of the compiler.
+On Linux, Mac OS and Windows, optional dependencies will install a native binary of the compiler.
 Native binaries offer faster compile times without requiring Java to be installed and available.
 Compilations with a very large number of source files may be slightly slower than the java version.
 

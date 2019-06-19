@@ -40,4 +40,4 @@ test_script:
 deploy_script:
   - node build-scripts/add-os-restrictions.js
   - IF "%COMPILER_NIGHTLY%" == "1" node build-scripts/create-nightly-version.js
-  - IF "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" IF "%APPVEYOR_REPO_BRANCH%" == "master" node build-scripts/lerna-publish.js publish-travis --npm-client "%APPVEYOR_BUILD_FOLDER%/build-scripts/npm-client.cmd" --ignore-changes "**/*" --force-publish="*" --yes
+  - IF "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" IF "%APPVEYOR_REPO_BRANCH%" == "master" node build-scripts/lerna-publish.js publish-travis --npm-client "%APPVEYOR_BUILD_FOLDER%/build-scripts/npm-client.js" --ignore-changes "**/*" --force-publish="*" --yes

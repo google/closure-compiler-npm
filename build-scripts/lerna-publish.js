@@ -120,7 +120,7 @@ const travisPublishCmd = Object.assign({}, publishCmd, {
  */
 function main(argv) {
   // For lerna publication to work, the NPM token must be stored in the .npmrc file in the user home directory
-  if (process.env.TRAVIS && process.env.NPM_TOKEN) {
+  if ((process.env.TRAVIS || process.env.APPVEYOR) && process.env.NPM_TOKEN) {
     fs.writeFileSync(
         path.resolve(process.env.HOME, '.npmrc'),
         `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,

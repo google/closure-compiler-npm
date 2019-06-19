@@ -79,6 +79,7 @@ const pkg = require(path.resolve(process.cwd(), 'package.json'));
 switch (pkg.name) {
   case 'google-closure-compiler-linux':
   case 'google-closure-compiler-osx':
+  case 'google-closure-compiler-windows':
     // We only want to publish the linux, osx or windows package from a Travis instance running on the correct os
     if (pkg.name === 'google-closure-compiler-linux' && process.platform !== 'linux' ||
         pkg.name === 'google-closure-compiler-osx' && process.platform !== 'darwin' ||

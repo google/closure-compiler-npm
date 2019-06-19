@@ -62,7 +62,7 @@ function logToFile(message) {
  * @return {!Promise<undefined>}
  */
 function npmPublish(packageInfo) {
-  return runCommand('npm', process.argv.slice(2))
+  return runCommand('npm', process.argv.slice(2), {stdio: 'pipe'})
       .catch(results => {
         if (!/You cannot publish over the previously published versions/.test(results.stderr)) {
           return Promise.reject(new Error(`Publish failed ${JSON.stringify(results, null, 2)}`));

@@ -24,6 +24,8 @@ cache:
 
 before_install:
   # Trigger an Appveyor windows build every time Travis runs a cron job
+  - echo $TRAVIS_EVENT_TYPE
+  - echo $TRAVIS_OS_NAME
   - >
       if [ $TRAVIS_EVENT_TYPE = "cron" ] && [ $TRAVIS_OS_NAME = "linux" ]; then
         curl -H "Authorization: Bearer ${APPVEYOR_TOKEN}" -H "Content-Type application\/json" --request POST  --data '{"accountName":"ClosureCompilerProject","projectSlug":"closure-compiler-npm","branch":"master","environmentVariables":{"COMPILER_NIGHTLY":"1"}}' https://ci.appveyor.com/api/builds;

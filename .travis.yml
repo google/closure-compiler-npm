@@ -24,18 +24,16 @@ cache:
 
 before_install:
   # Trigger an Appveyor windows build every time Travis runs a cron job
-  - echo $TRAVIS_EVENT_TYPE
-  - echo $TRAVIS_OS_NAME
-  - >
-      if [ $TRAVIS_EVENT_TYPE = "cron" ] && [ $TRAVIS_OS_NAME = "linux" ]; then
-        curl -H "Authorization: Bearer ${APPVEYOR_TOKEN}" -H "Content-Type application\/json" --request POST  --data '{"accountName":"ClosureCompilerProject","projectSlug":"closure-compiler-npm","branch":"master","environmentVariables":{"COMPILER_NIGHTLY":"1"}}' https://ci.appveyor.com/api/builds;
-      fi
+  - if [ "$TRAVIS_EVENT_TYPE" = "cron" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      echo "Triggering appveyor nightly build";
+      curl -H "Authorization:Bearer ${APPVEYOR_TOKEN}" -H "Content-Type:application/json; charset=utf-8" --request POST --data '{"accountName":"ClosureCompilerProject","projectSlug":"closure-compiler-npm","branch":"master","environmentVariables":{"COMPILER_NIGHTLY":"1"}}' https://ci.appveyor.com/api/builds;
+    fi
   - nvm install $NODE_VERSION
-  - if [ $TRAVIS_OS_NAME = "linux" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
   # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
   # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
   # https://stackoverflow.com/a/36982050/1211524
-  - if [ $TRAVIS_OS_NAME = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
   # Install yarn version 1.16 by downloading its install script and executing it in bash
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
   - export PATH="$HOME/.yarn/bin:$PATH"
@@ -43,7 +41,7 @@ before_install:
   # Disables tests ensuring the submodule is on a tagged commit.
   # Move the submodule pointer to the latest master branch commit.
   # Pipe the latest commit output through cat to log it to the console for debugging
-  - if [ $TRAVIS_EVENT_TYPE = "cron" ]; then
+  - if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then
       export COMPILER_NIGHTLY=1;
       cd compiler && git checkout master && git pull origin master && git log -1 | cat;
       cd ..;
@@ -60,7 +58,7 @@ before_deploy:
   # This cannot be added before now or the workspace install breaks.
   - build-scripts/add-os-restrictions.js
   # If this is the daily cron job, create a nightly release version
-  - if [ $COMPILER_NIGHTLY = "1" ]; then build-scripts/create-nightly-version.js; fi
+  - if [ "$COMPILER_NIGHTLY" = "1" ]; then build-scripts/create-nightly-version.js; fi
 
 deploy:
   skip_cleanup: true

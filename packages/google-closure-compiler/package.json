@@ -63,7 +63,7 @@
   },
   "scripts": {
     "build": "echo \"google-closure-compiler build\"",
-    "test": "mocha"
+    "test": "node_modules/.bin/mocha"
   },
   "engines": {
     "node": ">=8"

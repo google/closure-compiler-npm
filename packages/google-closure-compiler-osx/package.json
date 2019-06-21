@@ -1,6 +1,6 @@
 {
   "name": "google-closure-compiler-osx",
-  "version": "20190528.1.0",
+  "version": "20190618.0.0",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler using Java",
   "main": "index.js",
   "repository": "https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-osx",

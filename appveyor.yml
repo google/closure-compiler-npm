@@ -17,6 +17,8 @@ cache:
 
 install:
   - "@echo on"
+  - git config --global user.email "ci@appveyor.com"
+  - git config --global user.name "Appveyor"
   - git submodule update --init --recursive
   - choco install nodejs --version 12.4.0
   - choco install yarn --version 1.16.0

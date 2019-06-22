@@ -39,6 +39,7 @@ runGitCmd(['checkout', '-b', `publish-${nightlyVersion}`]);
 runGitCmd(['add', 'compiler']);
 runGitCmd(['add', 'packages/google-closure-compiler-linux/package.json']);
 runGitCmd(['add', 'packages/google-closure-compiler-osx/package.json']);
+runGitCmd(['add', 'packages/google-closure-compiler-windows/package.json']);
 runGitCmd(['commit', '-m', `Create version for nightly release ${nightlyVersion}`]);
 
 // Get the list of packages in this repo

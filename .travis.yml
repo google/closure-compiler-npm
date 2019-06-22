@@ -26,7 +26,7 @@ before_install:
   # Trigger an Appveyor windows build every time Travis runs a cron job
   - if [ "$TRAVIS_EVENT_TYPE" = "cron" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then
       echo "Triggering appveyor nightly build";
-      curl -H "Authorization:Bearer ${APPVEYOR_TOKEN}" -H "Content-Type:application/json; charset=utf-8" --request POST --data '{"accountName":"ClosureCompilerProject","projectSlug":"closure-compiler-npm","branch":"master","environmentVariables":{"COMPILER_NIGHTLY":"1"}}' https://ci.appveyor.com/api/builds;
+      curl -H "Authorization:Bearer ${APPVEYOR_TOKEN}" -H "Content-Type:application/json; charset=utf-8" --request POST --data '{"accountName":"ClosureCompilerProject","projectSlug":"closure-compiler-npm","branch":"master","environmentVariables":{"COMPILER_NIGHTLY":"1"}}' --write_out '\n' https://ci.appveyor.com/api/builds;
     fi
   - nvm install $NODE_VERSION
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi

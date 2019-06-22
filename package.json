@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": {
-    "packages": ["packages/*"],
-    "nohoist": ["**/mocha"]
+    "packages": ["packages/*"]
   },
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",
   "repository": {
@@ -25,11 +24,11 @@
   "dependencies": {},
   "devDependencies": {
     "glob": "7.x",
-    "lerna": "^3.4.1",
+    "lerna": "3.x",
     "mocha": "6.x",
-    "ncp": "^2.0.0",
-    "semver": "^5.1.0",
-    "should": "^13.2.3"
+    "ncp": "2.x",
+    "semver": "5.x",
+    "should": "13.x"
   },
   "scripts": {
     "build": "./build-scripts/build.sh",

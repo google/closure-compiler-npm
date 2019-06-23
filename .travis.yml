@@ -23,6 +23,7 @@ cache:
     - $HOME/.m2
 
 before_install:
+  - curl --write_out '\\n' https://www.google.com
   # Trigger an Appveyor windows build every time Travis runs a cron job
   - if [ "$TRAVIS_EVENT_TYPE" = "cron" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then
       echo "Triggering appveyor nightly build";

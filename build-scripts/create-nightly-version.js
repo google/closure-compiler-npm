@@ -20,8 +20,9 @@
  * The compiler in this version will be a snapshot version.
  */
 
-const {spawnSync} = require('child_process');
+const runCommand = require('./run-command');
 const glob = require('glob');
+const path = require('path');
 
 const today = new Date();
 const month = (today.getMonth() < 9 ? '0' : '') + (today.getMonth() + 1).toString();
@@ -30,32 +31,32 @@ const day = (today.getDate() < 10 ? '0' : '') + today.getDate().toString();
 // Version number is today's date with a -nightly prerelease suffix.
 const nightlyVersion = `${today.getFullYear()}${month}${day}.0.0-nightly`;
 
-// Lerna won't release packages on an already release tagged commit or
-// on a disconnected HEAD. Create a branch then an empty commit for this nightly release.
-function runGitCmd(args) {
-  spawnSync('git', args, { stdio: 'inherit' });
-}
-runGitCmd(['checkout', '-b', `publish-${nightlyVersion}`]);
-runGitCmd(['add', 'compiler']);
-runGitCmd(['add', 'packages/google-closure-compiler-linux/package.json']);
-runGitCmd(['add', 'packages/google-closure-compiler-osx/package.json']);
-runGitCmd(['add', 'packages/google-closure-compiler-windows/package.json']);
-runGitCmd(['commit', '-m', `Create version for nightly release ${nightlyVersion}`]);
+(async () => {
+  try {
+    // Lerna won't release packages on an already release tagged commit or
+    // on a disconnected HEAD. Create a branch then commit the os changes for this nightly release.
+    await runCommand('git', ['checkout', '-b', `publish-${nightlyVersion}`]);
+    await runCommand('git', ['add', 'compiler']);
+    await runCommand('git', ['add', 'packages/google-closure-compiler-linux/package.json']);
+    await runCommand('git', ['add', 'packages/google-closure-compiler-osx/package.json']);
+    await runCommand('git', ['add', 'packages/google-closure-compiler-windows/package.json']);
+    await runCommand('git', ['commit', '-m', `Create version for nightly release ${nightlyVersion}`]);
+    // Get the list of packages in this repo
+    const packages = glob.sync('packages/google-closure-compiler*')
+        .map(packagePath => packagePath.replace('packages/', ''));
 
-// Get the list of packages in this repo
-const packages = glob.sync('packages/google-closure-compiler*')
-    .map(packagePath => packagePath.replace('packages/', ''));
-
-// Create a nightly version of all the packages
-spawnSync(
-    'node_modules/.bin/lerna',
-    [
-      'version',
-      nightlyVersion,
-      '--push=false', // prevent the version commit from being pushed back to the repo
-      `--force-publish=${packages.join(',')}`, // publish every package even though no changes are detected
-      '--yes', // don't prompt for confirmation
-    ],
-    {
-      stdio: 'inherit',
-    });
+    // Create a nightly version of all the packages
+    await runCommand(
+      path.resolve(process.cwd(), 'node_modules', '.bin', `lerna${process.platform === 'win32' ? '.cmd' : ''}`),
+      [
+        'version',
+        nightlyVersion,
+        '--push=false', // prevent the version commit from being pushed back to the repo
+        `--force-publish=${packages.join(',')}`, // publish every package even though no changes are detected
+        '--yes', // don't prompt for confirmation
+      ]);
+    } catch (e) {
+      console.error(e);
+      process.exitCode = 1;
+    }
+  })()

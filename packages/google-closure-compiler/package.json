@@ -53,12 +53,13 @@
     "gulp-filter": "6.x",
     "gulp-mocha": "6.x",
     "gulp-sourcemaps": "2.x",
-    "lodash": "4.x",
+    "lerna": "^3.4.1",
+    "lodash": "^4.17.10",
     "mocha": "6.x",
-    "ncp": "2.x",
-    "semver": "5.x",
-    "should": "13.x",
-    "stream-assert": "2.x"
+    "ncp": "^2.0.0",
+    "semver": "^5.1.0",
+    "should": "^13.2.3",
+    "stream-assert": "^2.0.3"
   },
   "scripts": {
     "build": "echo \"google-closure-compiler build\"",

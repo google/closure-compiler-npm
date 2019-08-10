@@ -21,7 +21,7 @@ install:
   - git config --global user.name "Appveyor"
   - git submodule update --init --recursive
   - choco install nodejs --version 12.4.0
-  - choco install yarn --version 1.16.0
+  - choco install yarn
   - yarn install --colors=always
   - IF "%COMPILER_NIGHTLY%" == "1" CD compiler
   - IF "%COMPILER_NIGHTLY%" == "1" git checkout master

@@ -23,7 +23,7 @@
 'use strict';
 
 const path = require('path');
-const contribPath = path.dirname(path.resolve(__dirname, '../../')) + '/contrib';
+const contribPath = path.resolve(__dirname, '../../contrib');
 const jscomp = require('google-closure-compiler-js');
 const CONSOLE_COLOR_CHARS = /\u001B\[\d+m/ug;
 

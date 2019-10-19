@@ -51,7 +51,7 @@ function getCompilerVersionFromPomXml() {
 
 let compilerVersion = getCompilerVersionFromPomXml();
 const compilerJavaBinaryPath = `./compiler/target/closure-compiler-${compilerVersion}.jar`;
-const compilerJsBinaryPath = `./compiler/target/closure-compiler-gwt-${compilerVersion}/jscomp/jscomp.js`;
+const compilerJsBinaryPath = `./compiler/gen/jscomp.js`;
 
 console.log(process.platform, process.arch, compilerVersion);
 
@@ -90,7 +90,7 @@ function copyCompilerBinaries() {
 
 const mvnCmd = `mvn${process.platform === 'win32' ? '.cmd' : ''}`;
 
-if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
+if (!fs.existsSync(compilerJavaBinaryPath)) {
   // Force maven to use colorized output
   const extraMvnArgs = process.env.TRAVIS || process.env.APPVEYOR ? ['-Dstyle.color=always'] : [];
   if ((process.env.TRAVIS || process.env.APPVEYOR)) {
@@ -108,7 +108,7 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
             extraMvnArgs.concat([
               '-DskipTests',
               '-pl',
-              'externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml',
+              'externs/pom.xml,pom-main.xml,pom-main-shaded.xml',
               'install'
             ]),
             {cwd: './compiler'});

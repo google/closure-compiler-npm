@@ -99,7 +99,22 @@ describe('gulp-google-closure-compiler', function() {
         platformUtilized = undefined;
       });
 
-      it('should emit an error for invalid options', done => {
+      it('should emit an error for invalid flag', done => {
+        const stream = closureCompiler({
+          foo: 'BAR'
+        }, {
+          platform
+        });
+
+        stream.on('error', err => {
+          err.message.should.match(/^(gulp-google-closure-compiler: )?Compilation error/);
+          done();
+        });
+        stream.write(fakeFile1);
+        stream.end();
+      });
+
+      it('should emit an error for a flag with an invalid value', done => {
         const stream = closureCompiler({
           compilation_level: 'FOO'
         }, {

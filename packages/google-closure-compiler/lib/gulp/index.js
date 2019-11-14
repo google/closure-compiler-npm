@@ -161,7 +161,13 @@ module.exports = function(initOptions) {
             cb();
           });
         } catch (e) {
-          this._compilationComplete(1, [], e.message.replace(/^java.lang.RuntimeException: /, ''));
+          let errors = e.stack;
+          // Special case for the exception thrown for an invalid flag
+          if (/Bad value for | Unhandled flag: /.test(e.message)) {
+            errors = e.message.replace(/^(java\.lang\.RuntimeException|Class[a-zA-Z0-9_\$]+): /, '');
+          }
+
+          this._compilationComplete(1, [], errors);
           cb();
           return;
         }
@@ -232,6 +238,12 @@ module.exports = function(initOptions) {
       }
     }
 
+    /**
+     * @param {number} exitCode
+     * @param {string} compiledJs
+     * @param {string} errors
+     * @private
+     */
     _compilationComplete(exitCode, compiledJs, errors) {
       // standard error will contain compilation warnings, log those
       if (errors && errors.trim().length > 0) {

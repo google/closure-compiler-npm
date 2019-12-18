@@ -28,6 +28,7 @@ grunt.initConfig({
         'dest/output.min.js': ['src/js/**/*.js']
       },
       options: {
+        compile_in_batches: require('os').cpus().length,
         compilation_level: 'SIMPLE',
         language_in: 'ECMASCRIPT5_STRICT',
         create_source_map: 'dest/output.min.js.map',

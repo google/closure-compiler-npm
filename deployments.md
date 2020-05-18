@@ -5,11 +5,11 @@
 ## Deploying new releases of the main compiler
 
  1. Update the compiler submodule pointer to the tagged release.
-     * if not already done, update the compiler submodule
-       `git submodule init && git submodule update`
+     * `git submodule init && git submodule update` (update the compiler submodule)
      * change to the '/compiler' folder
-     * `git checkout` the correct tag/commit (should be of the form `closure-compiler-parent-vYYYYMMDD`)
-     * change back to the root folder and commit this change
+     * `git checkout closure-compiler-parent-vYYYYMMDD` (the current tag/commit)
+     * `cd ..`
+     * `git commit -m "Release vYYYYMMDD"`
  2. Run `yarn install` in the package root.
  3. Run `node_modules/.bin/lerna version --force-publish='*' {COMPILER_VERSION_NUMBER}.0.0`.
     The `COMPILER_VERSION_NUMBER` should not include the preceding `v` - example: 20181008.

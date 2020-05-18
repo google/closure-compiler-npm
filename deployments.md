@@ -6,7 +6,7 @@
 
  1. Update the compiler submodule pointer to the tagged release.
      * `git submodule init && git submodule update` (update the compiler submodule)
-     * change to the '/compiler' folder
+     * `cd compiler'
      * `git checkout closure-compiler-parent-vYYYYMMDD` (the current tag/commit)
      * `cd ..`
      * `git commit -m "Release vYYYYMMDD"`

@@ -38,13 +38,13 @@ if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
 }
 process.stdout.write(`  ${DIM}google-closure-compiler-windows building image${RESET}\n`);
 
-const setEnvCmd = fs.readFileSync(
-    'C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat', 'utf8');
+// const setEnvCmd = fs.readFileSync(
+//     'C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat', 'utf8');
 try {
   fs.mkdirSync('..\\..\\temp');
 } catch (e) {}
-fs.writeFileSync('..\\..\\temp\\build-image.cmd', `${setEnvCmd}
-
+fs.writeFileSync('..\\..\\temp\\build-image.cmd', `
+C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat
 node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
 `, {
   encoding: 'utf8',

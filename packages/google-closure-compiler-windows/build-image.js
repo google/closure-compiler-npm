@@ -44,7 +44,7 @@ try {
   fs.mkdirSync('..\\..\\temp');
 } catch (e) {}
 fs.writeFileSync('..\\..\\temp\\build-image.cmd', `
-C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat
+"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat"
 node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
 `, {
   encoding: 'utf8',

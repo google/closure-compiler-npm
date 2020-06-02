@@ -17,13 +17,9 @@ cache:
 
 install:
   - "@echo on"
-  - echo %JAVA_HOME%
-  - dir "C:\Program Files\java"
-  - dir "C:\Program Files (x86)\Microsoft Visual Studio"
-  - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019"
-  - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
-  - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7"
-  - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools"
+  - SET JAVA_HOME="C:\Program Files\java\jdk11"
+  - SET PATH=C:\Progra~1\Java\jdk11\bin;%PATH%
+  - echo %PATH%
   - git config --global user.email "ci@appveyor.com"
   - git config --global user.name "Appveyor"
   - git submodule update --init --recursive

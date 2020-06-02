@@ -141,7 +141,12 @@ describe('grunt-google-closure-compiler', function() {
     Object.defineProperty(JsClosureCompiler.prototype, 'run', originalJsCompilerRunMethod);
   });
 
-  ['java', 'native', 'javascript'].forEach(platform => {
+  const platforms = ['java', 'native'];
+  if (process.platform !== 'win32') {
+    platforms.push('win32');
+  }
+
+  platforms.forEach(platform => {
     describe(`${platform} version`, function() {
       let closureCompiler;
       this.slow(1000);

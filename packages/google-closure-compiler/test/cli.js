@@ -51,7 +51,12 @@ describe('command line interface', function() {
       .catch(complete);
   });
 
-  ['java', 'native', 'javascript'].forEach(platform => {
+  const platforms = ['java', 'native'];
+  if (process.platform !== 'win32') {
+    platforms.push('win32');
+  }
+
+  platforms.forEach(platform => {
     describe(`${platform} version`, function() {
       it('--help flag', done => {
         function complete(arg) {

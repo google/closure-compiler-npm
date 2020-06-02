@@ -50,6 +50,7 @@ function runCommand(cmd, args, spawnOpts) {
     let stdout = '';
     let stderr = '';
 
+    process.stdout.write(`runCommand: ${cmd} ${args.join(' ')}\n`);
     externalProcess = spawn(cmd, args, spawnOpts);
     externalProcess.on('error', err => {
       if (!err) {

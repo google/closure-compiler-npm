@@ -46,7 +46,9 @@ if (!fs.existsSync(TEMP_PATH)) {
   fs.mkdirSync(TEMP_PATH);
 }
 
-const NATIVE_IMAGE_BUILD_ARGS = [ '-H:+JNI'].concat(GRAAL_OS !== 'windows' ? ['--no-server'] : []).concat([
+const NATIVE_IMAGE_BUILD_ARGS = [
+  '-H:+JNI',
+  '--no-server',
   '-H:+ReportUnsupportedElementsAtRuntime',
   '-H:IncludeResourceBundles=com.google.javascript.rhino.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
@@ -65,12 +67,12 @@ const NATIVE_IMAGE_BUILD_ARGS = [ '-H:+JNI'].concat(GRAAL_OS !== 'windows' ? ['-
   '--initialize-at-build-time',
   '-jar',
   path.resolve(process.cwd(), 'compiler.jar')
-]);
+];
 let buildSteps = Promise.resolve();
 // Download Graal
 const GRAAL_ARCHIVE_FILE = `${GRAAL_FOLDER}.${GRAAL_PACKAGE_SUFFIX}`;
 // Build the compiler native image.
-let pathParts = [TEMP_PATH, `graalvm-ce-${GRAAL_VERSION}`];
+let pathParts = [TEMP_PATH, `graalvm-ce-java8-${GRAAL_VERSION}`];
 if (GRAAL_OS === 'windows') {
   pathParts.push('jre', 'lib', 'svm', 'bin');
 } else if (GRAAL_OS === 'darwin') {
@@ -80,7 +82,7 @@ if (GRAAL_OS === 'windows') {
 }
 const GRAAL_BIN_FOLDER = path.resolve.apply(null, pathParts);
 if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
-  const GRAAL_GU_PATH = path.resolve(GRAAL_BIN_FOLDER, 'gu');
+  const GRAAL_GU_PATH = path.resolve(GRAAL_BIN_FOLDER, `gu${GRAAL_OS === 'windows' ? '.cmd' : ''}`);
   buildSteps = buildSteps
       .then(() => {
         // Download graal and extract the contents
@@ -98,9 +100,6 @@ if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
         return runCommand(`7z x -y ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH});
       })
       .then(() => {
-        if (GRAAL_OS === 'windows') {
-          return Promise.resolve();
-        }
         return runCommand(`${GRAAL_GU_PATH} install native-image`);
       });
 }

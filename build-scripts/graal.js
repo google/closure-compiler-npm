@@ -55,18 +55,14 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
   '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
   `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
-  '-H:IncludeResources=(externs.zip)|(.*(js|txt))'.replace(/[|\(\)]/g, (match) => {
-    if (GRAAL_OS === 'windows') {
-      if (match === '|') {
-        // Escape the '|' character in a  windows batch command
-        // See https://stackoverflow.com/a/16018942/1211524
-        return '^^^|';
-      } else {
-        return `^${match}`;
-      }
-    }
-    return match;
-  }),
+  '-H:IncludeResources=(externs.zip)|(.*(js|txt))', // .replace(/\|/g, () => {
+  //   if (GRAAL_OS === 'windows') {
+  //     // Escape the '|' character in a  windows batch command
+  //     // See https://stackoverflow.com/a/16018942/1211524
+  //     return '^^^|';
+  //   }
+  //   return '|';
+  // }),
   '-H:+ReportExceptionStackTraces',
   '--initialize-at-build-time',
   '-jar',
@@ -77,7 +73,9 @@ let buildSteps = Promise.resolve();
 const GRAAL_ARCHIVE_FILE = `${GRAAL_FOLDER}.${GRAAL_PACKAGE_SUFFIX}`;
 // Build the compiler native image.
 let pathParts = [TEMP_PATH, `graalvm-ce-java8-${GRAAL_VERSION}`];
-if (GRAAL_OS === 'darwin') {
+if (GRAAL_OS === 'windows') {
+  pathParts.push('jre', 'lib', 'svm', 'bin');
+} else if (GRAAL_OS === 'darwin') {
   pathParts.push('Contents', 'Home', 'bin');
 } else {
   pathParts.push('bin');
@@ -102,6 +100,9 @@ if (!fs.existsSync(path.resolve(TEMP_PATH, GRAAL_FOLDER))) {
         return runCommand(`7z x -y ${GRAAL_ARCHIVE_FILE}`, {cwd: TEMP_PATH});
       })
       .then(() => {
+        // if (GRAAL_OS === 'windows') {
+        //   return Promise.resolve();
+        // }
         return runCommand(`${GRAAL_GU_PATH} install native-image`);
       });
 }

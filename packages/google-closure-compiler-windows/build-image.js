@@ -24,6 +24,7 @@
 const fs = require('fs');
 const path = require('path');
 const {DIM, RESET} = require('../../build-scripts/colors');
+const {spawn} = require('child_process');
 
 // The windows sdk set env command messes with colors, so reset the console back to default
 process.stdout.write(RESET);

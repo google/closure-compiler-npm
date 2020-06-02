@@ -17,8 +17,8 @@ cache:
 
 install:
   - "@echo on"
-  - SET JAVA_HOME=C:\Progra~1\Java\jdk11
-  - SET PATH=C:\Progra~1\Java\jdk11\bin;%PATH%
+  - SET JAVA_HOME="C:\Program Files\java\jdk11"
+  - SET PATH="C:\Program Files\java\jdk11\bin";%PATH%
   - echo %PATH%
   - git config --global user.email "ci@appveyor.com"
   - git config --global user.name "Appveyor"

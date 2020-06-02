@@ -73,9 +73,7 @@ let buildSteps = Promise.resolve();
 const GRAAL_ARCHIVE_FILE = `${GRAAL_FOLDER}.${GRAAL_PACKAGE_SUFFIX}`;
 // Build the compiler native image.
 let pathParts = [TEMP_PATH, `graalvm-ce-java8-${GRAAL_VERSION}`];
-if (GRAAL_OS === 'windows') {
-  pathParts.push('jre', 'lib', 'svm', 'bin');
-} else if (GRAAL_OS === 'darwin') {
+if (GRAAL_OS === 'darwin') {
   pathParts.push('Contents', 'Home', 'bin');
 } else {
   pathParts.push('bin');

@@ -1,6 +1,6 @@
 version: 1.0.{build}
 
-image: Visual Studio 2015
+image: Visual Studio 2019
 
 clone_depth: 50
 
@@ -31,6 +31,7 @@ install:
 
 build_script:
   - "@echo on"
+  - java -version
   - node ./build-scripts/build_compiler.js --colors=always
   - yarn workspaces run build
 

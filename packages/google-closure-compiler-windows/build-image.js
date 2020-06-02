@@ -24,7 +24,6 @@
 const fs = require('fs');
 const path = require('path');
 const {DIM, RESET} = require('../../build-scripts/colors');
-const runCommand = require('../../build-scripts/run-command');
 
 // The windows sdk set env command messes with colors, so reset the console back to default
 process.stdout.write(RESET);
@@ -37,22 +36,4 @@ if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
   process.exit(0);
 }
 process.stdout.write(`  ${DIM}google-closure-compiler-windows building image${RESET}\n`);
-
-// const setEnvCmd = fs.readFileSync(
-//     'C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat', 'utf8');
-try {
-  fs.mkdirSync('..\\..\\temp');
-} catch (e) {}
-fs.writeFileSync('..\\..\\temp\\build-image.cmd', `
-"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat"
-node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
-`, {
-  encoding: 'utf8',
-  mode: fs.constants.IRWXO // Add execute permissions
-});
-
-runCommand('..\\..\\temp\\build-image.cmd')
-  .catch(e => {
-    console.error(e);
-    process.exit(e.exitCode || 1);
-  });
+spawn('node', ['../../build-scripts/graal.js'], {stdio: 'inherit'});

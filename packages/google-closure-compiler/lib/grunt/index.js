@@ -72,7 +72,7 @@ module.exports = (grunt, pluginOptions) => {
   }
 
   function compilationPromiseGenerator(files, options, pluginOpts) {
-    return function () { return compilationPromise(files, options, pluginOpts); };
+    return () => compilationPromise(files, options, pluginOpts);
   }
 
   /**
@@ -224,20 +224,26 @@ module.exports = (grunt, pluginOptions) => {
       });
   }
 
+  // processPromises function grabs `ps` as array of promise-returning functions and `done` function as callback. It separates `ps` into batches of length == compileInBatches and runs resulting batches in parallel.
   function processPromises(ps, done) {
+    // if no promise-returning functions in array - it's done
     if (!ps.length) {
       done();
       return;
     }
+    // else forming psb array with `compileInBatches` or less promise-returning functions and running it in parallel
     let psb = [];
     for (let i = 0; i < compileInBatches; i++) {
       if (ps.length) {
         psb.push(ps.pop());
       }
     }
+    // for each promise returning function run that function to make promise running 
     return Promise.all(psb.map(t => t())).then(() => {
+      // when all promises in batch fulfilled run itself with main `ps` array (or what it has for now)
       return processPromises(ps, done);
     }).catch((e) => {
+      // if some error in promise - failing
       grunt.fail.warn('Compilation error');
       done();
     });

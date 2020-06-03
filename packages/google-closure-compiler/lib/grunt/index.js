@@ -211,7 +211,8 @@ module.exports = (grunt, pluginOptions) => {
     // they are all completed before calling the "done" method.
     Promise.all(compileTasks)
       .then(() => asyncDone())
-      .catch(() => {
+      .catch((err) => {
+        grunt.log.warn(err.message);
         grunt.fail.warn('Compilation error');
         asyncDone();
       });

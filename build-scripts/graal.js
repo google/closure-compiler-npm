@@ -59,7 +59,7 @@ const NATIVE_IMAGE_BUILD_ARGS = [
     if (GRAAL_OS === 'windows') {
       // Escape the '|' character in a  windows batch command
       // See https://stackoverflow.com/a/16018942/1211524
-      return '^^^|';
+      return '^|';
     }
     return '|';
   }),

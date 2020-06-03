@@ -71,12 +71,7 @@ describe('gulp-google-closure-compiler', function() {
     Object.defineProperty(JsClosureCompiler.prototype, 'run', originalJsCompilerRunMethod);
   });
 
-  const platforms = ['java', 'native'];
-  if (process.platform !== 'win32') {
-    platforms.push('win32');
-  }
-
-  platforms.forEach(platform => {
+  ['java', 'native', 'javascript'].forEach(platform => {
     describe(`${platform} version`, function() {
       const closureCompiler = compilerPackage.gulp();
 

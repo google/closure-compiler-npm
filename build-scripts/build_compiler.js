@@ -78,19 +78,14 @@ function copy(src, dest) {
  * @return {!Promise<undefined>}
  */
 function copyCompilerBinaries() {
-  const copyBinaries = [
+  return Promise.all([
     copy(compilerJavaBinaryPath, './packages/google-closure-compiler-java/compiler.jar'),
     copy(compilerJavaBinaryPath, './packages/google-closure-compiler-linux/compiler.jar'),
     copy(compilerJavaBinaryPath, './packages/google-closure-compiler-osx/compiler.jar'),
     copy(compilerJavaBinaryPath, './packages/google-closure-compiler-windows/compiler.jar'),
+    copy(compilerJsBinaryPath, './packages/google-closure-compiler-js/jscomp.js'),
     copy('./compiler/contrib', './packages/google-closure-compiler/contrib')
-  ];
-
-  if (process.platform !== 'win32') {
-    copyBinaries.push(copy(compilerJsBinaryPath, './packages/google-closure-compiler-js/jscomp.js'));
-  }
-
-  return Promise.all(copyBinaries);
+  ]);
 }
 
 const mvnCmd = `mvn${process.platform === 'win32' ? '.cmd' : ''}`;
@@ -113,7 +108,7 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
             extraMvnArgs.concat([
               '-DskipTests',
               '-pl',
-              `externs/pom.xml,pom-main.xml,pom-main-shaded.xml${process.platform === 'win32' ? '' : ',pom-gwt.xml'}`,
+              'externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml',
               'install'
             ]),
             {cwd: './compiler'});
@@ -123,14 +118,13 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
           process.exit(exitCode);
           return;
         }
-        if (process.platform !== 'win32') {
-          // Add a license header to the gwt version jscomp.js file since the compiler build omits this.
-          // If the gwt version ever has a source map, the source mappings will need updated to account for the
-          // prepended lines.
-          const jscompFileContents = fs.readFileSync(compilerJsBinaryPath, 'utf8');
-          fs.writeFileSync(
-              compilerJsBinaryPath,
-              `/*
+        // Add a license header to the gwt version jscomp.js file since the compiler build omits this.
+        // If the gwt version ever has a source map, the source mappings will need updated to account for the
+        // prepended lines.
+        const jscompFileContents = fs.readFileSync(compilerJsBinaryPath, 'utf8');
+        fs.writeFileSync(
+            compilerJsBinaryPath,
+            `/*
  * Copyright 2018 The Closure Compiler Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -146,8 +140,7 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
  * limitations under the License.
  */
  ${jscompFileContents}`,
-              'utf8');
-        }
+            'utf8');
         copyCompilerBinaries();
       })
       .catch(e => {

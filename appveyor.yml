@@ -1,6 +1,6 @@
 version: 1.0.{build}
 
-image: Visual Studio 2019
+image: Visual Studio 2015
 
 clone_depth: 50
 
@@ -17,9 +17,6 @@ cache:
 
 install:
   - "@echo on"
-  - SET JAVA_HOME=C:\Program Files\java\jdk11
-  - SET PATH=C:\Program Files\java\jdk11\bin;%PATH%
-  - echo %PATH%
   - git config --global user.email "ci@appveyor.com"
   - git config --global user.name "Appveyor"
   - git submodule update --init --recursive

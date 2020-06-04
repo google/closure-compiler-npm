@@ -24,7 +24,7 @@
 const fs = require('fs');
 const path = require('path');
 const {DIM, RESET} = require('../../build-scripts/colors');
-const {spawn} = require('child_process');
+const runCommand = require('../../build-scripts/run-command');
 
 // The windows sdk set env command messes with colors, so reset the console back to default
 process.stdout.write(RESET);
@@ -43,10 +43,11 @@ try {
 } catch (e) {}
 fs.writeFileSync('..\\..\\temp\\build-image.cmd', `@echo on
 C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Bin\\SetEnv.cmd
+set PIPE="|"
 node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
 `, {
   encoding: 'utf8',
   mode: fs.constants.IRWXO // Add execute permissions
 });
 
-spawn('..\\..\\temp\\build-image.cmd', [], {stdio: 'inherit'});
+runCommand('..\\..\\temp\\build-image.cmd');

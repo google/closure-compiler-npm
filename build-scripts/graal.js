@@ -60,7 +60,7 @@ const NATIVE_IMAGE_BUILD_ARGS = [
       // Escape the '|' character in a  windows batch command
       // See https://stackoverflow.com/a/16018942/1211524
       if (match === '|') {
-        return '^^^|';
+        return '%PIPE%';
       }
       return `^${match}`;
     }

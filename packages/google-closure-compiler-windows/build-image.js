@@ -42,7 +42,7 @@ try {
   fs.mkdirSync('..\\..\\temp');
 } catch (e) {}
 fs.writeFileSync('..\\..\\temp\\build-image.cmd', `@echo on
-C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Bin\\SetEnv.cmd
+"C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Bin\\SetEnv.cmd"
 set PIPE="|"
 node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
 `, {

@@ -35,6 +35,7 @@ module.exports = (grunt, pluginOptions) => {
 
   let extraArguments;
   let platforms;
+  let compileInBatches = false;
   if (pluginOptions) {
     if (Array.isArray(extraArguments)) {
       extraArguments = pluginOptions;
@@ -47,6 +48,9 @@ module.exports = (grunt, pluginOptions) => {
       if (pluginOptions.extraArguments) {
         extraArguments = pluginOptions.extraArguments;
       }
+    }
+    if (pluginOptions instanceof Object && typeof pluginOptions.compile_in_batches === 'number' && pluginOptions.compile_in_batches > 0) {
+      compileInBatches = pluginOptions.compile_in_batches;
     }
   }
 
@@ -65,6 +69,10 @@ module.exports = (grunt, pluginOptions) => {
       this.push(file);
       cb();
     }
+  }
+
+  function compilationPromiseGenerator(files, options, pluginOpts) {
+    return () => compilationPromise(files, options, pluginOpts);
   }
 
   /**
@@ -194,28 +202,61 @@ module.exports = (grunt, pluginOptions) => {
         options.compilerOpts.js_output_file = f.dest;
       }
 
-      compileTasks.push(compilationPromise(src, options.args || options.compilerOpts, {platform})
-          .then(function () {}, function(err) {
-            throw err;
-          }));
+      compileTasks.push(compilationPromiseGenerator(src, options.args || options.compilerOpts, {platform}));
     });
 
     // If the task was invoked without any files provided by grunt, assume that
     // --js flags are present and we want to run the compiler anyway.
     if (taskObject.files.length === 0) {
       const options = getCompilerOptions();
-      compileTasks.push(compilationPromise(null, options.args || options.compilerOpts, {platform}));
+      compileTasks.push(compilationPromiseGenerator(null, options.args || options.compilerOpts, {platform}));
     }
 
     // Multiple invocations of the compiler can occur for a single task target. Wait until
     // they are all completed before calling the "done" method.
-    Promise.all(compileTasks)
+
+    return compileInBatches ? processPromises(compileTasks, asyncDone) : Promise.all(compileTasks.map(t => t()))
       .then(() => asyncDone())
       .catch((err) => {
         grunt.log.warn(err.message);
         grunt.fail.warn('Compilation error');
         asyncDone();
       });
+  }
+
+  /**
+   * Grabs `ps` as array of promise-returning functions and `done` function as callback.
+   * Separates ps` into batches of length == compileInBatches and runs resulting 
+   * promises in batches in parallel but batches in series.
+   * 
+   * @param {!Array<function():!Promise<undefined>>} ps functions returning promises
+   * @param {function():undefined} done callback for the end of processing
+   * @return {!Promise<undefined>|undefined}
+   */
+  function processPromises(ps, done) {
+    // if no promise-returning functions in array - it's done
+    if (!ps.length) {
+      done();
+      return;
+    }
+    // else forming psb array with `compileInBatches` or less promise-returning functions
+    // and running it in parallel
+    let psb = [];
+    for (let i = 0; i < compileInBatches; i++) {
+      if (ps.length) {
+        psb.push(ps.pop());
+      }
+    }
+    // for each promise returning function run that function to make promise running 
+    return Promise.all(psb.map(t => t())).then(() => {
+      // when all promises in batch fulfilled run itself with main `ps` array
+      // (or what it has for now)
+      return processPromises(ps, done);
+    }).catch((e) => {
+      // if some error in promise - failing
+      grunt.fail.warn('Compilation error');
+      done();
+    });
   }
 
   grunt.registerMultiTask('closure-compiler',

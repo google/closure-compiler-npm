@@ -224,14 +224,24 @@ module.exports = (grunt, pluginOptions) => {
       });
   }
 
-  // processPromises function grabs `ps` as array of promise-returning functions and `done` function as callback. It separates `ps` into batches of length == compileInBatches and runs resulting batches in parallel.
+  // 
+  /**
+   * Grabs `ps` as array of promise-returning functions and `done` function as callback.
+   * Separates ps` into batches of length == compileInBatches and runs resulting 
+   * promises in batches in parallel but batches in series.
+   * 
+   * @param {Array<Function(...?):Promise>}} functions returning promises
+   * @param {Function(null)} callback for the end of processing
+   * @return {Promise}
+   */
   function processPromises(ps, done) {
     // if no promise-returning functions in array - it's done
     if (!ps.length) {
       done();
       return;
     }
-    // else forming psb array with `compileInBatches` or less promise-returning functions and running it in parallel
+    // else forming psb array with `compileInBatches` or less promise-returning functions
+    // and running it in parallel
     let psb = [];
     for (let i = 0; i < compileInBatches; i++) {
       if (ps.length) {
@@ -240,7 +250,8 @@ module.exports = (grunt, pluginOptions) => {
     }
     // for each promise returning function run that function to make promise running 
     return Promise.all(psb.map(t => t())).then(() => {
-      // when all promises in batch fulfilled run itself with main `ps` array (or what it has for now)
+      // when all promises in batch fulfilled run itself with main `ps` array
+      // (or what it has for now)
       return processPromises(ps, done);
     }).catch((e) => {
       // if some error in promise - failing

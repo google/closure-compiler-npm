@@ -29,7 +29,9 @@ function mkDirByPathSync(targetDir, {isRelativeToScript = false} = {}) {
   targetDir.split(sep).reduce((parentDir, childDir) => {
     const curDir = path.resolve(baseDir, parentDir, childDir);
     try {
-      fs.mkdirSync(curDir);
+      if (!fs.existsSync(curDir)) {
+        fs.mkdirSync(curDir);
+      }
     } catch (err) {
       if (err.code !== 'EEXIST') {
         throw err;

@@ -31,6 +31,7 @@ install:
 
 build_script:
   - "@echo on"
+  - java -version
   - node ./build-scripts/build_compiler.js --colors=always
   - yarn workspaces run build
 

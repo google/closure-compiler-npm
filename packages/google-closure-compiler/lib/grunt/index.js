@@ -224,15 +224,14 @@ module.exports = (grunt, pluginOptions) => {
       });
   }
 
-  // 
   /**
    * Grabs `ps` as array of promise-returning functions and `done` function as callback.
    * Separates ps` into batches of length == compileInBatches and runs resulting 
    * promises in batches in parallel but batches in series.
    * 
-   * @param {Array<Function(...?):Promise>}} functions returning promises
-   * @param {Function(null)} callback for the end of processing
-   * @return {Promise}
+   * @param {!Array<function():!Promise<undefined>>} ps functions returning promises
+   * @param {function():undefined} done callback for the end of processing
+   * @return {!Promise<undefined>|undefined}
    */
   function processPromises(ps, done) {
     // if no promise-returning functions in array - it's done

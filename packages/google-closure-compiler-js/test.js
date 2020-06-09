@@ -22,6 +22,7 @@ try {
   require('./');
   process.stdout.write(`  ${GREEN}✓${RESET} ${DIM}jscomp exists${RESET}\n`);
 } catch (e) {
-  process.stdout.write(`  ${RED}jscomp does not exist${RESET}\n`);
+  process.stdout.write(`  ${RED}error loading jscomp${RESET}\n`);
+  console.error(e);
   process.exitCode = 1;
 }

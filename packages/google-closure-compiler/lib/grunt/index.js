@@ -35,7 +35,7 @@ module.exports = (grunt, pluginOptions) => {
 
   let extraArguments;
   let platforms;
-  let compileInBatches = false;
+  let maxParallelCompilations = false;
   if (pluginOptions) {
     if (Array.isArray(extraArguments)) {
       extraArguments = pluginOptions;
@@ -48,9 +48,13 @@ module.exports = (grunt, pluginOptions) => {
       if (pluginOptions.extraArguments) {
         extraArguments = pluginOptions.extraArguments;
       }
-    }
-    if (pluginOptions instanceof Object && typeof pluginOptions.compile_in_batches === 'number' && pluginOptions.compile_in_batches > 0) {
-      compileInBatches = pluginOptions.compile_in_batches;
+      if (pluginOptions.compile_in_batches && pluginOptions.max_parallel_compilations === undefined) {
+        pluginOptions.max_parallel_compilations = pluginOptions.compile_in_batches;
+        grunt.log.warn('DEPRECATED: compile_in_batches is deprecated. Use max_parallel_compilations.');
+      }
+      if (typeof pluginOptions.max_parallel_compilations === 'number' && pluginOptions.max_parallel_compilations > 0) {
+        maxParallelCompilations = pluginOptions.max_parallel_compilations;
+      }
     }
   }
 
@@ -215,7 +219,7 @@ module.exports = (grunt, pluginOptions) => {
     // Multiple invocations of the compiler can occur for a single task target. Wait until
     // they are all completed before calling the "done" method.
 
-    return (compileInBatches ? processPromises(compileTasks, compileInBatches) : Promise.all(compileTasks.map(t => t())))
+    return (maxParallelCompilations ? processPromisesParallel(compileTasks, maxParallelCompilations) : Promise.all(compileTasks.map(t => t())))
       .then(() => asyncDone())
       .catch((err) => {
         grunt.log.warn(err.message);
@@ -225,15 +229,15 @@ module.exports = (grunt, pluginOptions) => {
   }
 
   /**
-   * Grabs `ps` as array of promise-returning functions, separates it in `batchLength`
+   * Grabs `ps` as array of promise-returning functions, separates it in `maxParallelCount`
    * count of sequential processing consumers and runs these consumers in parallel to process
    * all promises.
    * 
    * @param {!Array<function():!Promise<undefined>>} ps functions returning promises
-   * @param {!number} batchLength Maximum promises running in parallel
+   * @param {!number} maxParallelCount Maximum promises running in parallel
    * @return {!Promise<undefined>|undefined}
    */
-  function processPromises(ps, batchLength) {
+  function processPromisesParallel(ps, maxParallelCount) {
     // While ps is not empty grab one function, run promise from it, then repeat. Else resolve to true.
     async function goInSequence() {
       if (!ps.length) {
@@ -244,8 +248,8 @@ module.exports = (grunt, pluginOptions) => {
     }
 
     let bulk = [];
-    // run `batchLength` count of goInSequence
-    for (let i = 0; i < Math.min(batchLength, ps.length); i++) {
+    // run `maxParallelCount` or lesser (if array of promises lesser) count of goInSequence
+    for (let i = 0; i < Math.min(maxParallelCount, ps.length); i++) {
       bulk.push(goInSequence());
     }
     return Promise.all(bulk);

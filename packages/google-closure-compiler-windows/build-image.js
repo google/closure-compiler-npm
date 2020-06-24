@@ -38,12 +38,12 @@ if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
 }
 process.stdout.write(`  ${DIM}google-closure-compiler-windows building image${RESET}\n`);
 
-const setEnvCmd = fs.readFileSync('C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Bin\\SetEnv.cmd')
+const setEnvCmd = fs.readFileSync('C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Bin\\SetEnv.cmd');
 try {
   fs.mkdirSync('..\\..\\temp');
 } catch (e) {}
 fs.writeFileSync('..\\..\\temp\\build-image.cmd', `${setEnvCmd}
-
+set PIPE="|"
 node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
 `, {
   encoding: 'utf8',
@@ -51,7 +51,7 @@ node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
 });
 
 runCommand('..\\..\\temp\\build-image.cmd')
-  .catch(e => {
-    console.error(e);
-    process.exit(e.exitCode || 1);
-  });
+    .catch(e => {
+      console.error(e);
+      process.exit(e.exitCode || 1);
+    });

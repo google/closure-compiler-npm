@@ -24,6 +24,7 @@
     "x64",
     "x86"
   ],
+  "preferUnplugged": true,
   "scripts": {
     "build": "node build-image.js",
     "test": "./test.js"

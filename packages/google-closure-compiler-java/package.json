@@ -21,6 +21,7 @@
     "package.json",
     "readme.md"
   ],
+  "preferUnplugged": true,
   "scripts": {
     "build": "echo \"google-closure-compiler-java build\"",
     "test": "./test.js"

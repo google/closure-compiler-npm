@@ -82,6 +82,43 @@ gulp.task('js-compile', function () {
 });
 ```
 
+## Node module resolution
+By default the compiler will not resolve any node module imports however the compiler can resolve modules if it's made aware of them. You have two options at your disposal:
+
+### Option 1 include the module files with the source
+
+Using hello-world-npm as an example, this command will add the hello-world-npm node module from the node_modules folder into your output file.
+
+```npx google-closure-compiler --js=source.js node_modules/hello-world-npm/lib/index.js node_modules/hello-world-npm/package.json --js_output_file=out.js --warning_level=VERBOSE --module_resolution=NODE --externs=externs.js --process_common_js_modules```
+
+This may not be the most user-friendly approach in a gulp workflow though.
+
+### Option 2 use another utility that can resolve modules
+
+Tools such as [rollup.js](https://rollupjs.org/guide/en/) or [Browserify](http://browserify.org/) can automatically resolve any imports from the node_modules folder and you can then pass those files to the Closure-compiler.
+
+Example below using rollup.js, sourcemaps and closure-compiler in a gulp stream, you can then run the function in any tasks.
+
+```js
+const rollup = require('@rollup/stream');
+const closureCompiler = require('google-closure-compiler').gulp();
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+
+function compileJS() {
+  return rollupStream(...//config)
+    .pipe(source('script.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({ loadMaps: true }))
+    .pipe(closureCompiler(...//config))
+    .pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest('dist'));
+}
+```
+
+Alternatively you can extend the closure-compiler or use a utility such as [closure-calculate-chunks](https://github.com/chadkillingsworth/closure-calculate-chunks).
+
+
 ## Specifying Extra Java Arguments
 Some users may wish to pass the java vm extra arguments - such as to specify the amount of memory the compiler should
 be allocated. Both the grunt and gulp plugins support this.

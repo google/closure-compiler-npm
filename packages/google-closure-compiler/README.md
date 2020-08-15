@@ -22,7 +22,7 @@ You may also post in the
 
 *Please don't cross post to both Stackoverflow and Closure Compiler Discuss.*
 
-The compiler is distributed as a Java jar and a JavaScript library. Mac OS, Linux and Windows also have native binaries.
+The compiler is distributed as a Java jar or as Mac OS, Linux and Windows native binaries.
 
 ### Native Binary Version
 On Linux, Mac OS and Windows, optional dependencies will install a native binary of the compiler.
@@ -31,12 +31,6 @@ Compilations with a very large number of source files may be slightly slower tha
 
 ### Java Version
 Requires java to be installed and in the path. Using the java version typically results in faster compilation times.
-
-### JavaScript Version
-This is a transpiled version of the Java source to native JavaScript. It can be used in environments without
-java installed and even in a browser.
-
-*Note: not all flags are available for the JavaScript version.*
 
 ## Usage
 The simplest way to invoke the compiler (e.g. if you're just trying it out) is with [`npx`](https://www.npmjs.com/package/npx):
@@ -149,26 +143,6 @@ const closureCompiler = new ClosureCompiler({
 });
 
 const compilerProcess = closureCompiler.run((exitCode, stdOut, stdErr) => {
-  //compilation complete
-});
-```
-
-### JavaScript Version
-
-```js
-const ClosureCompiler = require('google-closure-compiler').jsCompiler;
-
-console.log(ClosureCompiler.CONTRIB_PATH); // absolute path to the contrib folder which contains externs
-
-const closureCompiler = new ClosureCompiler({
-  compilation_level: 'ADVANCED'
-});
-
-const compilerProcess = closureCompiler.run([{
- path: 'file-one.js',
- src: 'alert("hello world")',
- sourceMap: null // optional input source map
-}], (exitCode, stdOut, stdErr) => {
   //compilation complete
 });
 ```

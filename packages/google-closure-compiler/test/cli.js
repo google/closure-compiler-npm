@@ -51,7 +51,7 @@ describe('command line interface', function() {
       .catch(complete);
   });
 
-  ['java', 'native', 'javascript'].forEach(platform => {
+  ['java', 'native'].forEach(platform => {
     describe(`${platform} version`, function() {
       it('--help flag', done => {
         function complete(arg) {

@@ -1,9 +1,5 @@
 # google-closure-compiler-js
 
-JavaScript platform distribution of Closure Compiler.
+**The JS version of closure-compiler is no longer supported or maintained.**
 
 For cli scripts, build tool plugins and more see the [main distribution](https://www.npmjs.com/package/google-closure-compiler).
-
-The old standalone [google-closure-compiler-js](https://github.com/google/closure-compiler-js) package
-is deprecated and is now distributed as part of the
-[google-closure-compiler](https://www.npmjs.com/package/google-closure-compiler) package.

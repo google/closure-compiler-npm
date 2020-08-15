@@ -51,7 +51,6 @@ function getCompilerVersionFromPomXml() {
 
 let compilerVersion = getCompilerVersionFromPomXml();
 const compilerJavaBinaryPath = `./compiler/target/closure-compiler-${compilerVersion}.jar`;
-const compilerJsBinaryPath = `./compiler/target/closure-compiler-gwt-${compilerVersion}/jscomp/jscomp.js`;
 
 console.log(process.platform, process.arch, compilerVersion);
 
@@ -83,14 +82,13 @@ function copyCompilerBinaries() {
     copy(compilerJavaBinaryPath, './packages/google-closure-compiler-linux/compiler.jar'),
     copy(compilerJavaBinaryPath, './packages/google-closure-compiler-osx/compiler.jar'),
     copy(compilerJavaBinaryPath, './packages/google-closure-compiler-windows/compiler.jar'),
-    copy(compilerJsBinaryPath, './packages/google-closure-compiler-js/jscomp.js'),
     copy('./compiler/contrib', './packages/google-closure-compiler/contrib')
   ]);
 }
 
 const mvnCmd = `mvn${process.platform === 'win32' ? '.cmd' : ''}`;
 
-if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
+if (!fs.existsSync(compilerJavaBinaryPath)) {
   // Force maven to use colorized output
   const extraMvnArgs = process.env.TRAVIS || process.env.APPVEYOR ? ['-Dstyle.color=always'] : [];
   if ((process.env.TRAVIS || process.env.APPVEYOR)) {
@@ -108,7 +106,7 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
             extraMvnArgs.concat([
               '-DskipTests',
               '-pl',
-              'externs/pom.xml,pom-main.xml,pom-main-shaded.xml,pom-gwt.xml',
+              'externs/pom.xml,pom-main.xml,pom-main-shaded.xml',
               'install'
             ]),
             {cwd: './compiler'});
@@ -118,29 +116,6 @@ if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPat
           process.exit(exitCode);
           return;
         }
-        // Add a license header to the gwt version jscomp.js file since the compiler build omits this.
-        // If the gwt version ever has a source map, the source mappings will need updated to account for the
-        // prepended lines.
-        const jscompFileContents = fs.readFileSync(compilerJsBinaryPath, 'utf8');
-        fs.writeFileSync(
-            compilerJsBinaryPath,
-            `/*
- * Copyright 2018 The Closure Compiler Authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
- ${jscompFileContents}`,
-            'utf8');
         copyCompilerBinaries();
       })
       .catch(e => {

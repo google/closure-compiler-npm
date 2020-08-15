@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": {
-    "packages": ["packages/*"],
+    "packages": [
+      "packages/google-closure-compiler-java",
+      "packages/google-closure-compiler-linux",
+      "packages/google-closure-compiler-osx",
+      "packages/google-closure-compiler-windows",
+      "packages/google-closure-compiler"
+    ],
     "nohoist": ["**/mocha"]
   },
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",

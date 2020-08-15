@@ -119,26 +119,4 @@ describe('closure-compiler node bindings', () => {
       });
     });
   });
-
-  describe('javascript version', () => {
-    it('should have a static property for the contrib folder', () => {
-      jsCompiler.CONTRIB_PATH.should.match(/[\/\\]contrib$/);
-    });
-
-    it('should normalize arguments to camel case', () => {
-      const compiler = new jsCompiler({
-        one_bar: true,
-        two_baz: 'two',
-        three_foo_bar_baz: ['one', 'two', 'three']
-      });
-
-      const expectedFlags = ['oneBar', 'twoBaz', 'threeFooBarBaz'];
-      Object.keys(compiler.flags).forEach(flag => {
-        const flagIndex = expectedFlags.indexOf(flag);
-        flagIndex.should.be.aboveOrEqual(0);
-        expectedFlags.splice(flagIndex, 1);
-      });
-      expectedFlags.length.should.eql(0);
-    });
-  });
 });

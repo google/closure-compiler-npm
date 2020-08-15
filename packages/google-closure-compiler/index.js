@@ -35,14 +35,6 @@ class Main {
   static get compiler() {
     return require('./lib/node/closure-compiler');
   }
-
-  static get jsCompiler() {
-    return require('./lib/node/closure-compiler-js');
-  }
-  
-  static get gjd() {
-    return require('google-closure-compiler-js').gjd;
-  }
 }
 
 module.exports = Main;

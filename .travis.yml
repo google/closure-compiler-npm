@@ -4,13 +4,12 @@ matrix:
   include:
     - os: osx
       env:
-        - NODE_VERSION=8
-      # Use Java 8
-      osx_image: xcode9.3
+        - NODE_VERSION=10
+      osx_image: xcode12
     - os: linux
       env:
-        - NODE_VERSION=10
-      jdk: openjdk8
+        - NODE_VERSION=14
+      jdk: openjdk11
 
 # safelist
 branches:

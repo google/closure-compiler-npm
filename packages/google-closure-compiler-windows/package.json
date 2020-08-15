@@ -21,8 +21,7 @@
     "readme.md"
   ],
   "cpu": [
-    "x64",
-    "x86"
+    "x64"
   ],
   "preferUnplugged": true,
   "scripts": {

@@ -28,11 +28,18 @@ before_install:
       curl -H "Authorization:Bearer ${APPVEYOR_TOKEN}" -H "Content-Type:application/json; charset=utf-8" --request POST --data '{"accountName":"ClosureCompilerProject","projectSlug":"closure-compiler-npm","branch":"master","environmentVariables":{"COMPILER_NIGHTLY":"1"}}' --write-out '\\n' https://ci.appveyor.com/api/builds;
     fi
   - nvm install $NODE_VERSION
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir -p ~/.m2; cp .travis-settings.xml ~/.m2/settings.xml; fi
   # On Mac OS, maven builds fail with a "Non-resolvable parent POM" error.
   # The fix is to copy a basic maven settings.xml file into the ~/.m2 folder
   # https://stackoverflow.com/a/36982050/1211524
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cp .travis-settings.xml ~/.m2/settings.xml; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      cp .travis-settings.xml ~/.m2/settings.xml;
+      brew update;
+      brew tap AdoptOpenJDK/openjdk;
+      brew cask install adoptopenjdk11;
+      export JAVA_HOME=$(/usr/libexec/java_home -v11);
+      java -version;
+    fi
   # Install yarn version 1.16 by downloading its install script and executing it in bash
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
   - export PATH="$HOME/.yarn/bin:$PATH"

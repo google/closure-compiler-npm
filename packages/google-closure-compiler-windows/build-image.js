@@ -24,7 +24,7 @@
 const fs = require('fs');
 const path = require('path');
 const {DIM, RESET} = require('../../build-scripts/colors');
-const runCommand = require('../../build-scripts/run-command');
+const {spawn} = require('child_process');
 
 // The windows sdk set env command messes with colors, so reset the console back to default
 process.stdout.write(RESET);
@@ -35,23 +35,7 @@ if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
 } else if (process.platform !== 'win32') {
   process.stdout.write(`  ${DIM}google-closure-compiler-windows build wrong platform${RESET}\n`);
   process.exit(0);
+} else {
+  process.stdout.write(`  ${DIM}google-closure-compiler-windows building image${RESET}\n`);
+  spawn('node', ['../../build-scripts/graal.js'], {stdio: 'inherit'});
 }
-process.stdout.write(`  ${DIM}google-closure-compiler-windows building image${RESET}\n`);
-
-const setEnvCmd = fs.readFileSync('C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1\\Bin\\SetEnv.cmd');
-try {
-  fs.mkdirSync('..\\..\\temp');
-} catch (e) {}
-fs.writeFileSync('..\\..\\temp\\build-image.cmd', `${setEnvCmd}
-set PIPE="|"
-node ${path.resolve(__dirname, '..', '..', 'build-scripts', 'graal.js')}
-`, {
-  encoding: 'utf8',
-  mode: fs.constants.IRWXO // Add execute permissions
-});
-
-runCommand('..\\..\\temp\\build-image.cmd')
-    .catch(e => {
-      console.error(e);
-      process.exit(e.exitCode || 1);
-    });

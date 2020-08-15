@@ -1,11 +1,12 @@
 version: 1.0.{build}
 
-image: Visual Studio 2015
+image: Visual Studio 2019
 
 clone_depth: 50
 
 environment:
-  PATH: C:\Program Files (x86)\Apache\Maven\bin;%PATH%
+  JAVA_HOME: C:\Program Files\Java\jdk11
+  PATH: C:\Program Files (x86)\Apache\Maven\bin;C:\Program Files\Java\jdk11\bin;%PATH%
 
 branches:
   only:
@@ -17,9 +18,12 @@ cache:
 
 install:
   - "@echo on"
+  # Setup windows SDK build environment variables - Graal on windows only supports 64bit architectures
+  - '"\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64'
   - git config --global user.email "ci@appveyor.com"
   - git config --global user.name "Appveyor"
   - git submodule update --init --recursive
+  # Install expected versions of node and yarn
   - choco install nodejs --version 12.4.0
   - choco install yarn
   - yarn install --colors=always

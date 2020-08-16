@@ -16,7 +16,7 @@
  */
 
 /**
- * @fileoverview Build the compiler java jar and GWT platforms from source.
+ * @fileoverview Build the compiler GWT platforms from source.
  *
  * Invoked as part of the package build process:
  *

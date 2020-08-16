@@ -1,6 +1,4 @@
 # google-closure-compiler
-[![Travis Build Status](https://travis-ci.org/google/closure-compiler-npm.svg?branch=master)](https://travis-ci.org/google/closure-compiler-npm)
-[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/r56y1gns8pok3t7x/branch/master?svg=true)](https://ci.appveyor.com/project/ClosureCompilerProject/closure-compiler-npm/branch/master)
 
 Check, compile, optimize and compress JavaScript with Closure-Compiler
 

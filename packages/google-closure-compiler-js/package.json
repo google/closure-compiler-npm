@@ -21,6 +21,6 @@
   ],
   "scripts": {
     "build": "echo \"google-closure-compiler-js build\"",
-    "test": "./test.js"
+    "test": "node ./test.js"
   }
 }

@@ -37,8 +37,9 @@ const assertError = new should.Assertion('compiler version');
 assertError.params = {
   operator: 'should be a semver parseabe',
 };
+const isNightlyBuild = /^true|1$/i.test(process.env.COMPILER_NIGHTLY);
 
-if (!process.env.COMPILER_NIGHTLY) {
+if (!isNightlyBuild) {
   describe('compiler.jar', function () {
     this.timeout(10000);
     this.slow(5000);
@@ -84,7 +85,7 @@ if (!process.env.COMPILER_NIGHTLY) {
       const gitCmd = spawn('git', ['tag', '--points-at', 'HEAD'], {
         cwd: './compiler'
       });
-      should(gitCmd.status).eql(0)
+      should(gitCmd.status).eql(0);
       const currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
       const packageVer = new Semver(packageInfo.version);
       const mvnVersion = 'v' + packageVer.major;

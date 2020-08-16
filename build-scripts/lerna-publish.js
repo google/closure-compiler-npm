@@ -45,7 +45,7 @@ const fs = require('fs');
 const path = require('path');
 
 /** Override methods in the main publication command class to return the full set of packages for publication */
-class TravisPublishCommand extends PublishCommand {
+class CIPublishCommand extends PublishCommand {
   /**
    * @see https://github.com/lerna/lerna/blob/master/commands/publish/index.js
    *
@@ -108,10 +108,10 @@ class TravisPublishCommand extends PublishCommand {
 // New command meta data
 // Used by yargs to invoke the correct class and display help information
 // The bump argument has identical semantics as the main publish command
-const travisPublishCmd = Object.assign({}, publishCmd, {
-  command: 'publish-travis [bump]',
+const ciPublishCmd = Object.assign({}, publishCmd, {
+  command: 'publish-ci [bump]',
   describe: 'Publish all packages in the current project',
-  handler: argv => new TravisPublishCommand(argv)
+  handler: argv => new CIPublishCommand(argv)
 });
 
 /**
@@ -120,7 +120,7 @@ const travisPublishCmd = Object.assign({}, publishCmd, {
  */
 function main(argv) {
   // For lerna publication to work, the NPM token must be stored in the .npmrc file in the user home directory
-  if ((process.env.TRAVIS || process.env.APPVEYOR) && process.env.NPM_TOKEN) {
+  if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
     fs.writeFileSync(
         path.resolve(process.env.HOME, '.npmrc'),
         `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
@@ -149,18 +149,19 @@ function main(argv) {
       .command(publishCmd)
       .command(runCmd)
       .command(versionCmd)
-      .command(travisPublishCmd)
+      .command(ciPublishCmd)
       .parse(argv, context);
 }
 
-// match both the "publish" and "publish-travis" lerna commands
+// match both the "publish" and "publish-ci" lerna commands
 if (/publish/.test(process.argv[2])) {
   // Looks like we're trying to publish packages
   const lernaConfig = require(path.resolve(__dirname, '..', 'lerna.json'));
   const packageVersion = new Semver(lernaConfig.version);
 
   // If publishing nightly images, the compiler version will be a snapshot
-  if (process.env.COMPILER_NIGHTLY) {
+  const isNightlyBuild = /^true|1$/i.test(process.env.COMPILER_NIGHTLY);
+  if (isNightlyBuild) {
     if (!packageVersion.prerelease.includes('nightly')) {
       console.log('Package version does not have a nightly prerelease component');
       process.exit(0);

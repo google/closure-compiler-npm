@@ -1,0 +1,372 @@
+name: Build CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # Daily at 11am
+    - cron:  '0 11 * * *'
+
+jobs:
+  # Build the compiler jar file from the submodule
+  build-compiler:
+    name: Build Compiler
+    runs-on: ubuntu-latest
+    env:
+      COMPILER_NIGHTLY: ${{ github.event == 'cron' }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Fetch submodule tags
+        working-directory: compiler
+        run: git fetch --all --tags
+      - name: Update compiler submodule to master if nightly build
+        if: env.COMPILER_NIGHTLY == true
+        working-directory: compiler
+        run: |
+          git checkout master
+          git pull origin master
+          git log -1 | cat
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache yarn
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-maven
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Install packages
+        run: yarn install --colors=always
+      - name: Build jar
+        run: ./build-scripts/build_compiler.js --colors=always
+      - name: Tests
+        run: node_modules/.bin/mocha --colors
+      - name: Upload contrib folder
+        uses: actions/upload-artifact@v2
+        with:
+          name: Contrib folder
+          path: compiler/contrib
+      - name: Upload compiler jar
+        uses: actions/upload-artifact@v2
+        with:
+          name: Compiler.jar
+          path: packages/google-closure-compiler-java/compiler.jar
+
+  # Build the compiler js file from the submodule
+  build-compiler-js:
+    name: Build Compiler js
+    runs-on: ubuntu-latest
+    env:
+      COMPILER_NIGHTLY: ${{ github.event == 'cron' }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Fetch submodule tags
+        working-directory: compiler
+        run: git fetch --all --tags
+      - name: Update compiler submodule to master if nightly build
+        if: env.COMPILER_NIGHTLY == true
+        working-directory: compiler
+        run: |
+          git checkout master
+          git pull origin master
+          git log -1 | cat
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '8'
+          java-package: jdk
+          architecture: x64
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache yarn
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-maven
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Install packages
+        run: yarn install --colors=always
+      - name: Build js
+        run: ./build-scripts/build_js_compiler.js --colors=always
+      - name: Upload compiler js
+        uses: actions/upload-artifact@v2
+        with:
+          name: Compiler js
+          path: packages/google-closure-compiler-js/jscomp.js
+
+  # Build the native image on Linux
+  build-linux:
+    name: Build Linux Native Image
+    needs:
+      - build-compiler
+      - build-compiler-js
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Download compiler jar
+        uses: actions/download-artifact@v2
+        with:
+          name: Compiler.jar
+          path: packages/google-closure-compiler-java/
+      - name: Download compiler js
+        uses: actions/download-artifact@v2
+        with:
+          name: Compiler js
+          path: packages/google-closure-compiler-js/
+      - name: Download contrib folder
+        uses: actions/download-artifact@v2
+        with:
+          name: Contrib folder
+          path: packages/google-closure-compiler/contrib
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache yarn
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install packages
+        run: yarn install --colors=always
+      - name: Build image
+        working-directory: packages/google-closure-compiler-linux
+        run: |
+          cp ../google-closure-compiler-java/compiler.jar compiler.jar
+          yarn run build
+      - name: Tests
+        run: yarn workspaces run test --colors
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Linux image
+          path: packages/google-closure-compiler-linux/compiler
+
+  # Build the native image on MacOS
+  build-macos:
+    name: Build MacOS Native Image
+    needs:
+      - build-compiler
+      - build-compiler-js
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        node-version: [10.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Download compiler jar
+        uses: actions/download-artifact@v2
+        with:
+          name: Compiler.jar
+          path: packages/google-closure-compiler-java/
+      - name: Download compiler js
+        uses: actions/download-artifact@v2
+        with:
+          name: Compiler js
+          path: packages/google-closure-compiler-js/
+      - name: Download contrib folder
+        uses: actions/download-artifact@v2
+        with:
+          name: Contrib folder
+          path: packages/google-closure-compiler/contrib
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache yarn
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install packages
+        run: yarn install --colors=always
+      - name: Build image
+        working-directory: packages/google-closure-compiler-osx
+        run: |
+          cp ../google-closure-compiler-java/compiler.jar compiler.jar
+          yarn run build
+      - name: Tests
+        run: yarn workspaces run test --colors
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: MacOS image
+          path: packages/google-closure-compiler-osx/compiler
+
+  # Build the native image on Windows
+  build-windows:
+    name: Build Windows Native Image
+    needs:
+      - build-compiler
+      - build-compiler-js
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Download compiler jar
+        uses: actions/download-artifact@v2
+        with:
+          name: Compiler.jar
+          path: packages/google-closure-compiler-java/
+      - name: Download compiler js
+        uses: actions/download-artifact@v2
+        with:
+          name: Compiler js
+          path: packages/google-closure-compiler-js/
+      - name: Download contrib folder
+        uses: actions/download-artifact@v2
+        with:
+          name: Contrib folder
+          path: packages/google-closure-compiler/contrib
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache yarn
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install packages
+        run: yarn install --colors=always
+      - name: Build image
+        working-directory: packages/google-closure-compiler-windows
+        # Enable Visual Studio Build Environment in Powershell
+        # See https://stackoverflow.com/a/2124759/1211524
+        run: |
+          pushd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools"
+          cmd /c "VsDevCmd.bat -arch=amd64 & set" |
+          foreach {
+            if ($_ -match "=") {
+              $v = $_.split("="); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
+            }
+          }
+          popd
+          Write-Host "`nVisual Studio 2019 Command Prompt variables set." -ForegroundColor Yellow
+          cp ../google-closure-compiler-java/compiler.jar compiler.jar
+          yarn run build
+      - name: Tests
+        shell: cmd
+        run: |
+          echo "Running Tests"
+          yarn workspaces run test --colors
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Windows image
+          path: packages/google-closure-compiler-windows/compiler.exe
+
+  # Publish the packages if needed
+  publish-packages:
+    name: Publish Packages
+    runs-on: ubuntu-latest
+    if: github.event == 'cron' || github.event == 'push'
+    env:
+      COMPILER_NIGHTLY: ${{ github.event == 'cron' }}
+    needs:
+      - build-linux
+      - build-macos
+      - build-windows
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download compiler jar
+        uses: actions/download-artifact@v2
+        with:
+          name: Compiler.jar
+          path: packages/google-closure-compiler-java/
+      - name: Download compiler js
+        uses: actions/download-artifact@v2
+        with:
+          name: Compiler js
+          path: packages/google-closure-compiler-js/
+      - name: Download Linux image
+        uses: actions/download-artifact@v2
+        with:
+          name: Linux image
+          path: packages/google-closure-compiler-linux/
+      - name: Download MacOS image
+        uses: actions/download-artifact@v2
+        with:
+          name: MacOS image
+          path: packages/google-closure-compiler-osx/
+      - name: Download Windows image
+        uses: actions/download-artifact@v2
+        with:
+          name: Windows image
+          path: packages/google-closure-compiler-windows/
+      - name: Download contrib folder
+        uses: actions/download-artifact@v2
+        with:
+          name: Contrib folder
+          path: packages/google-closure-compiler/contrib
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache yarn
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install packages
+        run: yarn install --colors=always
+      - name: Prepare for publish
+        run: ./build-scripts/add-os-restrictions.js
+      - name: Create the nightly version
+        if: env.COMPILER_NIGHTLY == true
+        run: ./build-scripts/create-nightly-version.js
+      - name: Publish packages to npm
+        run: ./build-scripts/lerna-publish.js publish-ci --npm-client ${GITHUB_WORKSPACE}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes

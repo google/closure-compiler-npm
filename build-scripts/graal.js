@@ -47,8 +47,8 @@ if (!fs.existsSync(TEMP_PATH)) {
 }
 
 const NATIVE_IMAGE_BUILD_ARGS = [
-  '-H:+JNI',
   '--no-server',
+  '-H:+JNI',
   '-H:+ReportUnsupportedElementsAtRuntime',
   '-H:IncludeResourceBundles=com.google.javascript.rhino.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
@@ -60,7 +60,7 @@ const NATIVE_IMAGE_BUILD_ARGS = [
       // Escape the '|' character in a  windows batch command
       // See https://stackoverflow.com/a/16018942/1211524
       if (match === '|') {
-        return '%PIPE%';
+        return '^^^|';
       }
       return `^${match}`;
     }
@@ -75,7 +75,7 @@ let buildSteps = Promise.resolve();
 // Download Graal
 const GRAAL_ARCHIVE_FILE = `${GRAAL_FOLDER}.${GRAAL_PACKAGE_SUFFIX}`;
 // Build the compiler native image.
-let pathParts = [TEMP_PATH, `graalvm-ce-java8-${GRAAL_VERSION}`];
+let pathParts = [TEMP_PATH, `graalvm-ce-java11-${GRAAL_VERSION}`];
 if (GRAAL_OS === 'darwin') {
   pathParts.push('Contents', 'Home', 'bin');
 } else {

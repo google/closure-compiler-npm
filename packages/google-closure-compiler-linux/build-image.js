@@ -24,7 +24,7 @@
 const fs = require('fs');
 const path = require('path');
 const {DIM, RESET} = require('../../build-scripts/colors');
-const {spawn} = require('child_process');
+const runCommand = require('../../build-scripts/run-command');
 
 if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
   process.stdout.write(`  ${DIM}google-closure-compiler-linux binary already exists${RESET}\n`);
@@ -32,5 +32,11 @@ if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
   process.stdout.write(`  ${DIM}google-closure-compiler-linux build wrong platform${RESET}\n`);
 } else {
   process.stdout.write(`  ${DIM}google-closure-compiler-linux building image${RESET}\n`);
-  spawn('../../build-scripts/graal.js', [], {stdio: 'inherit'});
+  runCommand('node', ['../../build-scripts/graal.js'])
+      .then(({exitCode}) => {
+        process.exitCode = exitCode || 0;
+      })
+      .catch((e) => {
+        process.exitCode = e.exitCode || 1;
+      });
 }

@@ -80,27 +80,29 @@ switch (pkg.name) {
   case 'google-closure-compiler-linux':
   case 'google-closure-compiler-osx':
   case 'google-closure-compiler-windows':
-    // We only want to publish the linux, osx or windows package from a Travis instance running on the correct os
-    if (pkg.name === 'google-closure-compiler-linux' && process.platform !== 'linux' ||
-        pkg.name === 'google-closure-compiler-osx' && process.platform !== 'darwin' ||
-        pkg.name === 'google-closure-compiler-windows' && process.platform !== 'win32') {
-      logMessageQueue.push(`    skipping publication of ${pkg.name} - wrong platform`);
-      process.exitCode = 0;
-    } else {
-      npmPublish(pkg)
-          .then(() => {
-            logMessageQueue.push('  ✅ publish succeeded');
-            logToFile(logMessageQueue.join('\n'));
-          })
-          .catch(err => {
-            process.exitCode = 1;
-            logMessageQueue.push('   ❌ publish failed');
-            logToFile(logMessageQueue.join('\n'));
-            return Promise.reject(err);
-          });
+    // Github actions can publish all versions from the same run, but Travis and Appveyor can't
+    if (!process.env.GITHUB_ACTIONS) {
+      // We only want to publish the linux, osx or windows package from a Travis instance running on the correct os
+      if (pkg.name === 'google-closure-compiler-linux' && process.platform !== 'linux' ||
+          pkg.name === 'google-closure-compiler-osx' && process.platform !== 'darwin' ||
+          pkg.name === 'google-closure-compiler-windows' && process.platform !== 'win32') {
+        logMessageQueue.push(`    skipping publication of ${pkg.name} - wrong platform`);
+        process.exitCode = 0;
+      } else {
+        npmPublish(pkg)
+            .then(() => {
+              logMessageQueue.push('  ✅ publish succeeded');
+              logToFile(logMessageQueue.join('\n'));
+            })
+            .catch(err => {
+              process.exitCode = 1;
+              logMessageQueue.push('   ❌ publish failed');
+              logToFile(logMessageQueue.join('\n'));
+              return Promise.reject(err);
+            });
+      }
+      break;
     }
-    break;
-
   default:
     npmPublish(pkg)
         .then(() => {

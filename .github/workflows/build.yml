@@ -33,23 +33,13 @@ jobs:
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Cache yarn
+      - name: Yarn and maven cache
         uses: actions/cache@v2
-        id: yarn-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-maven
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ~/.m2/repository
+          key: ${{ runner.os }}-yarn-mvn-java11-${{ hashFiles('**/yarn.lock', '**/pom.xml') }}
       - name: Install packages
         run: yarn install --colors=always
       - name: Build jar
@@ -95,23 +85,13 @@ jobs:
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Cache yarn
+      - name: Yarn and maven cache
         uses: actions/cache@v2
-        id: yarn-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-maven
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ~/.m2/repository
+          key: ${{ runner.os }}-yarn-mvn-gwt-java8-${{ hashFiles('**/yarn.lock', '**/pom.xml') }}
       - name: Install packages
         run: yarn install --colors=always
       - name: Build js
@@ -370,4 +350,4 @@ jobs:
         if: env.COMPILER_NIGHTLY == true
         run: ./build-scripts/create-nightly-version.js
       - name: Publish packages to npm
-        run: ./build-scripts/lerna-publish.js publish-ci --npm-client ${GITHUB_WORKSPACE}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes
+        run: ./build-scripts/lerna-publish.js publish-ci --npm-client ${{ env.GITHUB_WORKSPACE }}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes

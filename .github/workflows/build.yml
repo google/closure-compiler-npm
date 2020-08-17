@@ -17,6 +17,11 @@ jobs:
     env:
       COMPILER_NIGHTLY: ${{ github.event == 'cron' }}
     steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+          java-package: jdk
+          architecture: x64
       - uses: actions/checkout@v2
         with:
           submodules: recursive
@@ -64,6 +69,11 @@ jobs:
     env:
       COMPILER_NIGHTLY: ${{ github.event == 'cron' }}
     steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '8'
+          java-package: jdk
+          architecture: x64
       - uses: actions/checkout@v2
         with:
           submodules: recursive
@@ -77,11 +87,6 @@ jobs:
           git checkout master
           git pull origin master
           git log -1 | cat
-      - uses: actions/setup-java@v1
-        with:
-          java-version: '8'
-          java-package: jdk
-          architecture: x64
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -113,6 +118,11 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+          java-package: jdk
+          architecture: x64
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
@@ -170,6 +180,11 @@ jobs:
       matrix:
         node-version: [10.x]
     steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+          java-package: jdk
+          architecture: x64
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
@@ -227,6 +242,11 @@ jobs:
       matrix:
         node-version: [12.x]
     steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+          java-package: jdk
+          architecture: x64
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1

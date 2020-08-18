@@ -27,9 +27,7 @@ jobs:
           submodules: recursive
       - name: Fetch submodule tags
         working-directory: compiler
-        run: |
-          git remote set-branches origin '*'
-          git fetch --all --tags
+        run: git fetch --tags https://github.com/google/closure-compiler.git
       - name: Update compiler submodule to master if nightly build
         if: env.COMPILER_NIGHTLY == true
         working-directory: compiler
@@ -81,9 +79,7 @@ jobs:
           submodules: recursive
       - name: Fetch submodule tags
         working-directory: compiler
-        run: |
-          git remote set-branches origin '*'
-          git fetch --all --tags
+        run: git fetch --tags https://github.com/google/closure-compiler.git
       - name: Update compiler submodule to master if nightly build
         if: env.COMPILER_NIGHTLY == true
         working-directory: compiler

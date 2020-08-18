@@ -29,7 +29,7 @@ jobs:
         working-directory: compiler
         run: git fetch --tags https://github.com/google/closure-compiler.git
       - name: Update compiler submodule to master if nightly build
-        if: env.COMPILER_NIGHTLY == true
+        if: ${{ env.COMPILER_NIGHTLY == true }}
         working-directory: compiler
         run: |
           git checkout master
@@ -81,7 +81,7 @@ jobs:
         working-directory: compiler
         run: git fetch --tags https://github.com/google/closure-compiler.git
       - name: Update compiler submodule to master if nightly build
-        if: env.COMPILER_NIGHTLY == true
+        if: ${{ env.COMPILER_NIGHTLY == true }}
         working-directory: compiler
         run: |
           git checkout master
@@ -364,7 +364,7 @@ jobs:
       - name: Prepare for publish
         run: ./build-scripts/add-os-restrictions.js
       - name: Create the nightly version
-        if: env.COMPILER_NIGHTLY == true
+        if: ${{ env.COMPILER_NIGHTLY == true }}
         run: ./build-scripts/create-nightly-version.js
       - name: Publish packages to npm
         run: ./build-scripts/lerna-publish.js publish-ci --npm-client ${{ env.GITHUB_WORKSPACE }}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes

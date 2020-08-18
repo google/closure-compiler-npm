@@ -28,6 +28,7 @@
   "preferUnplugged": true,
   "scripts": {
     "build": "node ./build-image.js",
-    "test": "node ./test.js"
+    "test": "node ./test.js",
+    "prepublishOnly": "node ../../build-scripts/ensure-file-exists.js compiler"
   }
 }

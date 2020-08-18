@@ -21,6 +21,7 @@
   ],
   "scripts": {
     "build": "echo \"google-closure-compiler-js build\"",
-    "test": "node ./test.js"
+    "test": "node ./test.js",
+    "prepublishOnly": "node ../../build-scripts/ensure-file-exists.js jscomp.js"
   }
 }

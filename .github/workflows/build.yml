@@ -116,9 +116,8 @@ jobs:
       - build-compiler
       - build-compiler-js
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x]
+    env:
+      NODE_VERSION: '14.x'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -126,10 +125,10 @@ jobs:
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
       - name: Download compiler jar
         uses: actions/download-artifact@v2
         with:
@@ -178,9 +177,8 @@ jobs:
       - build-compiler
       - build-compiler-js
     runs-on: macos-latest
-    strategy:
-      matrix:
-        node-version: [10.x]
+    env:
+      NODE_VERSION: '10.x'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -188,10 +186,10 @@ jobs:
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
       - name: Download compiler jar
         uses: actions/download-artifact@v2
         with:
@@ -240,9 +238,8 @@ jobs:
       - build-compiler
       - build-compiler-js
     runs-on: windows-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
+    env:
+      NODE_VERSION: '12.x'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -250,10 +247,10 @@ jobs:
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
       - name: Download compiler jar
         uses: actions/download-artifact@v2
         with:

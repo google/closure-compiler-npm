@@ -144,8 +144,8 @@ describe('grunt-google-closure-compiler', function() {
   ['java', 'native', 'javascript'].forEach(platform => {
     describe(`${platform} version`, function() {
       let closureCompiler;
-      this.slow(1000);
-      this.timeout(10000);
+      this.slow(10000);
+      this.timeout(45000);
 
       beforeEach(() => {
         closureCompiler = require('../').grunt(mockGrunt, {platform});
@@ -231,7 +231,7 @@ describe('grunt-google-closure-compiler', function() {
       });
 
       it('should run once for each destination', function (done) {
-        this.timeout(30000);
+        this.timeout(45000);
         this.slow(10000);
 
         const fileOneDest = 'test/out/one.js';
@@ -270,7 +270,7 @@ describe('grunt-google-closure-compiler', function() {
 
       if (platform !== 'javascript') {
         it('should run when grunt provides no files', function (done) {
-          this.timeout(30000);
+          this.timeout(45000);
           this.slow(10000);
 
           const fileOneDest = 'test/out/one.js';
@@ -301,7 +301,7 @@ describe('grunt-google-closure-compiler', function() {
         });
 
         it('should support an arguments array', function (done) {
-          this.timeout(30000);
+          this.timeout(45000);
           this.slow(10000);
 
           const fileOneDest = 'test/out/one.js';

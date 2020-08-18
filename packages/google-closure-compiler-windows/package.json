@@ -21,12 +21,12 @@
     "readme.md"
   ],
   "cpu": [
-    "x64",
-    "x86"
+    "x64"
   ],
   "preferUnplugged": true,
   "scripts": {
     "build": "node build-image.js",
-    "test": "./test.js"
+    "test": "node ./test.js",
+    "prepublishOnly": "node ../../build-scripts/ensure-file-exists.js compiler.exe"
   }
 }

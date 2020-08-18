@@ -86,6 +86,7 @@ if (!isNightlyBuild) {
         cwd: './compiler'
       });
       should(gitCmd.status).eql(0);
+      console.log(gitCmd.stdout.toString());
       const currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
       const packageVer = new Semver(packageInfo.version);
       const mvnVersion = 'v' + packageVer.major;

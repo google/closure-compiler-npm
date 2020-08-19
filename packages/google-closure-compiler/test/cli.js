@@ -29,7 +29,7 @@ require('mocha');
 process.on('unhandledRejection', e => { throw e; });
 
 describe('command line interface', function() {
-  this.timeout(30000);
+  this.timeout(45000);
   this.slow(10000);
 
   let cliPath = require.resolve('../cli.js');

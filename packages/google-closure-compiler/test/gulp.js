@@ -62,7 +62,7 @@ describe('gulp-google-closure-compiler', function() {
     describe(`${platform} version`, function() {
       const closureCompiler = compilerPackage.gulp();
 
-      this.timeout(30000);
+      this.timeout(45000);
       this.slow(10000);
 
       const fakeFile1 = new File({

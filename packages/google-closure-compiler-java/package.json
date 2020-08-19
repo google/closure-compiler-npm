@@ -24,6 +24,7 @@
   "preferUnplugged": true,
   "scripts": {
     "build": "echo \"google-closure-compiler-java build\"",
-    "test": "./test.js"
+    "test": "node ./test.js",
+    "prepublishOnly": "node ../../build-scripts/ensure-file-exists.js compiler.jar"
   }
 }

@@ -47,6 +47,7 @@ if (!fs.existsSync(TEMP_PATH)) {
 }
 
 const NATIVE_IMAGE_BUILD_ARGS = [
+  '--no-server',
   '-H:+JNI',
   '-H:+ReportUnsupportedElementsAtRuntime',
   '-H:IncludeResourceBundles=com.google.javascript.rhino.Messages',

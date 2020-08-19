@@ -37,5 +37,11 @@ if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
   process.exit(0);
 } else {
   process.stdout.write(`  ${DIM}google-closure-compiler-windows building image${RESET}\n`);
-  spawn('node', ['../../build-scripts/graal.js'], {stdio: 'inherit'});
+  runCommand('node', ['../../build-scripts/graal.js'])
+      .then(({exitCode}) => {
+        process.exitCode = exitCode || 0;
+      })
+      .catch((e) => {
+        process.exitCode = e.exitCode || 1;
+      });
 }

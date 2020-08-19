@@ -16,7 +16,7 @@
  */
 
 /**
- * @fileoverview Custom npm client for lerna publication on Travis.
+ * @fileoverview Custom npm client for lerna publication from CI Environments.
  *
  * This actually uses `npm publish` to do the actual publish, but special cases specific behaviors.
  *
@@ -24,7 +24,7 @@
  *   1. Checks that all the dependencies from the target package have their dependencies
  *       already published before publishing.
  *   2. Publishes still succeed in the case that they were already published.
- *       Allows Travis to publish on every commit.
+ *       Allows CI to publish on every commit.
  */
 
 const fs = require('fs');
@@ -76,42 +76,14 @@ logMessageQueue.push(`Publishing ${path.basename(process.cwd())}`);
 
 // Add logic specific to each pacakge
 const pkg = require(path.resolve(process.cwd(), 'package.json'));
-switch (pkg.name) {
-  case 'google-closure-compiler-linux':
-  case 'google-closure-compiler-osx':
-  case 'google-closure-compiler-windows':
-    // We only want to publish the linux, osx or windows package from a Travis instance running on the correct os
-    if (pkg.name === 'google-closure-compiler-linux' && process.platform !== 'linux' ||
-        pkg.name === 'google-closure-compiler-osx' && process.platform !== 'darwin' ||
-        pkg.name === 'google-closure-compiler-windows' && process.platform !== 'win32') {
-      logMessageQueue.push(`    skipping publication of ${pkg.name} - wrong platform`);
-      process.exitCode = 0;
-    } else {
-      npmPublish(pkg)
-          .then(() => {
-            logMessageQueue.push('  ✅ publish succeeded');
-            logToFile(logMessageQueue.join('\n'));
-          })
-          .catch(err => {
-            process.exitCode = 1;
-            logMessageQueue.push('   ❌ publish failed');
-            logToFile(logMessageQueue.join('\n'));
-            return Promise.reject(err);
-          });
-    }
-    break;
-
-  default:
-    npmPublish(pkg)
-        .then(() => {
-          logMessageQueue.push('  ✅ publish succeeded');
-          logToFile(logMessageQueue.join('\n'));
-        })
-        .catch(err => {
-          process.exitCode = 1;
-          logMessageQueue.push('   ❌ publish failed');
-          logToFile(logMessageQueue.join('\n'));
-          return Promise.reject(err);
-        });
-    break;
-}
+npmPublish(pkg)
+    .then(() => {
+      logMessageQueue.push('  ✅ publish succeeded');
+      logToFile(logMessageQueue.join('\n'));
+    })
+    .catch(err => {
+      process.exitCode = 1;
+      logMessageQueue.push('   ❌ publish failed');
+      logToFile(logMessageQueue.join('\n'));
+      return Promise.reject(err);
+    });

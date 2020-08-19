@@ -15,7 +15,7 @@ jobs:
     name: Build Compiler
     runs-on: ubuntu-latest
     env:
-      COMPILER_NIGHTLY: ${{ github.event == 'cron' }}
+      COMPILER_NIGHTLY: ${{ github.event_name == 'cron' }}
     steps:
       - uses: actions/setup-java@v1
         with:

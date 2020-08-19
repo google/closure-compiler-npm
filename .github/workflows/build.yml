@@ -85,11 +85,6 @@ jobs:
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
-      - name: Download compiler js
-        uses: actions/download-artifact@v2
-        with:
-          name: Compiler js
-          path: packages/google-closure-compiler-js/
       - name: Download contrib folder
         uses: actions/download-artifact@v2
         with:
@@ -144,11 +139,6 @@ jobs:
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
-      - name: Download compiler js
-        uses: actions/download-artifact@v2
-        with:
-          name: Compiler js
-          path: packages/google-closure-compiler-js/
       - name: Download contrib folder
         uses: actions/download-artifact@v2
         with:
@@ -203,11 +193,6 @@ jobs:
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
-      - name: Download compiler js
-        uses: actions/download-artifact@v2
-        with:
-          name: Compiler js
-          path: packages/google-closure-compiler-js/
       - name: Download contrib folder
         uses: actions/download-artifact@v2
         with:

@@ -6,8 +6,8 @@ on:
   pull_request:
     branches: [ master ]
   schedule:
-    # Daily at 11am
-    - cron: '*/5 * * * *'
+    # Daily at 12pm UTC
+    - cron: '0 12 * * *'
 
 jobs:
   # Build the compiler jar file from the submodule
@@ -18,11 +18,6 @@ jobs:
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       FORCE_COLOR: '1'
     steps:
-      - run: |
-          echo "${{ env.COMPILER_NIGHTLY }}"
-          echo "${{ github.event_name }}"
-          echo "${{ github.event_name == 'schedule' }}"
-          echo "${{ env.COMPILER_NIGHTLY == 'true' }}"
       - uses: actions/setup-java@v1
         with:
           java-version: '11'

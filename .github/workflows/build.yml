@@ -312,7 +312,6 @@ jobs:
     env:
       COMPILER_NIGHTLY: ${{ github.event_name == 'cron' }}
       NPM_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}
-      FORCE_COLOR: '1'
     needs:
       - build-linux
       - build-macos

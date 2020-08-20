@@ -44,8 +44,6 @@ const { PublishCommand } = require('@lerna/publish');
 const fs = require('fs');
 const path = require('path');
 
-console.log('FORCE_COLOR', process.env.FORCE_COLOR, 'FORCE_COLOR' in process.env, process.env.FORCE_COLOR.length === 0, parseInt(process.env.FORCE_COLOR, 10));
-
 /** Override methods in the main publication command class to return the full set of packages for publication */
 class CIPublishCommand extends PublishCommand {
   /**
@@ -104,6 +102,19 @@ class CIPublishCommand extends PublishCommand {
         process.stdout.write('publication log missing');
       }
     });
+  }
+
+  /** @override */
+  configureEnvironment() {
+    const retVal = super.configureEnvironment();
+    if (process.env.GITHUB_ACTIONS) {
+      try {
+        // force enable colorized output
+        const log = require('npmlog');
+        log.enableColor();
+      } catch (e) {}
+    }
+    return retVal;
   }
 }
 

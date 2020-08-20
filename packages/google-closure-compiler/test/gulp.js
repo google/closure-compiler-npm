@@ -29,7 +29,6 @@ const sourcemaps = require('gulp-sourcemaps');
 const File = require('vinyl');
 const compilerPackage = require('../');
 const ClosureCompiler = require('../lib/node/closure-compiler');
-const JsClosureCompiler = require('../lib/node/closure-compiler-js');
 const streamFilter = require('gulp-filter');
 
 require('mocha');
@@ -53,25 +52,13 @@ describe('gulp-google-closure-compiler', function() {
       enumerable: false,
       configurable: true
     });
-
-    originalJsCompilerRunMethod = Object.getOwnPropertyDescriptor(JsClosureCompiler.prototype, 'run');
-    Object.defineProperty(JsClosureCompiler.prototype, 'run', {
-      value: function(...args) {
-        platformUtilized = 'javascript';
-        return originalJsCompilerRunMethod.value.apply(this, args);
-      },
-      writable: true,
-      enumerable: false,
-      configurable: true
-    });
   });
 
   after(() => {
     Object.defineProperty(ClosureCompiler.prototype, 'run', originalCompilerRunMethod);
-    Object.defineProperty(JsClosureCompiler.prototype, 'run', originalJsCompilerRunMethod);
   });
 
-  ['java', 'native', 'javascript'].forEach(platform => {
+  ['java', 'native'].forEach(platform => {
     describe(`${platform} version`, function() {
       const closureCompiler = compilerPackage.gulp();
 
@@ -284,71 +271,69 @@ describe('gulp-google-closure-compiler', function() {
             .pipe(assert.end(done));
       });
 
-      if (platform !== 'javascript') {
-        it('should support passing input globs directly to the compiler', done => {
-          const stream = closureCompiler({
-            js: __dirname + '/fixtures/**.js',
+      it('should support passing input globs directly to the compiler', done => {
+        const stream = closureCompiler({
+          js: __dirname + '/fixtures/**.js',
+          compilation_level: 'SIMPLE',
+          warning_level: 'VERBOSE'
+        }, {
+          platform
+        })
+          .src()
+          .pipe(assert.length(1))
+          .pipe(assert.first(f => {
+            f.contents.toString().should.eql(fixturesCompiled);
+          }))
+          .pipe(assert.end(done));
+      });
+
+      it('should include js options before gulp.src files', done => {
+        gulp.src(__dirname + '/fixtures/two.js')
+          .pipe(closureCompiler({
+            js: __dirname + '/fixtures/one.js',
             compilation_level: 'SIMPLE',
             warning_level: 'VERBOSE'
           }, {
             platform
-          })
-            .src()
-            .pipe(assert.length(1))
-            .pipe(assert.first(f => {
-              f.contents.toString().should.eql(fixturesCompiled);
-            }))
-            .pipe(assert.end(done));
-        });
+          }))
+          .pipe(assert.length(1))
+          .pipe(assert.first(f => {
+            f.contents.toString().should.eql(fixturesCompiled);
+          }))
+          .pipe(assert.end(done));
+      });
 
-        it('should include js options before gulp.src files', done => {
-          gulp.src(__dirname + '/fixtures/two.js')
-            .pipe(closureCompiler({
-              js: __dirname + '/fixtures/one.js',
-              compilation_level: 'SIMPLE',
-              warning_level: 'VERBOSE'
-            }, {
-              platform
-            }))
-            .pipe(assert.length(1))
-            .pipe(assert.first(f => {
-              f.contents.toString().should.eql(fixturesCompiled);
-            }))
-            .pipe(assert.end(done));
-        });
+      it('should support calling the compiler with an arguments array', done => {
+        const stream = closureCompiler([
+          '--js="' + __dirname + '/fixtures/**.js"',
+          '--compilation_level=SIMPLE',
+          '--warning_level=VERBOSE'
+        ], {
+          platform
+        })
+          .src()
+          .pipe(assert.length(1))
+          .pipe(assert.first(f => {
+            f.contents.toString().should.eql(fixturesCompiled);
+          }))
+          .pipe(assert.end(done));
+      });
 
-        it('should support calling the compiler with an arguments array', done => {
-          const stream = closureCompiler([
-            '--js="' + __dirname + '/fixtures/**.js"',
-            '--compilation_level=SIMPLE',
-            '--warning_level=VERBOSE'
-          ], {
-            platform
-          })
-            .src()
-            .pipe(assert.length(1))
-            .pipe(assert.first(f => {
-              f.contents.toString().should.eql(fixturesCompiled);
-            }))
-            .pipe(assert.end(done));
-        });
-
-        it('should compile without gulp.src files when .src() is called', done => {
-          closureCompiler({
-            compilation_level: 'SIMPLE',
-            warning_level: 'VERBOSE',
-            js: __dirname + '/fixtures/**.js'
-          }, {
-            platform
-          })
-            .src()
-            .pipe(assert.length(1))
-            .pipe(assert.first(f => {
-              f.contents.toString().should.eql(fixturesCompiled);
-            }))
-            .pipe(assert.end(done));
-        });
-      }
+      it('should compile without gulp.src files when .src() is called', done => {
+        closureCompiler({
+          compilation_level: 'SIMPLE',
+          warning_level: 'VERBOSE',
+          js: __dirname + '/fixtures/**.js'
+        }, {
+          platform
+        })
+          .src()
+          .pipe(assert.length(1))
+          .pipe(assert.first(f => {
+            f.contents.toString().should.eql(fixturesCompiled);
+          }))
+          .pipe(assert.end(done));
+      });
 
       it('should generate no output without gulp.src files', done => {
         gulp.src('test/does-not-exist.js', {allowEmpty: true})

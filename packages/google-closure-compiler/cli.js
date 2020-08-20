@@ -51,7 +51,7 @@ if (compilerFlags.hasOwnProperty('platform')) {
   platform = compilerFlags.platform;
   delete compilerFlags.platform;
 } else {
-  platform = getFirstSupportedPlatform(['native', 'java', 'javascript']);
+  platform = getFirstSupportedPlatform(['native', 'java']);
 }
 
 // The compiler treats default arguments as if they were --js args.
@@ -83,116 +83,27 @@ Object.keys(compilerFlags).forEach(flag => {
   }
 });
 
-if (platform !== 'javascript') {
-  const Compiler = require('./lib/node/closure-compiler');
-  let args = process.argv.slice(2);
-  for (let i = 0; i < args.length; i++) {
-    if (/^--platform/.test(args[i])) {
-      let delCount = 1;
-      if (args[i].indexOf('=') < 0 && args.length > i + 1) {
-        delCount++;
-      }
-      args.splice(i, delCount);
-      break;
+const Compiler = require('./lib/node/closure-compiler');
+let args = process.argv.slice(2);
+for (let i = 0; i < args.length; i++) {
+  if (/^--platform/.test(args[i])) {
+    let delCount = 1;
+    if (args[i].indexOf('=') < 0 && args.length > i + 1) {
+      delCount++;
     }
+    args.splice(i, delCount);
+    break;
   }
-
-  const compiler = new Compiler(args);
-
-  compiler.spawnOptions = {stdio: 'inherit'};
-  if (platform === 'native') {
-    compiler.JAR_PATH = null;
-    compiler.javaPath = getNativeImagePath();
-  }
-
-  compiler.run((exitCode) => {
-    process.exitCode = exitCode;
-  });
-} else {
-  if (compilerFlags.help === true) {
-    process.stdout.write('Sample usage: --compilation_level (-O) VAL --externs VAL --js VAL --js_output_file VAL --warning_level (-W) [QUIET | DEFAULT | VERBOSE]\n');
-    process.stdout.write('See https://github.com/google/closure-compiler/wiki/Flags-and-Options for the full list of flags`);\n');
-    process.exit(0);
-  }
-
-  if (compilerFlags.version === true) {
-    const {version} = require('./package.json');
-    process.stdout.write(`Version: ${version}\n`);
-    process.exit(0);
-  }
-
-  let waitOnStdIn = true;
-  if (compilerFlags.js) {
-    waitOnStdIn = false;
-  }
-
-  // Mimic the behavior of the java version and wait for input from standard if there
-  // are no --js flags
-  const getFilesFromStdin = !waitOnStdIn ? Promise.resolve([]) : new Promise(resolve => {
-    let stdInData = '';
-    const waitingTimeout = setTimeout(() => {
-      process.stderr.write('The compiler is waiting for input via stdin.\n');
-    }, 1000);
-    process.stdin.setEncoding('utf8');
-    process.stdin.on('readable', () => {
-      const chunk = process.stdin.read();
-      if (chunk !== null) {
-        stdInData += chunk;
-        clearTimeout(waitingTimeout);
-      }
-    });
-    process.stdin.on('error', (err) => {
-      process.exitCode = 1;
-      console.error(err);
-      clearTimeout(waitingTimeout);
-    });
-    process.stdin.on('end', () => {
-      if (stdInData.length > 0) {
-        resolve([{
-          path: 'stdin',
-          src: stdInData
-        }]);
-      } else {
-        resolve([]);
-      }
-      clearTimeout(waitingTimeout);
-    });
-  });
-
-  getFilesFromStdin.then(inputFiles => {
-      const Compiler = require('./lib/node/closure-compiler-js');
-      const logErrors = require('./lib/logger');
-      const compiler = new Compiler(compilerFlags);
-      const output = compiler.run(inputFiles);
-      if (output.errors.length > 0) {
-        process.exitCode = process.exitCode || 1;
-      }
-      logErrors(output, inputFiles);
-      if (output.compiledFiles.length > 0) {
-        // If a --js_output_file or --chunk flag was provided, the output should be written to disk
-        if (compilerFlags['js_output_file'] || compilerFlags['chunk']) {
-          let srcMapPattern = '%outname%.map';
-          // Unfortunately the JS version of the compiler supported the `--create_source_map` flag as a boolean.
-          // We now support it both as a boolean and as a string path pattern.
-          if (compilerFlags.create_source_map && typeof compilerFlags.create_source_map === 'string') {
-            srcMapPattern = compilerFlags.create_source_map;
-          }
-          output.compiledFiles.forEach(compiledFile => {
-            mkDirByPathSync(path.dirname(compiledFile.path));
-            fs.writeFileSync(compiledFile.path, compiledFile.src, 'utf8');
-            if (compiledFile.sourceMap) {
-              const srcMapPath = srcMapPattern.replace('%outname%', compiledFile.path);
-              mkDirByPathSync(path.dirname(srcMapPath));
-              fs.writeFileSync(srcMapPath, compiledFile.sourceMap, 'utf8');
-            }
-          });
-        } else {
-          process.stdout.write(`${output.compiledFiles[0].src}\n`);
-        }
-      }
-    })
-    .catch(e => {
-      console.error(e);
-      process.exitCode = process.exitCode || 1;
-    });
 }
+
+const compiler = new Compiler(args);
+
+compiler.spawnOptions = {stdio: 'inherit'};
+if (platform === 'native') {
+  compiler.JAR_PATH = null;
+  compiler.javaPath = getNativeImagePath();
+}
+
+compiler.run((exitCode) => {
+  process.exitCode = exitCode;
+});

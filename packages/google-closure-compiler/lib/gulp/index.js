@@ -78,7 +78,7 @@ module.exports = function(initOptions) {
   }
 
   function getCompiler(platform) {
-    return platform === 'javascript' ? require('../node/closure-compiler-js') : require('../node/closure-compiler');
+    return require('../node/closure-compiler');
   }
 
   class CompilationStream extends stream.Transform {
@@ -94,8 +94,7 @@ module.exports = function(initOptions) {
       this.fileList_ = [];
       this._streamInputRequired = pluginOptions.requireStreamInput !== false;
 
-      const jsMode = Boolean(initOptions && initOptions.jsMode);
-      let platforms = (pluginOptions && pluginOptions.platform) || (jsMode ? ['javascript'] : ['native', 'java', 'javascript']);
+      let platforms = (pluginOptions && pluginOptions.platform) || ['native', 'java'];
       if (!Array.isArray(platforms)) {
         platforms = [platforms];
       }
@@ -127,10 +126,6 @@ module.exports = function(initOptions) {
         return;
       }
 
-      if (file.sourceMap && this.platform === 'javascript') {
-        this.compilationOptions_.createSourceMap = true;
-      }
-
       this.fileList_.push(file);
       cb();
     }
@@ -154,88 +149,69 @@ module.exports = function(initOptions) {
       }
       const Compiler = getCompiler(this.platform);
       const compiler = new Compiler(this.compilationOptions_, extraCommandArguments);
-      if (this.platform === 'javascript') {
-        try {
-          compiler.run(jsonFiles, (exitCode, outputFiles, errors) => {
-            this._compilationComplete(exitCode, outputFiles, errors);
-            cb();
-          });
-        } catch (e) {
-          let errors = e.stack;
-          // Special case for the exception thrown for an invalid flag
-          if (/Bad value for | Unhandled flag: /.test(e.message)) {
-            errors = e.message.replace(/^(java\.lang\.RuntimeException|Class[a-zA-Z0-9_\$]+): /, '');
-          }
-
-          this._compilationComplete(1, [], errors);
-          cb();
-          return;
-        }
-      } else {
-        if (this.platform === 'native') {
-          compiler.JAR_PATH = null;
-          compiler.javaPath = getNativeImagePath();
-        }
-        let stdOutData = '';
-        let stdErrData = '';
-
-        // Add the gulp-specific argument so the compiler will understand the JSON encoded input
-        // for gulp, the stream mode will be 'BOTH', but when invoked from grunt, we only use
-        // a stream mode of 'IN'
-        compiler.commandArguments.push('--json_streams', this.streamMode_);
-        const compilerProcess = compiler.run();
-
-        compilerProcess.stdout.on('data', data => {
-          stdOutData += data;
-        });
-        compilerProcess.stderr.on('data', data => {
-          stdErrData += data;
-        });
-        // Error events occur when there was a problem spawning the compiler process
-        compilerProcess.on('error', err => {
-          this.emit('error', new PluginError(this.PLUGIN_NAME_,
-              'Process spawn error. Is java in the path?\n' + err.message));
-          cb();
-        });
-        compilerProcess.stdin.on('error', err => {
-          stdErrData += `Error writing to stdin of the compiler. ${err.message}`;
-        });
-
-        Promise.all([
-          new Promise(resolve => compilerProcess.on('close', resolve)),
-          new Promise(resolve => compilerProcess.stdout.on('end', resolve)),
-          new Promise(resolve => compilerProcess.stderr.on('end', resolve))
-        ]).then(results => {
-          const code = results[0];
-
-          // If present, standard output will be a string of JSON encoded files.
-          // Convert these back to vinyl
-          let outputFiles = [];
-          if (stdOutData.trim().length > 0) {
-            // stdOutData = stdOutData.substr(stdOutData.indexOf('{'));
-            try {
-              outputFiles = JSON.parse(stdOutData);
-            } catch (e) {
-              this.emit('error', new PluginError(this.PLUGIN_NAME_, 'Error parsing json encoded files'));
-              cb();
-              return;
-            }
-          }
-
-          this._compilationComplete(code, outputFiles, stdErrData);
-          cb();
-        }).catch(err => {
-          this.emit('error', new PluginError(this.PLUGIN_NAME_, err, { showStack: true }));
-          cb();
-        });
-
-        const stdInStream = new stream.Readable({ read: function() {}});
-        stdInStream.pipe(compilerProcess.stdin);
-        process.nextTick(() => {
-          stdInStream.push(JSON.stringify(jsonFiles));
-          stdInStream.push(null);
-        });
+      if (this.platform === 'native') {
+        compiler.JAR_PATH = null;
+        compiler.javaPath = getNativeImagePath();
       }
+      let stdOutData = '';
+      let stdErrData = '';
+
+      // Add the gulp-specific argument so the compiler will understand the JSON encoded input
+      // for gulp, the stream mode will be 'BOTH', but when invoked from grunt, we only use
+      // a stream mode of 'IN'
+      compiler.commandArguments.push('--json_streams', this.streamMode_);
+      const compilerProcess = compiler.run();
+
+      compilerProcess.stdout.on('data', data => {
+        stdOutData += data;
+      });
+      compilerProcess.stderr.on('data', data => {
+        stdErrData += data;
+      });
+      // Error events occur when there was a problem spawning the compiler process
+      compilerProcess.on('error', err => {
+        this.emit('error', new PluginError(this.PLUGIN_NAME_,
+            'Process spawn error. Is java in the path?\n' + err.message));
+        cb();
+      });
+      compilerProcess.stdin.on('error', err => {
+        stdErrData += `Error writing to stdin of the compiler. ${err.message}`;
+      });
+
+      Promise.all([
+        new Promise(resolve => compilerProcess.on('close', resolve)),
+        new Promise(resolve => compilerProcess.stdout.on('end', resolve)),
+        new Promise(resolve => compilerProcess.stderr.on('end', resolve))
+      ]).then(results => {
+        const code = results[0];
+
+        // If present, standard output will be a string of JSON encoded files.
+        // Convert these back to vinyl
+        let outputFiles = [];
+        if (stdOutData.trim().length > 0) {
+          // stdOutData = stdOutData.substr(stdOutData.indexOf('{'));
+          try {
+            outputFiles = JSON.parse(stdOutData);
+          } catch (e) {
+            this.emit('error', new PluginError(this.PLUGIN_NAME_, 'Error parsing json encoded files'));
+            cb();
+            return;
+          }
+        }
+
+        this._compilationComplete(code, outputFiles, stdErrData);
+        cb();
+      }).catch(err => {
+        this.emit('error', new PluginError(this.PLUGIN_NAME_, err, { showStack: true }));
+        cb();
+      });
+
+      const stdInStream = new stream.Readable({ read: function() {}});
+      stdInStream.pipe(compilerProcess.stdin);
+      process.nextTick(() => {
+        stdInStream.push(JSON.stringify(jsonFiles));
+        stdInStream.push(null);
+      });
     }
 
     /**

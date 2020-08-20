@@ -13,7 +13,7 @@ require('google-closure-compiler').grunt(grunt, {
 // The load-grunt-tasks plugin won't automatically load closure-compiler
 ```
 
-The `platform` option specifies whether to use the `java`, `javascript` or `native` versions of the compiler.
+The `platform` option specifies whether to use the `java` or `native` versions of the compiler.
 The option can be either a string or an array where the first supported platform will be used.
 
 The `max_parallel_compilations` option caps number of parallel compilations to specified number. If it's 

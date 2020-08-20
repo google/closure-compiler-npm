@@ -25,7 +25,7 @@ gulp.task('js-compile', function () {
 });
 ```
 
-The `platform` option specifies whether to use the `java`, `javascript` or `native` versions of the compiler.
+The `platform` option specifies whether to use the `java` or `native` versions of the compiler.
 The option can be either a string or an array where the first supported platform will be used:
 
 ## Use without gulp.src (Java Version Only)

@@ -51,7 +51,6 @@ function getCompilerVersionFromPomXml() {
 
 let compilerVersion = getCompilerVersionFromPomXml();
 const compilerJavaBinaryPath = `./compiler/target/closure-compiler-${compilerVersion}.jar`;
-const compilerJsBinaryPath = `./compiler/target/closure-compiler-gwt-${compilerVersion}/jscomp/jscomp.js`;
 
 console.log(process.platform, process.arch, compilerVersion);
 
@@ -89,7 +88,7 @@ function copyCompilerBinaries() {
 
 const mvnCmd = `mvn${process.platform === 'win32' ? '.cmd' : ''}`;
 
-if (!fs.existsSync(compilerJavaBinaryPath) || !fs.existsSync(compilerJsBinaryPath)) {
+if (!fs.existsSync(compilerJavaBinaryPath)) {
   // Force maven to use colorized output
   const extraMvnArgs = process.env.GITHUB_ACTIONS ? ['-Dstyle.color=always'] : [];
   if ((process.env.GITHUB_ACTIONS)) {

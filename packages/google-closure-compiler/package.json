@@ -38,7 +38,6 @@
   "dependencies": {
     "chalk": "2.x",
     "google-closure-compiler-java": "^20200719.0.0",
-    "google-closure-compiler-js": "^20200719.0.0",
     "minimist": "1.x",
     "vinyl": "2.x",
     "vinyl-sourcemaps-apply": "^0.2.0"

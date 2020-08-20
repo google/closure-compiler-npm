@@ -1,9 +1,18 @@
 # google-closure-compiler-js
 
-JavaScript platform distribution of Closure Compiler.
+**The JS version of closure-compiler is no longer supported or maintained.**
 
-For cli scripts, build tool plugins and more see the [main distribution](https://www.npmjs.com/package/google-closure-compiler).
+We have decided that the maintenance burden of supporting the JS-compiled version of closure-compiler
+is greater than its benefits.
 
-The old standalone [google-closure-compiler-js](https://github.com/google/closure-compiler-js) package
-is deprecated and is now distributed as part of the
-[google-closure-compiler](https://www.npmjs.com/package/google-closure-compiler) package.
+ - The need to support compiling Java to JavaScript enforces restrictions on the Java code we can write
+ and our ability to upgrade to newer versions of the JDK.
+ - The JDK implemented by J2CL (used to transform Java to JS) has functional differences that lead
+  to frustrating bugs in the JS version, such as poor support for non-ASCII characters in input sources.
+ - There are inevitable differences in the command line flags and options that can be supported by the
+  Java and JS versions of the compiler, leading to user frustration and confusion.
+ - Users always have the option to install the JVM and run the Java version. We realize that some users
+ strongly prefer not to install and use a JVM. We believe that these users' needs are satisfied by the
+ Graal compiled-to-native versions of the compiler, which are much faster than the JS version ever could be.
+ Native versions offer full and equivalent functionality of the Java version including support for
+ all the compiler options.

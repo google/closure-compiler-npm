@@ -27,7 +27,6 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const ClosureCompiler = require('../lib/node/closure-compiler');
-const JsClosureCompiler = require('../lib/node/closure-compiler-js');
 require('mocha');
 
 process.on('unhandledRejection', e => { throw e; });
@@ -123,25 +122,13 @@ describe('grunt-google-closure-compiler', function() {
       enumerable: false,
       configurable: true
     });
-
-    originalJsCompilerRunMethod = Object.getOwnPropertyDescriptor(JsClosureCompiler.prototype, 'run');
-    Object.defineProperty(JsClosureCompiler.prototype, 'run', {
-      value: function(...args) {
-        platformUtilized = 'javascript';
-        return originalJsCompilerRunMethod.value.apply(this, args);
-      },
-      writable: true,
-      enumerable: false,
-      configurable: true
-    });
   });
 
   after(() => {
     Object.defineProperty(ClosureCompiler.prototype, 'run', originalCompilerRunMethod);
-    Object.defineProperty(JsClosureCompiler.prototype, 'run', originalJsCompilerRunMethod);
   });
 
-  ['java', 'native', 'javascript'].forEach(platform => {
+  ['java', 'native'].forEach(platform => {
     describe(`${platform} version`, function() {
       let closureCompiler;
       this.slow(10000);
@@ -268,71 +255,69 @@ describe('grunt-google-closure-compiler', function() {
         closureCompiler.call(taskObj);
       });
 
-      if (platform !== 'javascript') {
-        it('should run when grunt provides no files', function (done) {
-          this.timeout(45000);
-          this.slow(10000);
+      it('should run when grunt provides no files', function (done) {
+        this.timeout(30000);
+        this.slow(10000);
 
-          const fileOneDest = 'test/out/one.js';
+        const fileOneDest = 'test/out/one.js';
 
-          function taskDone() {
-            const fileOne = fs.statSync(fileOneDest);
-            should(fileOne.isFile()).be.eql(true);
-            fs.unlinkSync(fileOneDest);
+        function taskDone() {
+          const fileOne = fs.statSync(fileOneDest);
+          should(fileOne.isFile()).be.eql(true);
+          fs.unlinkSync(fileOneDest);
 
-            fs.rmdirSync('test/out');
-            done();
-          }
+          fs.rmdirSync('test/out');
+          done();
+        }
 
-          mockGrunt.fail.warn = (err, code) => {
-            assertNoError.fail();
-            taskDone();
-          };
+        mockGrunt.fail.warn = (err, code) => {
+          assertNoError.fail();
+          taskDone();
+        };
 
-          const taskObj = getGruntTaskObject([], {
-            compilation_level: 'SIMPLE',
-            js: 'test/fixtures/one.js',
-            js_output_file: fileOneDest
-          }, () => {
-            taskDone();
-          });
-
-          closureCompiler.call(taskObj);
+        const taskObj = getGruntTaskObject([], {
+          compilation_level: 'SIMPLE',
+          js: 'test/fixtures/one.js',
+          js_output_file: fileOneDest
+        }, () => {
+          taskDone();
         });
 
-        it('should support an arguments array', function (done) {
-          this.timeout(45000);
-          this.slow(10000);
+        closureCompiler.call(taskObj);
+      });
 
-          const fileOneDest = 'test/out/one.js';
+      it('should support an arguments array', function (done) {
+        this.timeout(30000);
+        this.slow(10000);
 
-          function taskDone() {
-            const fileOne = fs.statSync(fileOneDest);
-            should(fileOne.isFile()).be.eql(true);
-            fs.unlinkSync(fileOneDest);
+        const fileOneDest = 'test/out/one.js';
 
-            fs.rmdirSync('test/out');
-            done();
-          }
+        function taskDone() {
+          const fileOne = fs.statSync(fileOneDest);
+          should(fileOne.isFile()).be.eql(true);
+          fs.unlinkSync(fileOneDest);
 
-          mockGrunt.fail.warn = (err, code) => {
-            assertNoError.fail();
-            taskDone();
-          };
+          fs.rmdirSync('test/out');
+          done();
+        }
 
-          const taskObj = getGruntTaskObject([], {
-            args: [
-              '--compilation_level=SIMPLE',
-              '--js=test/fixtures/one.js',
-              '--js_output_file=' + fileOneDest
-            ]
-          }, () => {
-            taskDone();
-          });
+        mockGrunt.fail.warn = (err, code) => {
+          assertNoError.fail();
+          taskDone();
+        };
 
-          closureCompiler.call(taskObj);
+        const taskObj = getGruntTaskObject([], {
+          args: [
+            '--compilation_level=SIMPLE',
+            '--js=test/fixtures/one.js',
+            '--js_output_file=' + fileOneDest
+          ]
+        }, () => {
+          taskDone();
         });
-      }
+
+        closureCompiler.call(taskObj);
+      });
     });
   });
 });

@@ -45,9 +45,6 @@ function getFirstSupportedPlatform(platforms) {
         }
         return process.env.JAVA_HOME;
 
-      case "javascript":
-        return true;
-
       case "native":
         if (getNativeImagePath()) {
           return true;

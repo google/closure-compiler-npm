@@ -39,8 +39,6 @@ module.exports = (grunt, pluginOptions) => {
   if (pluginOptions) {
     if (Array.isArray(extraArguments)) {
       extraArguments = pluginOptions;
-    } else if (pluginOptions === 'javascript') {
-      platforms = ['javascript'];
     } else {
       if (pluginOptions.platform) {
         platforms = Array.isArray(pluginOptions.platform) ? pluginOptions.platform : [pluginOptions.platform];
@@ -59,7 +57,7 @@ module.exports = (grunt, pluginOptions) => {
   }
 
   if (!platforms) {
-    platforms = ['native', 'java', 'javascript'];
+    platforms = ['native', 'java'];
   }
   const platform = getFirstSupportedPlatform(platforms);
 
@@ -107,21 +105,13 @@ module.exports = (grunt, pluginOptions) => {
     return new Promise(function(resolve, reject) {
       let stream;
       const args = {};
-      let gulpOpts;
-      if (platform === 'javascript') {
-        gulpOpts = Object.assign({}, gulpCompilerOptions, {
-          logger: grunt.log,
-          pluginName: 'grunt-google-closure-compiler'
-        });
-      } else {
-        gulpOpts = Object.assign({}, gulpCompilerOptions, {
-          streamMode: 'IN',
-          logger: grunt.log,
-          pluginName: 'grunt-google-closure-compiler',
-          requireStreamInput: false
-        });
-      };
-      if (extraArguments && extraArguments !== 'javascript') {
+      let gulpOpts = Object.assign({}, gulpCompilerOptions, {
+        streamMode: 'IN',
+        logger: grunt.log,
+        pluginName: 'grunt-google-closure-compiler',
+        requireStreamInput: false
+      });
+      if (extraArguments) {
         args.extraArguments = extraArguments;
       }
       const gulpCompiler = require('../gulp')(args);
@@ -132,23 +122,11 @@ module.exports = (grunt, pluginOptions) => {
         // the compiler task
         stream = new VinylStream(files, {base: process.cwd()})
             .pipe(gulpCompiler(options, compilerOpts));
-        if (platform === 'javascript') {
-          stream = stream.on('error', err => {
-            hadError = true;
-            reject(err);
-          }).pipe(new WriteGruntFiles());
-        }
       } else {
         // No source files were provided. Assume the options specify
         // --js flags and invoke the compiler without any grunt inputs.
         // Manually end the stream to force compilation to begin.
         stream = gulpCompiler(options, compilerOpts);
-        if (platform === 'javascript') {
-          stream = stream.on('error', err => {
-            hadError = true;
-            reject(err);
-          }).pipe(new WriteGruntFiles());
-        }
         stream.end();
       }
 
@@ -232,7 +210,7 @@ module.exports = (grunt, pluginOptions) => {
    * Grabs `ps` as array of promise-returning functions, separates it in `maxParallelCount`
    * count of sequential processing consumers and runs these consumers in parallel to process
    * all promises.
-   * 
+   *
    * @param {!Array<function():!Promise<undefined>>} ps functions returning promises
    * @param {!number} maxParallelCount Maximum promises running in parallel
    * @return {!Promise<undefined>|undefined}

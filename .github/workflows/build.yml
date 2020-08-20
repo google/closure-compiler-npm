@@ -15,13 +15,13 @@ jobs:
     name: Build Compiler
     runs-on: ubuntu-latest
     env:
-      COMPILER_NIGHTLY: ${{ github.event_name == 'cron' }}
+      COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       FORCE_COLOR: '1'
     steps:
       - run: |
           echo "${{ env.COMPILER_NIGHTLY }}"
           echo "${{ github.event_name }}"
-          echo "${{ github.event_name == 'cron' }}"
+          echo "${{ github.event_name == 'schedule' }}"
           echo "${{ env.COMPILER_NIGHTLY == true }}"
       - uses: actions/setup-java@v1
         with:
@@ -73,7 +73,7 @@ jobs:
     name: Build Compiler js
     runs-on: ubuntu-latest
     env:
-      COMPILER_NIGHTLY: ${{ github.event_name == 'cron' }}
+      COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -317,9 +317,9 @@ jobs:
   publish-packages:
     name: Publish Packages
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'cron' || github.event_name == 'push' }}
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
     env:
-      COMPILER_NIGHTLY: ${{ github.event_name == 'cron' }}
+      COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       NPM_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}
       FORCE_COLOR: '1'
     needs:

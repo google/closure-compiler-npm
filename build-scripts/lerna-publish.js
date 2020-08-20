@@ -103,6 +103,19 @@ class CIPublishCommand extends PublishCommand {
       }
     });
   }
+
+  /** @override */
+  configureEnvironment() {
+    const retVal = super.configureEnvironment();
+    if (process.env.GITHUB_ACTIONS) {
+      try {
+        // force enable colorized output
+        const log = require('npmlog');
+        log.enableColor();
+      } catch (e) {}
+    }
+    return retVal;
+  }
 }
 
 // New command meta data
@@ -153,6 +166,8 @@ function main(argv) {
       .parse(argv, context);
 }
 
+const flags = process.argv.slice(2);
+
 // match both the "publish" and "publish-ci" lerna commands
 if (/publish/.test(process.argv[2])) {
   // Looks like we're trying to publish packages
@@ -167,7 +182,7 @@ if (/publish/.test(process.argv[2])) {
       process.exit(0);
     }
     // Add the nightly tag so we don't publish this as the "latest" tag
-    main(process.argv.slice(2).concat(['--npm-tag', 'nightly']));
+    main(flags.concat(['--npm-tag', 'nightly']));
   } else {
     // Make sure the compiler version matches the package major version before publishing
     const compilerVersionMatch = require(path.resolve(__dirname, 'version-match.js'));
@@ -183,10 +198,10 @@ if (/publish/.test(process.argv[2])) {
         process.exit(0);
       }
       // Invoke the cli with arguments
-      main(process.argv.slice(2));
+      main(flags);
     });
   }
 } else {
   // Invoke the cli with arguments
-  main(process.argv.slice(2));
+  main(flags);
 }

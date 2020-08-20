@@ -19,7 +19,7 @@ jobs:
       FORCE_COLOR: '1'
     steps:
       - run: |
-          echo "${{ COMPILER_NIGHTLY }}"
+          echo "${{ evn.COMPILER_NIGHTLY }}"
           echo "${{ github.event_name == 'cron' }}"
           echo "${{ env.COMPILER_NIGHTLY == true }}"
       - uses: actions/setup-java@v1

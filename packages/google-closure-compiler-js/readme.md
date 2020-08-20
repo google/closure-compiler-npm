@@ -13,6 +13,6 @@ is greater than its benefits.
   Java and JS versions of the compiler, leading to user frustration and confusion.
  - Users always have the option to install the JVM and run the Java version. We realize that some users
  strongly prefer not to install and use a JVM. We believe that these users' needs are satisfied by the
- Graal compiled-to-native version of the compiler, which is much faster and more functionally identical
- to the behavior of the Java version than the JS version ever could be.
- 
+ Graal compiled-to-native versions of the compiler, which are much faster than the JS version ever could be.
+ Native versions offer full and equivalent functionality of the Java version including support for
+ all the compiler options.

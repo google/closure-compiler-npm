@@ -39,7 +39,7 @@ jobs:
         working-directory: compiler
         run: |
           git checkout master
-          git pull origin master
+          git pull https://github.com/google/closure-compiler.git master
           git log -1 | cat
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -91,7 +91,7 @@ jobs:
         working-directory: compiler
         run: |
           git checkout master
-          git pull origin master
+          git pull https://github.com/google/closure-compiler.git master
           git log -1 | cat
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path

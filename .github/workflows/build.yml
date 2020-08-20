@@ -375,6 +375,9 @@ jobs:
         run: ./build-scripts/add-os-restrictions.js
       - name: Create the nightly version
         if: ${{ env.COMPILER_NIGHTLY == 'true' }}
-        run: ./build-scripts/create-nightly-version.js
+        run: |
+          git config --global user.email "github-bot@github.com"
+          git config --global user.name "Github Bot"
+          ./build-scripts/create-nightly-version.js
       - name: Publish packages to npm
         run: ./build-scripts/lerna-publish.js publish-ci --npm-client ${{ github.workspace }}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes

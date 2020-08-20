@@ -6,8 +6,8 @@ on:
   pull_request:
     branches: [ master ]
   schedule:
-    # Daily at 11am
-    - cron:  '0 11 * * *'
+    # Daily at 12pm UTC
+    - cron: '0 12 * * *'
 
 jobs:
   # Build the compiler jar file from the submodule
@@ -15,7 +15,8 @@ jobs:
     name: Build Compiler
     runs-on: ubuntu-latest
     env:
-      COMPILER_NIGHTLY: ${{ github.event_name == 'cron' }}
+      COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
+      FORCE_COLOR: '1'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -29,11 +30,11 @@ jobs:
         working-directory: compiler
         run: git fetch --tags https://github.com/google/closure-compiler.git
       - name: Update compiler submodule to master if nightly build
-        if: ${{ env.COMPILER_NIGHTLY == true }}
+        if: ${{ env.COMPILER_NIGHTLY == 'true' }}
         working-directory: compiler
         run: |
           git checkout master
-          git pull origin master
+          git pull https://github.com/google/closure-compiler.git master
           git log -1 | cat
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -69,6 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_VERSION: '14.x'
+      FORCE_COLOR: '1'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -123,6 +125,7 @@ jobs:
     runs-on: macos-latest
     env:
       NODE_VERSION: '10.x'
+      FORCE_COLOR: '1'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -177,6 +180,7 @@ jobs:
     runs-on: windows-latest
     env:
       NODE_VERSION: '12.x'
+      FORCE_COLOR: '1'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -242,10 +246,11 @@ jobs:
   publish-packages:
     name: Publish Packages
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'cron' || github.event_name == 'push' }}
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
     env:
-      COMPILER_NIGHTLY: ${{ github.event_name == 'cron' }}
+      COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       NPM_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}
+      FORCE_COLOR: '1'
     needs:
       - build-linux
       - build-macos
@@ -293,7 +298,10 @@ jobs:
       - name: Prepare for publish
         run: ./build-scripts/add-os-restrictions.js
       - name: Create the nightly version
-        if: ${{ env.COMPILER_NIGHTLY == true }}
-        run: ./build-scripts/create-nightly-version.js
+        if: ${{ env.COMPILER_NIGHTLY == 'true' }}
+        run: |
+          git config --global user.email "github-bot@github.com"
+          git config --global user.name "Github Bot"
+          ./build-scripts/create-nightly-version.js
       - name: Publish packages to npm
         run: ./build-scripts/lerna-publish.js publish-ci --npm-client ${{ github.workspace }}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes

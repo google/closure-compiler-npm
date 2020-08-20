@@ -44,6 +44,8 @@ const { PublishCommand } = require('@lerna/publish');
 const fs = require('fs');
 const path = require('path');
 
+console.log('FORCE_COLOR', process.env.FORCE_COLOR, 'FORCE_COLOR' in process.env, process.env.FORCE_COLOR.length === 0, parseInt(process.env.FORCE_COLOR, 10));
+
 /** Override methods in the main publication command class to return the full set of packages for publication */
 class CIPublishCommand extends PublishCommand {
   /**
@@ -153,7 +155,7 @@ function main(argv) {
       .parse(argv, context);
 }
 
-const flags = process.argv.slice(2).filter((arg) => !/^--color/.test(arg));
+const flags = process.argv.slice(2);
 
 // match both the "publish" and "publish-ci" lerna commands
 if (/publish/.test(process.argv[2])) {

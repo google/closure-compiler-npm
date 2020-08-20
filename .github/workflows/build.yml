@@ -312,6 +312,7 @@ jobs:
     env:
       COMPILER_NIGHTLY: ${{ github.event == 'cron' }}
       NPM_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}
+      FORCE_COLOR: '1'
     needs:
       - build-linux
       - build-macos
@@ -367,4 +368,4 @@ jobs:
         if: ${{ env.COMPILER_NIGHTLY == true }}
         run: ./build-scripts/create-nightly-version.js
       - name: Publish packages to npm
-        run: ./build-scripts/lerna-publish.js publish-ci --npm-client ${{ github.workspace }}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes --color=always
+        run: ./build-scripts/lerna-publish.js publish-ci --npm-client ${{ github.workspace }}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes

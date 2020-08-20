@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       COMPILER_NIGHTLY: ${{ github.event_name == 'cron' }}
+      FORCE_COLOR: '1'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -116,6 +117,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_VERSION: '14.x'
+      FORCE_COLOR: '1'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -177,6 +179,7 @@ jobs:
     runs-on: macos-latest
     env:
       NODE_VERSION: '10.x'
+      FORCE_COLOR: '1'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -238,6 +241,7 @@ jobs:
     runs-on: windows-latest
     env:
       NODE_VERSION: '12.x'
+      FORCE_COLOR: '1'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -312,6 +316,7 @@ jobs:
     env:
       COMPILER_NIGHTLY: ${{ github.event_name == 'cron' }}
       NPM_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}
+      FORCE_COLOR: '1'
     needs:
       - build-linux
       - build-macos

@@ -20,6 +20,7 @@ jobs:
     steps:
       - run: |
           echo "${{ env.COMPILER_NIGHTLY }}"
+          echo "${{ github.event_name }}"
           echo "${{ github.event_name == 'cron' }}"
           echo "${{ env.COMPILER_NIGHTLY == true }}"
       - uses: actions/setup-java@v1

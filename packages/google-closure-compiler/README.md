@@ -8,7 +8,7 @@ Any bugs not related to the plugins themselves should be reported to the
 [main repository](https://github.com/google/closure-compiler/).
 
 **The JS version of closure-compiler is no longer supported or maintained.**  
-[Read why](../google-closure-compiler-js/readme.md)
+[Read why](https://github.com/google/closure-compiler-npm/blob/master/packages/google-closure-compiler-js/readme.md)
 
 ## Getting Started
 If you are new to [Closure-Compiler](https://developers.google.com/closure/compiler/), make

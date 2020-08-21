@@ -28,6 +28,7 @@ const addCmd = require('@lerna/add/command');
 const bootstrapCmd = require('@lerna/bootstrap/command');
 const changedCmd = require('@lerna/changed/command');
 const cleanCmd = require('@lerna/clean/command');
+const Command = require('@lerna/command');
 const createCmd = require('@lerna/create/command');
 const diffCmd = require('@lerna/diff/command');
 const execCmd = require('@lerna/exec/command');
@@ -43,6 +44,20 @@ const pkg = require('lerna/package.json');
 const { PublishCommand } = require('@lerna/publish');
 const fs = require('fs');
 const path = require('path');
+
+if (process.env.GITHUB_ACTIONS) {
+  // force enable colorized output for all lerna commands
+  const originalConfigureEnvironment = Command.prototype.configureEnvironment;
+  Command.prototype.configureEnvironment = function(...args) {
+    const retVal = originalConfigureEnvironment.apply(this, args);
+    try {
+      // force enable colorized output
+      const log = require('npmlog');
+      log.enableColor();
+    } catch (e) {}
+    return retVal;
+  };
+}
 
 /** Override methods in the main publication command class to return the full set of packages for publication */
 class CIPublishCommand extends PublishCommand {
@@ -102,19 +117,6 @@ class CIPublishCommand extends PublishCommand {
         process.stdout.write('publication log missing');
       }
     });
-  }
-
-  /** @override */
-  configureEnvironment() {
-    const retVal = super.configureEnvironment();
-    if (process.env.GITHUB_ACTIONS) {
-      try {
-        // force enable colorized output
-        const log = require('npmlog');
-        log.enableColor();
-      } catch (e) {}
-    }
-    return retVal;
   }
 }
 

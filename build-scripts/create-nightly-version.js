@@ -47,16 +47,17 @@ const nightlyVersion = `${today.getFullYear()}${month}${day}.0.0-nightly`;
 
     // Create a nightly version of all the packages
     await runCommand(
-      path.resolve(process.cwd(), 'node_modules', '.bin', `lerna${process.platform === 'win32' ? '.cmd' : ''}`),
+      'node',
       [
+        './build-scripts/lerna-publish.js',
         'version',
         nightlyVersion,
         '--push=false', // prevent the version commit from being pushed back to the repo
         `--force-publish=${packages.join(',')}`, // publish every package even though no changes are detected
         '--yes', // don't prompt for confirmation
       ]);
-    } catch (e) {
-      console.error(e);
-      process.exitCode = 1;
-    }
-  })()
+  } catch (e) {
+    console.error(e);
+    process.exitCode = 1;
+  }
+})();

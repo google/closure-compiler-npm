@@ -20,7 +20,6 @@ The google-closure-compiler package contains Grunt and Gulp plugins and a CLI:
 Bare bones distributions intended for developers who want to author against a specific platform.
 
  - Java build: [google-closure-compiler-java](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-java)
- - JavaScript build: [google-closure-compiler-js](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-js)
  - Native Linux build: [google-closure-compiler-linux](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-linux)
  - Native OSX build: [google-closure-compiler-osx](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-osx)
  - Native Windows build: [google-closure-compiler-windows](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-windows)

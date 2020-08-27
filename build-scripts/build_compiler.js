@@ -42,20 +42,38 @@ const compilerJavaBinaryPath = `./compiler/bazel-bin/${compilerTargetName}`;
 async function main() {
   console.log(process.platform, process.arch, compilerVersion);
 
-  if (fs.existsSync(compilerJavaBinaryPath)) {
-    return copyCompilerBinaries();
-  }
-
   const { exitCode } = await runCommand(
     "bazel",
-    ["build", `//:${compilerTargetName}`],
+    [
+      "build",
+      `//:${compilerTargetName}`,
+      `--define=COMPILER_VERSION=${compilerVersion}`,
+    ],
     { cwd: "./compiler" }
   );
   if (exitCode !== 0) {
     throw new Error(exitCode);
   }
 
-  return copyCompilerBinaries();
+  return Promise.all([
+    copy(
+      compilerJavaBinaryPath,
+      "./packages/google-closure-compiler-java/compiler.jar"
+    ),
+    copy(
+      compilerJavaBinaryPath,
+      "./packages/google-closure-compiler-linux/compiler.jar"
+    ),
+    copy(
+      compilerJavaBinaryPath,
+      "./packages/google-closure-compiler-osx/compiler.jar"
+    ),
+    copy(
+      compilerJavaBinaryPath,
+      "./packages/google-closure-compiler-windows/compiler.jar"
+    ),
+    copy("./compiler/contrib", "./packages/google-closure-compiler/contrib"),
+  ]);
 }
 
 /**
@@ -87,33 +105,6 @@ function copy(src, dest) {
       err ? reject(err) : resolve();
     });
   });
-}
-
-/**
- * Copy the newly built compiler and the contrib folder to the applicable packages.
- *
- * @return {!Promise<undefined>}
- */
-function copyCompilerBinaries() {
-  return Promise.all([
-    copy(
-      compilerJavaBinaryPath,
-      "./packages/google-closure-compiler-java/compiler.jar"
-    ),
-    copy(
-      compilerJavaBinaryPath,
-      "./packages/google-closure-compiler-linux/compiler.jar"
-    ),
-    copy(
-      compilerJavaBinaryPath,
-      "./packages/google-closure-compiler-osx/compiler.jar"
-    ),
-    copy(
-      compilerJavaBinaryPath,
-      "./packages/google-closure-compiler-windows/compiler.jar"
-    ),
-    copy("./compiler/contrib", "./packages/google-closure-compiler/contrib"),
-  ]);
 }
 
 main();

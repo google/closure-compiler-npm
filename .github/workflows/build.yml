@@ -18,11 +18,16 @@ jobs:
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       FORCE_COLOR: '1'
     steps:
-      - uses: actions/setup-java@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
         with:
           java-version: '11'
           java-package: jdk
           architecture: x64
+      - name: Setup Bazel
+        uses: jwlawson/actions-setup-bazel@v1
+        with: 
+          bazel-version: '3.4.1'
       - uses: actions/checkout@v2
         with:
           submodules: recursive
@@ -49,7 +54,7 @@ jobs:
       - name: Install packages
         run: yarn install --colors=always
       - name: Build jar
-        run: ./build-scripts/build_compiler.js --colors=always
+        run: ./build-scripts/build_compiler.js
       - name: Tests
         run: node_modules/.bin/mocha --colors
       - name: Upload contrib folder

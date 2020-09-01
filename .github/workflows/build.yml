@@ -282,6 +282,11 @@ jobs:
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
+      - name: Mark binaries executable
+        run: |
+          chmod 755 packages/google-closure-compiler-linux/compiler
+          chmod 755 packages/google-closure-compiler-osx/compiler
+          chmod 755 packages/google-closure-compiler-windows/compiler.exe
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"

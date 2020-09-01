@@ -45,8 +45,8 @@ async function main() {
   const { exitCode } = await runCommand(
     "bazel",
     [
-      "--color=yes",
       "build",
+      "--color=yes",
       `//:${compilerTargetName}`,
       `--define=COMPILER_VERSION=${compilerVersion}`,
     ],

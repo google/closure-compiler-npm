@@ -7,7 +7,7 @@
  1. Update the compiler submodule pointer to the tagged release.
      * `git submodule init && git submodule update` (update the compiler submodule)
      * `cd compiler`
-     * `git checkout closure-compiler-parent-vYYYYMMDD` (the current tag/commit)
+     * `git checkout vYYYYMMDD` (the current tag/commit)
      * `cd ..`
      * `git add . && git commit -m "Release vYYYYMMDD"`
  2. Run `yarn install` in the package root.

@@ -86,7 +86,7 @@ async function main() {
  *
  * @type {string}
  */
-const compilerVersion = process.env.COMPILER_NIGHTLY
+const compilerVersion = process.env.COMPILER_NIGHTLY == 'true'
   ? "SNAPSHOT-1.0"
   : String(
       childProcess.execSync("git tag --points-at HEAD", {

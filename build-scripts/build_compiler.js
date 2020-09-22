@@ -35,6 +35,7 @@ const ncp = require("ncp");
 const fs = require("fs");
 const path = require("path");
 const runCommand = require("./run-command");
+const childProcess = require("child_process");
 
 const compilerTargetName = "compiler_unshaded_deploy.jar";
 const compilerJavaBinaryPath = `./compiler/bazel-bin/${compilerTargetName}`;
@@ -80,20 +81,18 @@ async function main() {
 /**
  * The compiler version that will be built.
  *
- * Retrieved  by reading the contents of ./compiler/pom.xml.
  * For release builds, this is of the form: "vYYYYMMDD"
  * For nightly builds, this is "1.0-SNAPSHOT"
  *
  * @type {string}
  */
-const compilerVersion = (function getCompilerVersionFromPomXml() {
-  const pomXmlContents = fs.readFileSync(
-    path.resolve(__dirname, "..", "compiler", "pom.xml"),
-    "utf8"
-  );
-  const versionParts = /<version>([^<]+)<\/version>/.exec(pomXmlContents);
-  return versionParts[1];
-})();
+const compilerVersion = process.env.COMPILER_NIGHTLY
+  ? "SNAPSHOT-1.0"
+  : String(
+      childProcess.execSync("git tag --points-at HEAD", {
+        cwd: "./compiler",
+      })
+    ).trim();
 
 /**
  * @param {string} src path to source file or folder

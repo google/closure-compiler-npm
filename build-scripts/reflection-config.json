@@ -154,6 +154,12 @@
     "allDeclaredFields": true
   },
   {
+    "name": "org.kohsuke.args4j.spi.PatternOptionHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
     "name": "org.kohsuke.args4j.spi.PathOptionHandler",
     "allDeclaredConstructors": true,
     "allDeclaredMethods": true,

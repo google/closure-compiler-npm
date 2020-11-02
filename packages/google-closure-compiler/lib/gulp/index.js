@@ -189,6 +189,12 @@ module.exports = function(initOptions) {
         // Convert these back to vinyl
         let outputFiles = [];
         if (stdOutData.trim().length > 0) {
+          if (code !== 0) {
+            this.emit('error', new PluginError(this.PLUGIN_NAME_, 'Compiler error.\n' + stdOutData + '\n' + stdErrData));
+            cb();
+            return;
+          }
+          
           // stdOutData = stdOutData.substr(stdOutData.indexOf('{'));
           try {
             outputFiles = JSON.parse(stdOutData);

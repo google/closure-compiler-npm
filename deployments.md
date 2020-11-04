@@ -4,14 +4,14 @@
 
 ## Deploying new releases of the main compiler
 
- 1. Update the compiler submodule pointer to the tagged release.
+ 1. `COMPILER_VERSION_NUMBER=YYYYMMDD` (Use actual version number here without the `v`.)
+ 2. Update the compiler submodule pointer to the tagged release.
      * `git submodule init && git submodule update` (update the compiler submodule)
      * `cd compiler`
-     * `git checkout vYYYYMMDD` (the current tag/commit)
+     * `git checkout v$COMPILER_VERSION_NUMBER` (the current tag/commit)
      * `cd ..`
-     * `git add . && git commit -m "Release vYYYYMMDD"`
- 2. Run `yarn install` in the package root.
- 3. `COMPILER_VERSION_NUMBER=20201102` (Use actual version number here without the `v`.)
+     * `git add . && git commit -m "Release v$COMPILER_VERSION_NUMBER"`
+ 3. Run `yarn install` in the package root.
  4. Run `node_modules/.bin/lerna version --force-publish='*' $COMPILER_VERSION_NUMBER.0.0`.
     The command will ask you to verify that you wish to create new versions for each package.
     Once confirmed, version numbers will be committed, the commit tagged and changes pushed.

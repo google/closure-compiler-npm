@@ -11,8 +11,8 @@
      * `cd ..`
      * `git add . && git commit -m "Release vYYYYMMDD"`
  2. Run `yarn install` in the package root.
- 3. Run `node_modules/.bin/lerna version --force-publish='*' {COMPILER_VERSION_NUMBER}.0.0`.
-    The `COMPILER_VERSION_NUMBER` should not include the preceding `v` - example: 20181008.
+ 3. `COMPILER_VERSION_NUMBER=20201102` (Use actual version number here without the `v`.)
+ 4. Run `node_modules/.bin/lerna version --force-publish='*' $COMPILER_VERSION_NUMBER.0.0`.
     The command will ask you to verify that you wish to create new versions for each package.
     Once confirmed, version numbers will be committed, the commit tagged and changes pushed.
 

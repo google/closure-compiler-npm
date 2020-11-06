@@ -17,14 +17,11 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const {
-  getNativeImagePath,
-  getFirstSupportedPlatform,
-} = require('./lib/utils');
+const {getNativeImagePath, getFirstSupportedPlatform} = require('./lib/utils');
 const parseArgs = require('minimist');
 
 /** @see https://stackoverflow.com/a/40686853/1211524 */
-function mkDirByPathSync(targetDir, { isRelativeToScript = false } = {}) {
+function mkDirByPathSync(targetDir, {isRelativeToScript = false} = {}) {
   const sep = path.sep;
   const initDir = path.isAbsolute(targetDir) ? sep : '';
   const baseDir = isRelativeToScript ? __dirname : '.';
@@ -101,7 +98,7 @@ for (let i = 0; i < args.length; i++) {
 
 const compiler = new Compiler(args);
 
-compiler.spawnOptions = { stdio: 'inherit' };
+compiler.spawnOptions = {stdio: 'inherit'};
 if (platform === 'native') {
   compiler.JAR_PATH = null;
   compiler.javaPath = getNativeImagePath();

@@ -16,7 +16,7 @@
 'use strict';
 
 const GRAAL_OS = process.platform === 'win32' ? 'windows' : process.platform;
-const GRAAL_VERSION = process.env.GRAAL_VERSION || '20.2.0';
+const GRAAL_VERSION = process.env.GRAAL_VERSION || '21.0.0.2';
 const GRAAL_FOLDER = `graalvm-ce-java11-${GRAAL_OS}-amd64-${GRAAL_VERSION}`;
 const GRAAL_PACKAGE_SUFFIX = GRAAL_OS === 'windows' ? 'zip' : 'tar.gz';
 const GRAAL_URL = process.env.GRAAL_URL ||

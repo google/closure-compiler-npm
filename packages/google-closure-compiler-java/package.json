@@ -1,6 +1,6 @@
 {
   "name": "google-closure-compiler-java",
-  "version": "20210302.0.0",
+  "version": "20210406.0.0",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler using Java",
   "main": "index.js",
   "repository": "https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-java",

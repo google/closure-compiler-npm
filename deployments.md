@@ -30,14 +30,10 @@ Breaking changes should be deployed at the same time as a major compiler release
     
 ## Verifying Publication Was Successful
 
-The `lerna version` command will push a new tagged commit. Travis will automatically start building
-this commit. Expand the `Deploying application` section at the bottom of the log. For each
+The `lerna version` command will push a new tagged commit. [Github Actions](https://github.com/google/closure-compiler-npm/actions)
+will automatically start building this commit. Expand the `Deploying application` section at the bottom of the log. For each
 successfully published package, a `✅ publish succeeded` line should be present. In addition,
 the npm registry page for each package should list the newly published version.
-
-Since the native images can only be build on their respective OS, whichever Travis build
-finishes last will publish the main package as it waits until all dependent packages have
-been published.
 
 *Note: The lerna log file lines "lerna success published 5 packages" is misleading. Lerna will
 succeed even if the package has already been published or failed to publish due to missing

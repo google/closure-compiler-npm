@@ -227,14 +227,6 @@
     "allPublicFields" : true
   },
   {
-    "name" : "com.google.javascript.jscomp.ConformanceRules$BanExpose",
-    "methods" : [ { "name" : "<init>" } ],
-    "allDeclaredMethods" : true,
-    "allDeclaredFields" : true,
-    "allPublicMethods" : true,
-    "allPublicFields" : true
-  },
-  {
     "name" : "com.google.javascript.jscomp.ConformanceRules$BanGlobalVars",
     "methods" : [ { "name" : "<init>" } ],
     "allDeclaredMethods" : true,

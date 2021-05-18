@@ -54,6 +54,7 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
   '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
+  '-H:+AllowIncompleteClasspath',
   `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
   '-H:IncludeResources=(externs.zip)|(.*(js|txt))'.replace(/[\|\(\)]/g, (match) => {
     if (GRAAL_OS === 'windows') {

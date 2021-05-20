@@ -18,13 +18,17 @@ jobs:
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       FORCE_COLOR: '1'
     steps:
-      - name: Setup Java
-        uses: actions/setup-java@v2
+      - name: Download Graal Labs JDK
+        run: |
+          download_url="https://github.com/graalvm/labs-openjdk-16/releases/download/jvmci-21.2-b01/labsjdk-ce-16.0.1+9-jvmci-21.2-b01-linux-amd64.tar.gz"
+          wget -O $RUNNER_TEMP/java_package.tar.gz $download_url
+      - uses: actions/setup-java@v2
         with:
           java-version: '16'
-          distribution: 'adopt-hotspot'
           java-package: jdk
           architecture: x64
+          distribution: 'jdkfile'
+          jdkFile: ${{ runner.temp }}/java_package.tar.gz
       - name: Setup Bazel
         uses: jwlawson/actions-setup-bazel@v1
         with:
@@ -80,12 +84,17 @@ jobs:
       GRAAL_VERSION: '21.1.0'
       GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.1.0/graalvm-ce-java11-linux-amd64-21.1.0.tar.gz'
     steps:
+      - name: Download Graal Labs JDK
+        run: |
+          download_url="https://github.com/graalvm/labs-openjdk-16/releases/download/jvmci-21.2-b01/labsjdk-ce-16.0.1+9-jvmci-21.2-b01-linux-amd64.tar.gz"
+          wget -O $RUNNER_TEMP/java_package.tar.gz $download_url
       - uses: actions/setup-java@v2
         with:
           java-version: '16'
           java-package: jdk
           architecture: x64
-          distribution: 'adopt-hotspot'
+          distribution: 'jdkfile'
+          jdkFile: ${{ runner.temp }}/java_package.tar.gz
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v1
@@ -138,12 +147,17 @@ jobs:
       GRAAL_VERSION: '21.1.0'
       GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.1.0/graalvm-ce-java11-darwin-amd64-21.1.0.tar.gz'
     steps:
+      - name: Download Graal Labs JDK
+        run: |
+          download_url="https://github.com/graalvm/labs-openjdk-16/releases/download/jvmci-21.2-b01/labsjdk-ce-16.0.1+9-jvmci-21.2-b01-darwin-amd64.tar.gz"
+          wget -O $RUNNER_TEMP/java_package.tar.gz $download_url
       - uses: actions/setup-java@v2
         with:
           java-version: '16'
           java-package: jdk
           architecture: x64
-          distribution: 'adopt-hotspot'
+          distribution: 'jdkfile'
+          jdkFile: ${{ runner.temp }}/java_package.tar.gz
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v1
@@ -196,12 +210,17 @@ jobs:
       GRAAL_VERSION: '21.1.0'
       GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.1.0/graalvm-ce-java11-windows-amd64-21.1.0.zip'
     steps:
+      - name: Download Graal Labs JDK
+        run: |
+          download_url="https://github.com/graalvm/labs-openjdk-16/releases/download/jvmci-21.2-b01/labsjdk-ce-16.0.1+9-jvmci-21.2-b01-windows-amd64.tar.gz"
+          wget -O $RUNNER_TEMP/java_package.tar.gz $download_url
       - uses: actions/setup-java@v2
         with:
           java-version: '16'
           java-package: jdk
           architecture: x64
-          distribution: 'adopt-hotspot'
+          distribution: 'jdkfile'
+          jdkFile: ${{ runner.temp }}/java_package.tar.gz
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v1

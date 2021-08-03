@@ -50,7 +50,6 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   '--no-server',
   '-H:+JNI',
   '-H:+ReportUnsupportedElementsAtRuntime',
-  '-H:IncludeResourceBundles=com.google.javascript.rhino.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
   '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',

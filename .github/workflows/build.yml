@@ -76,8 +76,8 @@ jobs:
     env:
       NODE_VERSION: '14.x'
       FORCE_COLOR: '1'
-      GRAAL_VERSION: '21.0.0.2'
-      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0.2/graalvm-ce-java11-linux-amd64-21.0.0.2.tar.gz'
+      GRAAL_VERSION: '21.2.0'
+      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.2.0/graalvm-ce-java11-linux-amd64-21.2.0.tar.gz'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -133,8 +133,8 @@ jobs:
     env:
       NODE_VERSION: '10.x'
       FORCE_COLOR: '1'
-      GRAAL_VERSION: '21.0.0.2'
-      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0.2/graalvm-ce-java11-darwin-amd64-21.0.0.2.tar.gz'
+      GRAAL_VERSION: '21.2.0'
+      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.2.0/graalvm-ce-java11-darwin-amd64-21.2.0.tar.gz'
     steps:
       - uses: actions/setup-java@v1
         with:
@@ -190,8 +190,8 @@ jobs:
     env:
       NODE_VERSION: '12.x'
       FORCE_COLOR: '1'
-      GRAAL_VERSION: '21.0.0.2'
-      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0.2/graalvm-ce-java11-windows-amd64-21.0.0.2.zip'
+      GRAAL_VERSION: '21.2.0'
+      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.2.0/graalvm-ce-java11-windows-amd64-21.2.0.zip'
     steps:
       - uses: actions/setup-java@v1
         with:

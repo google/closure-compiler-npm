@@ -17,7 +17,8 @@
 
 const GRAAL_OS = process.platform === 'win32' ? 'windows' : process.platform;
 const GRAAL_VERSION = process.env.GRAAL_VERSION || '21.2.0';
-const GRAAL_FOLDER = `graalvm-ce-java11-${GRAAL_OS}-amd64-${GRAAL_VERSION}`;
+const JAVA_VERSION = process.env.JAVA_VERSION || '11';
+const GRAAL_FOLDER = `graalvm-ce-java${JAVA_VERSION}-${GRAAL_OS}-amd64-${GRAAL_VERSION}`;
 const GRAAL_PACKAGE_SUFFIX = GRAAL_OS === 'windows' ? 'zip' : 'tar.gz';
 const GRAAL_URL = process.env.GRAAL_URL ||
     `https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${GRAAL_VERSION}/${GRAAL_FOLDER}.${GRAAL_PACKAGE_SUFFIX}`;
@@ -27,5 +28,6 @@ module.exports = {
   GRAAL_VERSION,
   GRAAL_FOLDER,
   GRAAL_PACKAGE_SUFFIX,
-  GRAAL_URL
+  GRAAL_URL,
+  JAVA_VERSION
 };

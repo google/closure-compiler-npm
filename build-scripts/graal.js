@@ -29,7 +29,8 @@ const {
   GRAAL_FOLDER,
   GRAAL_VERSION,
   GRAAL_PACKAGE_SUFFIX,
-  GRAAL_URL
+  GRAAL_URL,
+  JAVA_VERSION
 } = require('./graal-env');
 const TEMP_PATH = path.resolve(__dirname, '../temp');
 const runCommand = require('./run-command');
@@ -73,7 +74,7 @@ let buildSteps = Promise.resolve();
 // Download Graal
 const GRAAL_ARCHIVE_FILE = `${GRAAL_FOLDER}.${GRAAL_PACKAGE_SUFFIX}`;
 // Build the compiler native image.
-let pathParts = [TEMP_PATH, `graalvm-ce-java11-${GRAAL_VERSION}`];
+let pathParts = [TEMP_PATH, `graalvm-ce-java${JAVA_VERSION}-${GRAAL_VERSION}`];
 if (GRAAL_OS === 'darwin') {
   pathParts.push('Contents', 'Home', 'bin');
 } else {

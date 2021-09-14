@@ -21,7 +21,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: '11'
+          java-version: '8'
           java-package: jdk
           architecture: x64
       - name: Setup Bazel
@@ -77,11 +77,12 @@ jobs:
       NODE_VERSION: '14.x'
       FORCE_COLOR: '1'
       GRAAL_VERSION: '21.2.0'
-      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.2.0/graalvm-ce-java11-linux-amd64-21.2.0.tar.gz'
+      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.2.0/graalvm-ce-java8-linux-amd64-21.2.0.tar.gz'
+      JAVA_VERSION: '8'
     steps:
       - uses: actions/setup-java@v1
         with:
-          java-version: '11'
+          java-version: '8'
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v2

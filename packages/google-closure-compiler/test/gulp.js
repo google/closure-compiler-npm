@@ -275,7 +275,8 @@ describe('gulp-google-closure-compiler', function() {
         const stream = closureCompiler({
           js: __dirname + '/fixtures/**.js',
           compilation_level: 'SIMPLE',
-          warning_level: 'VERBOSE'
+          warning_level: 'VERBOSE',
+          language_out: 'ECMASCRIPT5'
         }, {
           platform
         })
@@ -292,7 +293,8 @@ describe('gulp-google-closure-compiler', function() {
           .pipe(closureCompiler({
             js: __dirname + '/fixtures/one.js',
             compilation_level: 'SIMPLE',
-            warning_level: 'VERBOSE'
+            warning_level: 'VERBOSE',
+            language_out: 'ECMASCRIPT5'
           }, {
             platform
           }))
@@ -307,7 +309,8 @@ describe('gulp-google-closure-compiler', function() {
         const stream = closureCompiler([
           '--js="' + __dirname + '/fixtures/**.js"',
           '--compilation_level=SIMPLE',
-          '--warning_level=VERBOSE'
+          '--warning_level=VERBOSE',
+	  '--language_out=ECMASCRIPT5'
         ], {
           platform
         })
@@ -323,6 +326,7 @@ describe('gulp-google-closure-compiler', function() {
         closureCompiler({
           compilation_level: 'SIMPLE',
           warning_level: 'VERBOSE',
+          language_out: 'ECMASCRIPT5',
           js: __dirname + '/fixtures/**.js'
         }, {
           platform

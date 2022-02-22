@@ -231,7 +231,7 @@ jobs:
         # Enable Visual Studio Build Environment in Powershell
         # See https://stackoverflow.com/a/2124759/1211524
         run: |
-          pushd "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\Common7\Tools"
+          pushd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools"
           cmd /c "VsDevCmd.bat -arch=amd64 & set" |
           foreach {
             if ($_ -match "=") {

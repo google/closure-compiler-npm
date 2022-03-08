@@ -19,9 +19,10 @@ jobs:
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          distribution: adopt-hotspot
+          java-version: 17
           java-package: jdk
           architecture: x64
       - name: Setup Bazel
@@ -76,12 +77,14 @@ jobs:
     env:
       NODE_VERSION: '14.x'
       FORCE_COLOR: '1'
-      GRAAL_VERSION: '21.0.0.2'
-      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0.2/graalvm-ce-java11-linux-amd64-21.0.0.2.tar.gz'
+      GRAAL_VERSION: '22.0.0.2'
+      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-linux-amd64-22.0.0.2.tar.gz'
     steps:
-      - uses: actions/setup-java@v1
+      - name: Setup Java
+        uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          distribution: adopt-hotspot
+          java-version: 17
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v2
@@ -133,12 +136,14 @@ jobs:
     env:
       NODE_VERSION: '10.x'
       FORCE_COLOR: '1'
-      GRAAL_VERSION: '21.0.0.2'
-      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0.2/graalvm-ce-java11-darwin-amd64-21.0.0.2.tar.gz'
+      GRAAL_VERSION: '22.0.0.2'
+      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-darwin-amd64-22.0.0.2.tar.gz'
     steps:
-      - uses: actions/setup-java@v1
+      - name: Setup Java
+        uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          distribution: adopt-hotspot
+          java-version: 17
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v2
@@ -190,12 +195,14 @@ jobs:
     env:
       NODE_VERSION: '12.x'
       FORCE_COLOR: '1'
-      GRAAL_VERSION: '21.0.0.2'
-      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0.2/graalvm-ce-java11-windows-amd64-21.0.0.2.zip'
+      GRAAL_VERSION: '22.0.0.2'
+      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-windows-amd64-22.0.0.2.zip'
     steps:
-      - uses: actions/setup-java@v1
+      - name: Setup Java
+        uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          distribution: adopt-hotspot
+          java-version: 17
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v2

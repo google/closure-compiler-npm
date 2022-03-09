@@ -37,14 +37,7 @@ class VinylStream extends Readable {
 
   _read() {
     if (this._files.length === 0) {
-      this.emit('end');
-      return;
-    }
-    this.readFile();
-  }
-
-  readFile() {
-    if (this._files.length === 0) {
+      this.push(null);
       return;
     }
     const filepath = this._files.shift();
@@ -55,17 +48,11 @@ class VinylStream extends Readable {
         return;
       }
 
-      const file = new File({
+      this.push(new File({
         base: this._base,
         path: fullpath,
         contents: data
-      });
-
-      if (!this.push(file)) {
-        return;
-      } else {
-        this.readFile();
-      }
+      }));
     });
   }
 }

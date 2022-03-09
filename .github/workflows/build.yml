@@ -134,7 +134,7 @@ jobs:
     needs: build-compiler
     runs-on: macos-latest
     env:
-      NODE_VERSION: '10.x'
+      NODE_VERSION: '16.x'
       FORCE_COLOR: '1'
       GRAAL_VERSION: '22.0.0.2'
       GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-darwin-amd64-22.0.0.2.tar.gz'
@@ -193,7 +193,7 @@ jobs:
     needs: build-compiler
     runs-on: windows-latest
     env:
-      NODE_VERSION: '12.x'
+      NODE_VERSION: '17.x'
       FORCE_COLOR: '1'
       GRAAL_VERSION: '22.0.0.2'
       GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-windows-amd64-22.0.0.2.zip'

@@ -167,4 +167,4 @@ limitations under the License.
 
 ## Version History
 Closure Compiler release notes can be found on the
-[main repository wiki](https://github.com/google/closure-compiler/wiki/Binary-Downloads).
+[main repository wiki](https://github.com/google/closure-compiler/wiki/Releases).

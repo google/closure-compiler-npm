@@ -158,6 +158,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Install upx
+        run: brew install upx
       - name: Download compiler jar
         uses: actions/download-artifact@v2
         with:
@@ -186,6 +188,7 @@ jobs:
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
+          upx compiler
       - name: Tests
         run: yarn workspaces run test --colors
       - name: Upload artifacts

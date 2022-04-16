@@ -92,6 +92,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Setup upx
+        run: |
+          UPX_VERSION=3.96
+          curl --fail --show-error --location --remote-name "https://github.com/upx/upx/releases/download/v$UPX_VERSION/upx-$UPX_VERSION-amd64_linux.tar.xz"
+          tar -xf upx-$UPX_VERSION-amd64_linux.tar.xz
+          mv ./upx-$UPX_VERSION-amd64_linux/upx /usr/local/bin/upx
       - name: Download compiler jar
         uses: actions/download-artifact@v2
         with:
@@ -120,6 +126,7 @@ jobs:
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
+          upx compiler
       - name: Tests
         run: yarn workspaces run test --colors
       - name: Upload artifacts

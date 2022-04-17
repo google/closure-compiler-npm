@@ -30,9 +30,11 @@ function getNativeImagePath() {
       return;
     }
   }
-  try {
-    return require('google-closure-compiler-linux');
-  } catch (e) {
+  if (process.platform === 'linux' && ['x64','x32'].includes(process.arch)) {
+    try {
+      return require('google-closure-compiler-linux');
+    } catch (e) {
+    }
   }
 }
 

@@ -18,7 +18,8 @@
     "compiler.exe",
     "index.js",
     "package.json",
-    "readme.md"
+    "readme.md",
+    "LICENSE"
   ],
   "cpu": [
     "x64"

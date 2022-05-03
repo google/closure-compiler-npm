@@ -19,7 +19,8 @@
     "compiler.jar",
     "index.js",
     "package.json",
-    "readme.md"
+    "readme.md",
+    "LICENSE"
   ],
   "preferUnplugged": true,
   "scripts": {

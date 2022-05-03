@@ -75,7 +75,7 @@ jobs:
     needs: build-compiler
     runs-on: ubuntu-latest
     env:
-      NODE_VERSION: '12.x'
+      NODE_VERSION: '14.x'
       FORCE_COLOR: '1'
       GRAAL_VERSION: '22.0.0.2'
       GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-linux-amd64-22.0.0.2.tar.gz'
@@ -141,7 +141,7 @@ jobs:
     needs: build-compiler
     runs-on: macos-latest
     env:
-      NODE_VERSION: '14.x'
+      NODE_VERSION: '16.x'
       FORCE_COLOR: '1'
       GRAAL_VERSION: '22.0.0.2'
       GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-darwin-amd64-22.0.0.2.tar.gz'
@@ -203,7 +203,7 @@ jobs:
     needs: build-compiler
     runs-on: windows-latest
     env:
-      NODE_VERSION: '16.x'
+      NODE_VERSION: '18.x'
       FORCE_COLOR: '1'
       GRAAL_VERSION: '22.0.0.2'
       GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-windows-amd64-22.0.0.2.zip'
@@ -276,6 +276,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
     env:
+      NODE_VERSION: '14.x'
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       NPM_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}
       FORCE_COLOR: '1'
@@ -285,6 +286,10 @@ jobs:
       - build-windows
     steps:
       - uses: actions/checkout@v2
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - name: Download compiler jar
         uses: actions/download-artifact@v2
         with:

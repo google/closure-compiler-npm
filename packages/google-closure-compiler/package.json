@@ -28,7 +28,8 @@
     "index.js",
     "package.json",
     "contrib/",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "license": "Apache-2.0",
   "bugs": {

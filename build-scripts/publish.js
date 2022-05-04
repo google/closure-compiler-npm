@@ -23,37 +23,43 @@
  * They can't be present before publication as it errors out the installs.
  */
 
-const fs = require('fs');
-const fsPromises = require('fs/promises');
+const fs = require('fs/promises');
 const path = require('path');
+const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
-const packages = fs.readdirSync(packagesDirPath);
 
 function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
-      .then((res) => {
-        return res.ok
-      });
+      .then((res) => res.ok);
 }
 
 async function publishPackagesIfNeeded(packageDir) {
-  const pkgJson = JSON.parse(await fsPromises.readFile(`${packageDir}/package.json`));
+  const packageJsonPath = `${packageDir}/package.json`;
+  try {
+    await fs.stat(packageJsonPath);
+  } catch {
+    return;
+  }
+  const pkgJson = JSON.parse(await fs.readFile(`${packageDir}/package.json`));
   const isAlreadyPublished = await isPackageVersionPublished(pkgJson.name, pkgJson.version);
   if (isAlreadyPublished) {
     console.log('Already published', pkgJson.name, pkgJson.version);
   } else {
-    console.log('Needs published', pkgJson.name, pkgJson.version);
+    console.log('Publishing', pkgJson.name, pkgJson.version);
+    const publishArgs = [];
+    if (process.env.COMPILER_NIGHTLY ) {
+      publishArgs.push('--npm-tag', 'nightly');
+    }
+    await runCommand('npm', ['publish'].concat(publishArgs), {
+      cwd: packageDir
+    });
   }
 }
 
-let publicationPromise = Promise.resolve();
-packages.forEach((packageName) => {
-  const packageJsonPath = `${packagesDirPath}/${packageName}/package.json`;
-  try {
-    fs.statSync(packageJsonPath); // check if file exists
-  } catch {
-    return;
-  }
-  publicationPromise = publicationPromise.then(() => publishPackagesIfNeeded(path.dirname(packageJsonPath)));
-});
+fs.readdir(packagesDirPath)
+    .then((packages) =>
+        packages.reduce(
+            (prevPublish, packageDir) =>
+                prevPublish.then(() => publishPackagesIfNeeded(`${packagesDirPath}/${packageDir}`)),
+            Promise.resolve()));

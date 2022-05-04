@@ -26,9 +26,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const mainPackageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf8'));
+const newVersion = process.env.npm_package_version;
 const packagesDirPath = path.resolve(__dirname, '../packages');
 const packages = fs.readdirSync(packagesDirPath);
+
+console.log('Setting all packages to version', newVersion);
 
 packages.forEach((packageName) => {
   const packageJsonPath = `${packagesDirPath}/${packageName}/package.json`;
@@ -38,7 +40,7 @@ packages.forEach((packageName) => {
     return;
   }
   const pkgJson = JSON.parse(fs.readFileSync(packageJsonPath));
-  pkgJson.version = mainPackageJson.version;
+  pkgJson.version = newVersion;
 
   function updateInternalDependencyVersions(dependencyType) {
     if (!pkgJson[dependencyType]) {
@@ -46,7 +48,7 @@ packages.forEach((packageName) => {
     }
     Object.keys(pkgJson[dependencyType]).forEach((dependencyName) => {
       if (packages.includes(dependencyName)) {
-        pkgJson[dependencyType][dependencyName] = `^${mainPackageJson.version}`;
+        pkgJson[dependencyType][dependencyName] = `^${newVersion}`;
       }
     });
   }

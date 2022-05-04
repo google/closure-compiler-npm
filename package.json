@@ -1,6 +1,6 @@
 {
   "name": "closure-compiler-npm",
-  "version": "1.0.0",
+  "version": "20220405.0.0",
   "private": true,
   "workspaces": {
     "packages": [
@@ -10,7 +10,9 @@
       "packages/google-closure-compiler-windows",
       "packages/google-closure-compiler"
     ],
-    "nohoist": ["**/mocha"]
+    "nohoist": [
+      "**/mocha"
+    ]
   },
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",
   "repository": {
@@ -31,7 +33,6 @@
   "dependencies": {},
   "devDependencies": {
     "glob": "7.x",
-    "lerna": "^3.4.1",
     "mocha": "6.x",
     "ncp": "2.x",
     "semver": "5.x",
@@ -40,6 +41,7 @@
   "scripts": {
     "build": "./build-scripts/build.sh",
     "test": "./build-scripts/test.sh",
-    "clean": "./build-scripts/clean.sh"
+    "clean": "./build-scripts/clean.sh",
+    "version": "yarn workspaces run version --new-version $npm_package_version --no-git-tag-version"
   }
 }

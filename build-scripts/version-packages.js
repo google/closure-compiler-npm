@@ -25,12 +25,11 @@
 
 const fs = require('fs');
 const path = require('path');
+const childProcess = require('child_process');
 
 const newVersion = process.env.npm_package_version;
 const packagesDirPath = path.resolve(__dirname, '../packages');
 const packages = fs.readdirSync(packagesDirPath);
-
-console.log('Setting all packages to version', newVersion);
 
 packages.forEach((packageName) => {
   const packageJsonPath = `${packagesDirPath}/${packageName}/package.json`;
@@ -56,4 +55,5 @@ packages.forEach((packageName) => {
   updateInternalDependencyVersions('devDependencies');
   updateInternalDependencyVersions('optionalDependencies');
   fs.writeFileSync(packageJsonPath, `${JSON.stringify(pkgJson, null, 2)}\n`, 'utf8');
+  childProcess.execSync(`git add "${packageJsonPath}"`);
 });

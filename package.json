@@ -42,6 +42,6 @@
     "build": "./build-scripts/build.sh",
     "test": "./build-scripts/test.sh",
     "clean": "./build-scripts/clean.sh",
-    "preversion": "./build-scripts/version-packages.js"
+    "version": "./build-scripts/version-packages.js"
   }
 }

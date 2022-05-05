@@ -4,16 +4,10 @@
 
 ## Deploying new releases of the main compiler
 
- 1. `COMPILER_VERSION_NUMBER=YYYYMMDD` (Use actual version number here without the `v`.)
- 2. Update the compiler submodule pointer to the tagged release.
-     * `git submodule init && git submodule update` (update the compiler submodule)
-     * `cd compiler`
-     * `git checkout v$COMPILER_VERSION_NUMBER` (the current tag/commit)
-     * `cd ..`
-     * `git add compiler`
- 3. Run `yarn install` in the package root.
- 4. Run `yarn version --new-version $COMPILER_VERSION_NUMBER.0.0`.
- 5. Push commit and tags
+ 1. Run the [Compiler release workflow](https://github.com/google/closure-compiler-npm/actions/workflows/release.yml)
+     * For the `COMPILER_VERSION_NUMBER` input, use the actual version number here without the `v`.
+ 2. Verify the workflow runs successfully. It will push the release commit and tag.
+ 3. Verify the Build CI workflow triggered from the commit builds and publishes the release successfully.
 
 ## Deploying changes to the package CLIs or plugins
 

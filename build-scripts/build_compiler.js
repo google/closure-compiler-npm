@@ -44,7 +44,7 @@ async function main() {
   console.log(process.platform, process.arch, compilerVersion);
 
   const { exitCode } = await runCommand(
-    "bazel",
+    "bazelisk",
     [
       "build",
       "--color=yes",

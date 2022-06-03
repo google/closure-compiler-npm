@@ -34,6 +34,23 @@ function isPackageVersionPublished(packageName, version) {
       .then((res) => res.ok);
 }
 
+async function isValidPackagePath(packageDir) {
+  const packageJsonPath = `${packageDir}/package.json`;
+  try {
+    await fs.stat(packageJsonPath);
+    return true
+  } catch {
+    return false;
+  }
+}
+
+async function getPackageInfo(packagePath) {
+  return {
+    path: packagePath,
+    pkg: JSON.parse(await fs.readFile(`${packageDir}/package.json`))
+  };
+}
+
 async function publishPackagesIfNeeded(packageDir) {
   const packageJsonPath = `${packageDir}/package.json`;
   try {
@@ -57,9 +74,26 @@ async function publishPackagesIfNeeded(packageDir) {
   }
 }
 
-fs.readdir(packagesDirPath)
-    .then((packages) =>
-        packages.reduce(
-            (prevPublish, packageDir) =>
-                prevPublish.then(() => publishPackagesIfNeeded(`${packagesDirPath}/${packageDir}`)),
-            Promise.resolve()));
+function getPackageInternalDeps(pkgJson) {
+  
+}
+
+(async () => {
+  const packagesDirEntries = await fs.readdir(packagesDirPath);
+  const packagesInfo = [];
+  for (let i = 0; i < packagesDirEntries.length; i++) {
+    const packagePath = `${packagesDirPath}/${packagesDirEntries[i]}`;
+    if (await isValidPackagePath(packagePath)) {
+      packagesInfo.push(await getPackageInfo(packagePath));
+    }
+  }
+  const packageDeps = new Map([
+    packagesInfo.map((info) => [info.name, new Set()])
+  ]);
+})();
+// fs.readdir(packagesDirPath)
+//     .then((packages) =>
+//         packages.reduce(
+//             (prevPublish, packageDir) =>
+//                 prevPublish.then(() => publishPackagesIfNeeded(`${packagesDirPath}/${packageDir}`)),
+//             Promise.resolve()));

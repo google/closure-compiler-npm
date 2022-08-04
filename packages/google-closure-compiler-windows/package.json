@@ -21,10 +21,6 @@
     "readme.md",
     "LICENSE"
   ],
-  "cpu": [
-    "x64",
-    "arm64"
-  ],
   "preferUnplugged": true,
   "scripts": {
     "build": "node build-image.js",

@@ -33,6 +33,9 @@ const packages = fs.readdirSync(packagesDirPath);
 
 packages.forEach((packageName) => {
   const packageJsonPath = `${packagesDirPath}/${packageName}/package.json`;
+  // Only directories that have package.json files are packages in this project.
+  // For instance, the google-closure-compiler-js directory only has a readme for historical purposes and should
+  // be excluded.
   try {
     fs.statSync(packageJsonPath); // check if file exists
   } catch {

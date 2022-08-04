@@ -86,9 +86,9 @@ const mockGrunt = {
 function gruntTaskOptions(options) {
   options = options || {};
   return function(defaults) {
-    const opts = structuredClone(defaults || {});
-    return Object.assign(opts, options);
-  }
+    const baseOpts = JSON.parse(JSON.stringify(defaults || {}));
+    return Object.assign(baseOpts, options);
+  };
 }
 
 function getGruntTaskObject(fileObj, options, asyncDone) {
@@ -105,7 +105,6 @@ function getGruntTaskObject(fileObj, options, asyncDone) {
 
 describe('grunt-google-closure-compiler', function() {
   let originalCompilerRunMethod;
-  let originalJsCompilerRunMethod;
   let platformUtilized;
 
   before(() => {

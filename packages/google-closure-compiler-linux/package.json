@@ -24,8 +24,7 @@
   ],
   "cpu": [
     "x64",
-    "x86",
-    "arm64"
+    "x86"
   ],
   "preferUnplugged": true,
   "scripts": {

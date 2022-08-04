@@ -22,8 +22,8 @@
     "LICENSE"
   ],
   "cpu": [
-    "x64",
-    "arm64"
+    "x32",
+    "x64"
   ],
   "preferUnplugged": true,
   "scripts": {

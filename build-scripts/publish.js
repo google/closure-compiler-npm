@@ -77,16 +77,16 @@ async function publishPackagesIfNeeded(packageInfo) {
     const packagePath = `${packagesDirPath}/${packageDirName}`;
     if (await isValidPackagePath(packagePath)) {
       const packageInfo = await getPackageInfo(packagePath);
-      graph.setNode(packageInfo.name, packageInfo);
+      graph.setNode(packageInfo.pkg.name, packageInfo);
     }
   }
 
   // Create edges from each package to any non-development dependency
   graph.nodes().forEach((packageName) => {
     const packageInfo = graph.node(packageName);
-    const allDeps = (packageInfo.pkg.dependencies || [])
-        .concat(packageInfo.pkg.optionalDependencies || [])
-        .concat(packageInfo.pkg.peerDependencies || []);
+    const allDeps = Object.keys(packageInfo.pkg.dependencies || {})
+        .concat(Object.keys(packageInfo.pkg.optionalDependencies || {}))
+        .concat(Object.keys(packageInfo.pkg.peerDependencies || {}));
     allDeps.forEach((depName) => {
       if (graph.hasNode(depName)) {
         graph.setEdge(packageName, depName);
@@ -100,8 +100,8 @@ async function publishPackagesIfNeeded(packageInfo) {
     const startingSize = publishedPackages.size;
     // Find any package where all dependencies have already been published
     const packagesToPublish = graph.nodes().filter((packageName) => {
-      const packageDeps = graph.outEdges(packageName);
-      return packageDeps.every((depName) => publishedPackages.has(depName));
+      const packageDeps = graph.outEdges(packageName).map((edge) => edge.w);
+      return !publishedPackages.has(packageName) && packageDeps.every((depName) => publishedPackages.has(depName));
     });
     for (const packageName of packagesToPublish) {
       const packageInfo = graph.node(packageName);
@@ -112,4 +112,4 @@ async function publishPackagesIfNeeded(packageInfo) {
       throw new Error('Unable to publish packages: cyclical dependencies encountered.');
     }
   }
-})();
+})().catch((e) => { throw e });

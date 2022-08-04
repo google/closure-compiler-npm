@@ -53,7 +53,6 @@
     "gulp-filter": "6.x",
     "gulp-mocha": "6.x",
     "gulp-sourcemaps": "2.x",
-    "lodash": "^4.17.10",
     "mocha": "6.x",
     "ncp": "^2.0.0",
     "semver": "^5.1.0",

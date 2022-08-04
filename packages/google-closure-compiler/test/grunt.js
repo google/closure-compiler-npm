@@ -25,7 +25,6 @@
 const should = require('should');
 const fs = require('fs');
 const path = require('path');
-const _ = require('lodash');
 const ClosureCompiler = require('../lib/node/closure-compiler');
 require('mocha');
 
@@ -87,9 +86,8 @@ const mockGrunt = {
 function gruntTaskOptions(options) {
   options = options || {};
   return function(defaults) {
-    const opts = _.cloneDeep(defaults || {});
-    _.merge(opts, options);
-    return opts;
+    const opts = structuredClone(defaults || {});
+    return Object.assign(opts, options);
   }
 }
 

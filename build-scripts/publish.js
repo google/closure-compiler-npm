@@ -48,7 +48,7 @@ async function isValidPackagePath(packageDir) {
 async function getPackageInfo(packageDir) {
   return {
     path: packageDir,
-    pkg: JSON.parse(await fs.readFile(`${packageDir}/package.json`))
+    pkg: JSON.parse(await fs.readFile(`${packageDir}/package.json`, 'utf8'))
   };
 }
 

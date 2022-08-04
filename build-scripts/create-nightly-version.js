@@ -34,8 +34,16 @@ const nightlyVersion = `${today.getFullYear()}${month}${day}.0.0-nightly`;
     // Create a branch then commit the changes for this nightly release.
     await runCommand('git', ['checkout', '-b', `publish-${nightlyVersion}`]);
     await runCommand('git', ['add', 'compiler']);
-    await runCommand('yarn', ['config', 'set', 'version-git-message', `Create version for nightly release ${nightlyVersion}`]);
-    await runCommand('yarn', ['version', '--new-version', nightlyVersion]);
+    await runCommand(
+        'yarn',
+        [
+            'version',
+            '--new-version',
+            nightlyVersion,
+            '--message',
+            `Create version for nightly release ${nightlyVersion}`
+        ]
+    );
   } catch (e) {
     console.error(e);
     process.exitCode = 1;

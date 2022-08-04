@@ -19,8 +19,8 @@
 /**
  * @fileoverview
  *
- * Before publication, add OS restrictions to the graal packages.
- * They can't be present before publication as it errors out the installs.
+ * Create a new version for each package.
+ * Update any dependencies on other packages in this project.
  */
 
 const fs = require('fs');
@@ -41,19 +41,17 @@ packages.forEach((packageName) => {
   const pkgJson = JSON.parse(fs.readFileSync(packageJsonPath));
   pkgJson.version = newVersion;
 
-  function updateInternalDependencyVersions(dependencyType) {
-    if (!pkgJson[dependencyType]) {
-      return;
-    }
-    Object.keys(pkgJson[dependencyType]).forEach((dependencyName) => {
-      if (packages.includes(dependencyName)) {
-        pkgJson[dependencyType][dependencyName] = `^${newVersion}`;
-      }
-    });
-  }
-  updateInternalDependencyVersions('dependencies');
-  updateInternalDependencyVersions('devDependencies');
-  updateInternalDependencyVersions('optionalDependencies');
+  ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies']
+      .forEach((dependencyType) =>{
+        if (!pkgJson[dependencyType]) {
+          return;
+        }
+        Object.keys(pkgJson[dependencyType]).forEach((dependencyName) => {
+          if (packages.includes(dependencyName)) {
+            pkgJson[dependencyType][dependencyName] = `^${newVersion}`;
+          }
+        });
+      });
   fs.writeFileSync(packageJsonPath, `${JSON.stringify(pkgJson, null, 2)}\n`, 'utf8');
   childProcess.execSync(`git add "${packageJsonPath}"`);
 });

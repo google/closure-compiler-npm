@@ -19,17 +19,18 @@
 /**
  * @fileoverview
  *
- * Before publication, add OS restrictions to the graal packages.
- * They can't be present before publication as it errors out the installs.
+ * Publish each package in this project in order.
+ * Packages can only be published after all their dependencies have been successfully published.
  */
 
 const fs = require('fs/promises');
+const graphlib = require('graphlib');
 const path = require('path');
 const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
 
-function isPackageVersionPublished(packageName, version) {
+async function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
       .then((res) => res.ok);
 }
@@ -44,56 +45,71 @@ async function isValidPackagePath(packageDir) {
   }
 }
 
-async function getPackageInfo(packagePath) {
+async function getPackageInfo(packageDir) {
   return {
-    path: packagePath,
+    path: packageDir,
     pkg: JSON.parse(await fs.readFile(`${packageDir}/package.json`))
   };
 }
 
-async function publishPackagesIfNeeded(packageDir) {
-  const packageJsonPath = `${packageDir}/package.json`;
-  try {
-    await fs.stat(packageJsonPath);
-  } catch {
-    return;
-  }
-  const pkgJson = JSON.parse(await fs.readFile(`${packageDir}/package.json`));
+async function publishPackagesIfNeeded(packageInfo) {
+  const pkgJson = packageInfo.pkg;
   const isAlreadyPublished = await isPackageVersionPublished(pkgJson.name, pkgJson.version);
   if (isAlreadyPublished) {
     console.log('Already published', pkgJson.name, pkgJson.version);
-  } else {
-    console.log('Publishing', pkgJson.name, pkgJson.version);
-    const publishArgs = [];
-    if (process.env.COMPILER_NIGHTLY ) {
-      publishArgs.push('--npm-tag', 'nightly');
-    }
-    await runCommand('npm', ['publish'].concat(publishArgs), {
-      cwd: packageDir
-    });
+    return;
   }
-}
-
-function getPackageInternalDeps(pkgJson) {
-  
+  console.log('Publishing', pkgJson.name, pkgJson.version);
+  const publishArgs = [];
+  if (process.env.COMPILER_NIGHTLY ) {
+    publishArgs.push('--npm-tag', 'nightly');
+  }
+  await runCommand('npm', ['publish'].concat(publishArgs), {
+    cwd: packageInfo.path
+  });
 }
 
 (async () => {
   const packagesDirEntries = await fs.readdir(packagesDirPath);
-  const packagesInfo = [];
-  for (let i = 0; i < packagesDirEntries.length; i++) {
-    const packagePath = `${packagesDirPath}/${packagesDirEntries[i]}`;
+  // build a graph of the interdependencies of projects and only publish
+  const graph = new graphlib.Graph({directed: true, compound: false});
+  for (const packageDirName of packagesDirEntries) {
+    const packagePath = `${packagesDirPath}/${packageDirName}`;
     if (await isValidPackagePath(packagePath)) {
-      packagesInfo.push(await getPackageInfo(packagePath));
+      const packageInfo = await getPackageInfo(packagePath);
+      graph.setNode(packageInfo.name, packageInfo);
     }
   }
-  const packageDeps = new Map([
-    packagesInfo.map((info) => [info.name, new Set()])
-  ]);
+
+  // Create edges from each package to any non-development dependency
+  graph.nodes().forEach((packageName) => {
+    const packageInfo = graph.node(packageName);
+    const allDeps = (packageInfo.pkg.dependencies || [])
+        .concat(packageInfo.pkg.optionalDependencies || [])
+        .concat(packageInfo.pkg.peerDependencies || []);
+    allDeps.forEach((depName) => {
+      if (graph.hasNode(depName)) {
+        graph.setEdge(packageName, depName);
+      }
+    });
+  });
+
+  // Publish the packages in order
+  const publishedPackages = new Set();
+  while (publishedPackages.size !== graph.nodeCount()) {
+    const startingSize = publishedPackages.size;
+    // Find any package where all dependencies have already been published
+    const packagesToPublish = graph.nodes().filter((packageName) => {
+      const packageDeps = graph.outEdges(packageName);
+      return packageDeps.every((depName) => publishedPackages.has(depName));
+    });
+    for (const packageName of packagesToPublish) {
+      const packageInfo = graph.node(packageName);
+      await publishPackagesIfNeeded(packageInfo);
+      publishedPackages.add(packageName);
+    }
+    if (startingSize === publishedPackages.size) {
+      throw new Error('Unable to publish packages: cyclical dependencies encountered.');
+    }
+  }
 })();
-// fs.readdir(packagesDirPath)
-//     .then((packages) =>
-//         packages.reduce(
-//             (prevPublish, packageDir) =>
-//                 prevPublish.then(() => publishPackagesIfNeeded(`${packagesDirPath}/${packageDir}`)),
-//             Promise.resolve()));

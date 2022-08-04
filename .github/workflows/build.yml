@@ -25,10 +25,8 @@ jobs:
           java-version: 17
           java-package: jdk
           architecture: x64
-      - name: Setup Bazel
-        uses: jwlawson/actions-setup-bazel@v1
-        with:
-          bazel-version: '4.2.2'
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v2
       - uses: actions/checkout@v2
         with:
           submodules: recursive

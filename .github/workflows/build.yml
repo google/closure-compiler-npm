@@ -75,8 +75,6 @@ jobs:
     env:
       NODE_VERSION: '14.x'
       FORCE_COLOR: '1'
-      GRAAL_VERSION: '22.0.0.2'
-      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-linux-amd64-22.0.0.2.tar.gz'
     steps:
       - name: Setup Java
         uses: actions/setup-java@v2
@@ -90,6 +88,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          version: '22.2.0'
+          java-version: '17'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup upx
         run: |
           UPX_VERSION=3.96
@@ -141,8 +145,6 @@ jobs:
     env:
       NODE_VERSION: '16.x'
       FORCE_COLOR: '1'
-      GRAAL_VERSION: '22.0.0.2'
-      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-darwin-amd64-22.0.0.2.tar.gz'
     steps:
       - name: Setup Java
         uses: actions/setup-java@v2
@@ -156,6 +158,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          version: '22.2.0'
+          java-version: '17'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install upx
         run: brew install upx
       - name: Download compiler jar
@@ -203,8 +211,6 @@ jobs:
     env:
       NODE_VERSION: '18.x'
       FORCE_COLOR: '1'
-      GRAAL_VERSION: '22.0.0.2'
-      GRAAL_URL: 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java11-windows-amd64-22.0.0.2.zip'
     steps:
       - name: Setup Java
         uses: actions/setup-java@v2
@@ -218,6 +224,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          version: '22.2.0'
+          java-version: '17'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Download compiler jar
         uses: actions/download-artifact@v2
         with:
@@ -243,18 +255,7 @@ jobs:
         run: yarn install --colors=always
       - name: Build image
         working-directory: packages/google-closure-compiler-windows
-        # Enable Visual Studio Build Environment in Powershell
-        # See https://stackoverflow.com/a/2124759/1211524
         run: |
-          pushd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools"
-          cmd /c "VsDevCmd.bat -arch=amd64 & set" |
-          foreach {
-            if ($_ -match "=") {
-              $v = $_.split("="); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
-            }
-          }
-          popd
-          Write-Host "`nVisual Studio 2022 Command Prompt variables set." -ForegroundColor Yellow
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
       - name: Tests

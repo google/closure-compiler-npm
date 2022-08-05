@@ -1,0 +1,53 @@
+name: Compiler release
+
+on:
+  workflow_dispatch:
+    inputs:
+      COMPILER_VERSION_NUMBER:
+        description: 'Compiler version to base release from'
+        required: true
+        type: string
+
+jobs:
+  create-release:
+    name: Create release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      FORCE_COLOR: '1'
+      NODE_VERSION: '18.x'
+    steps:
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt-hotspot
+          java-version: 17
+          java-package: jdk
+          architecture: x64
+      - name: Setup Bazel
+        uses: jwlawson/actions-setup-bazel@v1
+        with:
+          bazel-version: '4.2.2'
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Set compiler submodule to release branch
+        working-directory: compiler
+        run: |
+          git fetch --tags https://github.com/google/closure-compiler.git
+          git checkout v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}
+      - name: Install packages
+        run: yarn install --colors=always
+      - name: Build jar
+        run: ./build-scripts/build_compiler.js
+      - name: Create release commit and tag
+        run: |
+          git add compiler
+          yarn version --new-version ${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0
+          git push origin master
+          git push origin v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}

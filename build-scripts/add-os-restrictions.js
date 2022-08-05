@@ -20,6 +20,7 @@
  *
  * Before publication, add OS restrictions to the graal packages.
  * They can't be present before publication as it errors out the installs.
+ * Also set correct architectures. In order to execute `yarn install` in the main package, the current architecture
  */
 
 const fs = require('fs');
@@ -27,15 +28,16 @@ const path = require('path');
 
 // Maps of the os marketing name to the platform name used in package.json os restriction fields
 const osRestrictions = new Map([
-    ['osx', 'darwin'],
-    ['linux', 'linux'],
-    ['windows', 'win32']
+    ['osx', {os: ['darwin'], cpu: ['x32', 'x64', 'arm64']}],
+    ['linux', {os: ['linux'], cpu: ['x32', 'x64']}],
+    ['windows', {os: ['win32'], cpu: ['x32', 'x64']}]
 ]);
 
 // Read the package.json files, add the OS restriction, then write it back.
-osRestrictions.forEach((platformName, osName) => {
-  const packagePath = path.resolve(__dirname, '..', 'packages', `google-closure-compiler-${osName}`, 'package.json');
+osRestrictions.forEach((osAndCpu, packageKey) => {
+  const packagePath = path.resolve(__dirname, '..', 'packages', `google-closure-compiler-${packageKey}`, 'package.json');
   const packageContents = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
-  packageContents.os = [platformName];
+  packageContents.os = osAndCpu.os;
+  packageContents.cpu = osAndCpu.cpu;
   fs.writeFileSync(packagePath, JSON.stringify(packageContents, null, 2) + '\n', 'utf8');
 });

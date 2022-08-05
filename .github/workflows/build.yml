@@ -274,7 +274,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
     env:
-      NODE_VERSION: '14.x'
+      NODE_VERSION: '18.x'
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       NPM_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}
       FORCE_COLOR: '1'
@@ -340,4 +340,4 @@ jobs:
           git config --global user.name "Github Bot"
           ./build-scripts/create-nightly-version.js
       - name: Publish packages to npm
-        run: ./build-scripts/lerna-publish.js publish-ci --npm-client ${{ github.workspace }}/build-scripts/npm-client.js --ignore-changes '**/*' --force-publish='*' --yes
+        run: yarn publish-packages

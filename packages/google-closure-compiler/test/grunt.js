@@ -25,7 +25,6 @@
 const should = require('should');
 const fs = require('fs');
 const path = require('path');
-const _ = require('lodash');
 const ClosureCompiler = require('../lib/node/closure-compiler');
 require('mocha');
 
@@ -87,10 +86,9 @@ const mockGrunt = {
 function gruntTaskOptions(options) {
   options = options || {};
   return function(defaults) {
-    const opts = _.cloneDeep(defaults || {});
-    _.merge(opts, options);
-    return opts;
-  }
+    const baseOpts = JSON.parse(JSON.stringify(defaults || {}));
+    return Object.assign(baseOpts, options);
+  };
 }
 
 function getGruntTaskObject(fileObj, options, asyncDone) {
@@ -107,7 +105,6 @@ function getGruntTaskObject(fileObj, options, asyncDone) {
 
 describe('grunt-google-closure-compiler', function() {
   let originalCompilerRunMethod;
-  let originalJsCompilerRunMethod;
   let platformUtilized;
 
   before(() => {

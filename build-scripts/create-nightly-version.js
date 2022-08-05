@@ -21,8 +21,6 @@
  */
 
 const runCommand = require('./run-command');
-const glob = require('glob');
-const path = require('path');
 
 const today = new Date();
 const month = (today.getMonth() < 9 ? '0' : '') + (today.getMonth() + 1).toString();
@@ -33,29 +31,19 @@ const nightlyVersion = `${today.getFullYear()}${month}${day}.0.0-nightly`;
 
 (async () => {
   try {
-    // Lerna won't release packages on an already release tagged commit or
-    // on a disconnected HEAD. Create a branch then commit the os changes for this nightly release.
+    // Create a branch then commit the changes for this nightly release.
     await runCommand('git', ['checkout', '-b', `publish-${nightlyVersion}`]);
     await runCommand('git', ['add', 'compiler']);
-    await runCommand('git', ['add', 'packages/google-closure-compiler-linux/package.json']);
-    await runCommand('git', ['add', 'packages/google-closure-compiler-osx/package.json']);
-    await runCommand('git', ['add', 'packages/google-closure-compiler-windows/package.json']);
-    await runCommand('git', ['commit', '-m', `Create version for nightly release ${nightlyVersion}`]);
-    // Get the list of packages in this repo
-    const packages = glob.sync('packages/google-closure-compiler*')
-        .map(packagePath => packagePath.replace('packages/', ''));
-
-    // Create a nightly version of all the packages
     await runCommand(
-      'node',
-      [
-        './build-scripts/lerna-publish.js',
-        'version',
-        nightlyVersion,
-        '--push=false', // prevent the version commit from being pushed back to the repo
-        `--force-publish=${packages.join(',')}`, // publish every package even though no changes are detected
-        '--yes', // don't prompt for confirmation
-      ]);
+        'yarn',
+        [
+            'version',
+            '--new-version',
+            nightlyVersion,
+            '--message',
+            `Create version for nightly release ${nightlyVersion}`
+        ]
+    );
   } catch (e) {
     console.error(e);
     process.exitCode = 1;

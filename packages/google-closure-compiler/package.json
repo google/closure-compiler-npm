@@ -37,7 +37,7 @@
   },
   "homepage": "https://developers.google.com/closure/compiler/",
   "dependencies": {
-    "chalk": "2.x",
+    "chalk": "4.x",
     "google-closure-compiler-java": "^20220719.0.0",
     "minimist": "1.x",
     "vinyl": "2.x",
@@ -51,9 +51,9 @@
   "devDependencies": {
     "gulp": "4.x",
     "gulp-filter": "6.x",
-    "gulp-mocha": "6.x",
+    "gulp-mocha": "8.x",
     "gulp-sourcemaps": "2.x",
-    "mocha": "6.x",
+    "mocha": "10.x",
     "ncp": "^2.0.0",
     "semver": "^5.1.0",
     "should": "^13.2.3",

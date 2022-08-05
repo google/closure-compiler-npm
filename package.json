@@ -34,10 +34,15 @@
   "devDependencies": {
     "glob": "7.x",
     "graphlib": "2.x",
-    "mocha": "6.x",
+    "mocha": "10.x",
     "ncp": "2.x",
     "semver": "5.x",
     "should": "13.x"
+  },
+  "resolutions": {
+    "**/set-value": "^2.0.1",
+    "glob-parent": "^5.1.2",
+    "yargs-parser": "^13.1.2 || ^20.2.4"
   },
   "scripts": {
     "build": "./build-scripts/build.sh",

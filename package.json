@@ -40,9 +40,10 @@
     "should": "13.x"
   },
   "resolutions": {
-    "**/set-value": "^2.0.1",
-    "glob-parent": "^5.1.2",
-    "yargs-parser": "^13.1.2 || ^20.2.4"
+    "**/glob-stream/**/glob-parent": "^5.1.2",
+    "**/glob-watcher/**/chokidar/**/glob-parent": "^5.1.2",
+    "**/gulp-cli/**/yargs-parser": "^13.1.2",
+    "**/union-value/**/set-value": "^2.0.1"
   },
   "scripts": {
     "build": "./build-scripts/build.sh",

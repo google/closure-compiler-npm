@@ -29,6 +29,7 @@ const path = require('path');
 const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
+const npmrcPath = path.resolve(process.env.HOME, '.npmrc');
 
 async function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
@@ -38,8 +39,9 @@ async function isPackageVersionPublished(packageName, version) {
 async function isValidPackagePath(packageDir) {
   const packageJsonPath = `${packageDir}/package.json`;
   try {
+    // check to see if the file already exists - if so do nothing
     await fs.stat(packageJsonPath);
-    return true
+    return true;
   } catch {
     return false;
   }
@@ -50,6 +52,29 @@ async function getPackageInfo(packageDir) {
     path: packageDir,
     pkg: JSON.parse(await fs.readFile(`${packageDir}/package.json`, 'utf8'))
   };
+}
+
+let npmrcCleanupRequired = false;
+async function setupNpm() {
+  try {
+    await fs.stat(npmrcPath);
+    return;
+  } catch { }
+  // For npm publication to work, the NPM token must be stored in the .npmrc file in the user home directory
+  if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
+    await fs.writeFile(
+        path.resolve(process.env.HOME, '.npmrc'),
+        `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
+        'utf8');
+    npmrcCleanupRequired = true;
+  }
+}
+
+async function cleanupNpmrc() {
+  if (!npmrcCleanupRequired) {
+    return;
+  }
+  await fs.unlink(npmrcPath);
 }
 
 async function publishPackagesIfNeeded(packageInfo) {
@@ -112,4 +137,6 @@ async function publishPackagesIfNeeded(packageInfo) {
       throw new Error('Unable to publish packages: cyclical dependencies encountered.');
     }
   }
-})().catch((e) => { throw e });
+})().catch((e) => {
+  throw e;
+}).finally(cleanupNpmrc);

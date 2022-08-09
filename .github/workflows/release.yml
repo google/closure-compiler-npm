@@ -47,6 +47,8 @@ jobs:
         run: ./build-scripts/build_compiler.js
       - name: Create release commit and tag
         run: |
+          git config --global user.email "github-bot@github.com"
+          git config --global user.name "Github Bot"
           git add compiler
           yarn version --new-version ${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0
           git push origin master

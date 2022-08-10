@@ -29,7 +29,6 @@ const path = require('path');
 const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
-const npmrcPath = path.resolve(__dirname, '.npmrc');
 
 async function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
@@ -54,17 +53,21 @@ async function getPackageInfo(packageDir) {
   };
 }
 
-async function setupNpm() {
+async function setupNpm(npmrcPath) {
   // For npm publication to work, the NPM token must be stored in the .npmrc file
   if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
     await fs.writeFile(
         npmrcPath,
         `registry=https://registry.npmjs.org\n//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
         'utf8');
+  } else {
+    console.log(
+        'Not running in GitHub actions',
+        Boolean(process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN));
   }
 }
 
-async function cleanupNpmrc() {
+async function cleanupNpmrc(npmrcPath) {
   await fs.unlink(npmrcPath);
 }
 
@@ -80,9 +83,12 @@ async function publishPackagesIfNeeded(packageInfo) {
   if (process.env.COMPILER_NIGHTLY ) {
     publishArgs.push('--npm-tag', 'nightly');
   }
+  const npmrcPath = path.resolve(packageInfo.path, '.npmrc');
+  await setupNpm(npmrcPath);
   await runCommand('npm', ['publish'].concat(publishArgs), {
     cwd: packageInfo.path
   });
+  await cleanupNpmrc(npmrcPath);
 }
 
 (async () => {
@@ -130,4 +136,4 @@ async function publishPackagesIfNeeded(packageInfo) {
   }
 })().catch((e) => {
   throw e;
-}).finally(cleanupNpmrc);
+});

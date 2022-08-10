@@ -274,7 +274,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
     env:
-      NODE_VERSION: '18.x'
+      NODE_VERSION: '14.x'
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       NPM_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}
       FORCE_COLOR: '1'

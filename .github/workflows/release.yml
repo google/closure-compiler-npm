@@ -8,6 +8,9 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: write
+
 jobs:
   create-release:
     name: Create release
@@ -35,6 +38,7 @@ jobs:
           bazel-version: '4.2.2'
       - uses: actions/checkout@v2
         with:
+          refs: 'master'
           submodules: recursive
       - name: Set compiler submodule to release branch
         working-directory: compiler

@@ -29,7 +29,7 @@ const path = require('path');
 const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
-const npmrcPath = path.resolve(process.env.HOME, '.npmrc');
+const npmrcPath = path.resolve(__dirname, '.npmrc');
 
 async function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
@@ -54,26 +54,17 @@ async function getPackageInfo(packageDir) {
   };
 }
 
-let npmrcCleanupRequired = false;
 async function setupNpm() {
-  try {
-    await fs.stat(npmrcPath);
-    return;
-  } catch { }
-  // For npm publication to work, the NPM token must be stored in the .npmrc file in the user home directory
+  // For npm publication to work, the NPM token must be stored in the .npmrc file
   if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
     await fs.writeFile(
-        path.resolve(process.env.HOME, '.npmrc'),
-        `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
+        npmrcPath,
+        `registry=https://registry.npmjs.org\n//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
         'utf8');
-    npmrcCleanupRequired = true;
   }
 }
 
 async function cleanupNpmrc() {
-  if (!npmrcCleanupRequired) {
-    return;
-  }
   await fs.unlink(npmrcPath);
 }
 

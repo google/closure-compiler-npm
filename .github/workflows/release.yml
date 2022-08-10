@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      releases: write
     env:
       FORCE_COLOR: '1'
       NODE_VERSION: '18.x'
@@ -35,6 +36,7 @@ jobs:
           bazel-version: '4.2.2'
       - uses: actions/checkout@v2
         with:
+          refs: master
           submodules: recursive
       - name: Set compiler submodule to release branch
         working-directory: compiler
@@ -52,4 +54,12 @@ jobs:
           git add compiler
           yarn version --new-version ${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0
           git push origin master
-          git push origin v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}
+          git push origin v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0
+      - name: Create GitHub Release
+        run: |
+          curl \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/google/closure-compiler-npm/releases \
+            -d '{"tag_name":"v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0","name":"${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0","body":"Closure-compiler ${{ github.event.inputs.COMPILER_VERSION_NUMBER }} release","draft":false,"prerelease":false,"generate_release_notes":false}'

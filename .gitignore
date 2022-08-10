@@ -12,3 +12,4 @@ yarn-error.log
 /packages/google-closure-compiler-js/jscomp.js
 /temp
 /publish-log.txt
+.npmrc

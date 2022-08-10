@@ -87,9 +87,10 @@ jobs:
           architecture: x64
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
       - name: Setup upx
         run: |
           UPX_VERSION=3.96
@@ -153,9 +154,10 @@ jobs:
           architecture: x64
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
       - name: Install upx
         run: brew install upx
       - name: Download compiler jar
@@ -215,9 +217,10 @@ jobs:
           architecture: x64
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
       - name: Download compiler jar
         uses: actions/download-artifact@v2
         with:
@@ -285,9 +288,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org
+          cache: yarn
       - name: Download compiler jar
         uses: actions/download-artifact@v2
         with:

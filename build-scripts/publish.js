@@ -29,7 +29,7 @@ const path = require('path');
 const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
-const npmrcPath = path.resolve(__dirname, '.npmrc');
+const npmrcPath = path.resolve(process.env.HOME, '.npmrc');
 
 async function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)

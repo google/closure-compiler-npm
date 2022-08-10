@@ -58,7 +58,7 @@ async function setupNpm(npmrcPath) {
   if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
     await fs.writeFile(
         npmrcPath,
-        `registry=https://registry.npmjs.org\n//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
+        `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
         'utf8');
   } else {
     console.log(
@@ -79,7 +79,7 @@ async function publishPackagesIfNeeded(packageInfo) {
     return;
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
-  const publishArgs = ['publish', '--no-workspaces'];
+  const publishArgs = ['publish', '--no-workspaces', '--registry=https://registry.npmjs.org'];
   if (process.env.COMPILER_NIGHTLY ) {
     publishArgs.push('--npm-tag', 'nightly');
   }

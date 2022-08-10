@@ -61,4 +61,4 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           https://api.github.com/repos/google/closure-compiler-npm/releases \
-          -d '{"tag_name":"v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}","name":"${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0","body":"Closure-compiler ${{ github.event.inputs.COMPILER_VERSION_NUMBER }} release","draft":false,"prerelease":false,"generate_release_notes":false}'
+          -d '{"tag_name":"v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0","name":"${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0","body":"Closure-compiler ${{ github.event.inputs.COMPILER_VERSION_NUMBER }} release","draft":false,"prerelease":false,"generate_release_notes":false}'

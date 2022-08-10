@@ -79,13 +79,13 @@ async function publishPackagesIfNeeded(packageInfo) {
     return;
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
-  const publishArgs = [];
+  const publishArgs = ['publish', '--no-workspaces'];
   if (process.env.COMPILER_NIGHTLY ) {
     publishArgs.push('--npm-tag', 'nightly');
   }
   const npmrcPath = path.resolve(packageInfo.path, '.npmrc');
   await setupNpm(npmrcPath);
-  await runCommand('npm', ['publish'].concat(publishArgs), {
+  await runCommand('npm', publishArgs, {
     cwd: packageInfo.path
   });
   await cleanupNpmrc(npmrcPath);

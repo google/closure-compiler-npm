@@ -29,6 +29,7 @@ const path = require('path');
 const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
+const npmrcPath = path.resolve(__dirname, '.npmrc');
 
 async function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
@@ -53,21 +54,17 @@ async function getPackageInfo(packageDir) {
   };
 }
 
-async function setupNpm(npmrcPath) {
+async function setupNpm() {
   // For npm publication to work, the NPM token must be stored in the .npmrc file
   if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
     await fs.writeFile(
         npmrcPath,
-        `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
+        `registry=https://registry.npmjs.org\n//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
         'utf8');
-  } else {
-    console.log(
-        'Not running in GitHub actions',
-        Boolean(process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN));
   }
 }
 
-async function cleanupNpmrc(npmrcPath) {
+async function cleanupNpmrc() {
   await fs.unlink(npmrcPath);
 }
 
@@ -79,19 +76,15 @@ async function publishPackagesIfNeeded(packageInfo) {
     return;
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
-  const publishArgs = ['publish', '--no-workspaces', '--registry=https://registry.npmjs.org'];
+  const publishArgs = ['publish', '-w', pkgJson.name];
   if (process.env.COMPILER_NIGHTLY ) {
     publishArgs.push('--npm-tag', 'nightly');
   }
-  const npmrcPath = path.resolve(packageInfo.path, '.npmrc');
-  await setupNpm(npmrcPath);
-  await runCommand('npm', publishArgs, {
-    cwd: packageInfo.path
-  });
-  await cleanupNpmrc(npmrcPath);
+  await runCommand('npm', publishArgs);
 }
 
 (async () => {
+  await setupNpm();
   const packagesDirEntries = await fs.readdir(packagesDirPath);
   // build a graph of the interdependencies of projects and only publish
   const graph = new graphlib.Graph({directed: true, compound: false});
@@ -136,4 +129,4 @@ async function publishPackagesIfNeeded(packageInfo) {
   }
 })().catch((e) => {
   throw e;
-});
+}).finally(cleanupNpmrc);

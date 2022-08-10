@@ -59,7 +59,7 @@ async function setupNpm() {
   if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
     await fs.writeFile(
         npmrcPath,
-        `registry=https://registry.npmjs.org\n//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
+        `registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
         'utf8');
   }
 }
@@ -76,7 +76,7 @@ async function publishPackagesIfNeeded(packageInfo) {
     return;
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
-  const publishArgs = ['publish', '-w', pkgJson.name, '--registry=https://registry.npmjs.org'];
+  const publishArgs = ['publish', '-w', pkgJson.name, '--registry=https://registry.npmjs.org/'];
   if (process.env.COMPILER_NIGHTLY ) {
     publishArgs.push('--npm-tag', 'nightly');
   }

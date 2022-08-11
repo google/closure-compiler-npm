@@ -32,24 +32,8 @@ const packagesDirPath = path.resolve(__dirname, '../packages');
 const isNightlyVersion = process.env.COMPILER_NIGHTLY === 'true';
 
 async function isPackageVersionPublished(packageName, version) {
-  const isPublished = await fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
+  return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
       .then((res) => res.ok);
-
-  if (!isPublished) {
-    return false;
-  }
-
-  const packageInfoResponse = await fetch(`https://registry.npmjs.org/${encodeURI(packageName)}`);
-  if (!packageInfoResponse.ok) {
-    return false;
-  }
-
-  const packageDetail = await packageInfoResponse.json();
-  console.log(packageDetail['dist-tags']);
-  if (isNightlyVersion) {
-    return packageDetail['dist-tags'].nightly === version;
-  }
-  return packageDetail['dist-tags'].latest === version;
 }
 
 async function isValidPackagePath(packageDir) {

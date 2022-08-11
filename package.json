@@ -32,7 +32,6 @@
   "homepage": "https://developers.google.com/closure/compiler/",
   "dependencies": {},
   "devDependencies": {
-    "node-fetch": "3.x",
     "glob": "7.x",
     "graphlib": "2.x",
     "mocha": "6.x",

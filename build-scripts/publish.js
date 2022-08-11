@@ -32,7 +32,6 @@ const packagesDirPath = path.resolve(__dirname, '../packages');
 const npmrcPath = path.resolve(process.env.HOME, '.npmrc');
 
 async function isPackageVersionPublished(packageName, version) {
-  const {default: fetch} = await import('node-fetch');
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
       .then((res) => res.ok);
 }
@@ -60,7 +59,7 @@ async function setupNpm() {
   if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
     await fs.writeFile(
         npmrcPath,
-        `registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\n`,
+        `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\nregistry=https://registry.npmjs.org/`,
         'utf8');
   }
 }
@@ -77,13 +76,11 @@ async function publishPackagesIfNeeded(packageInfo) {
     return;
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
-  const publishArgs = ['publish', '--registry=https://registry.npmjs.org/'];
+  const publishArgs = ['workspace', packageInfo.name, 'publish', `--new-version=${pkgJson.version}`];
   if (process.env.COMPILER_NIGHTLY ) {
-    publishArgs.push('--npm-tag', 'nightly');
+    publishArgs.push('--tag', 'nightly');
   }
-  await runCommand('npm', publishArgs, {
-    cwd: packageInfo.path
-  });
+  await runCommand('yarn', publishArgs);
 }
 
 (async () => {

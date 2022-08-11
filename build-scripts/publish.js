@@ -62,7 +62,8 @@ async function publishPackagesIfNeeded(packageInfo) {
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
   const publishArgs = ['-w', pkgJson.name, 'publish'];
-  if (process.env.COMPILER_NIGHTLY ) {
+  console.log('Is nightly version:', Boolean(process.env.COMPILER_NIGHTLY), process.env.COMPILER_NIGHTLY);
+  if (process.env.COMPILER_NIGHTLY) {
     publishArgs.push('--tag', 'nightly');
   }
   await runCommand('npm', publishArgs);

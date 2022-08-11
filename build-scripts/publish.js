@@ -55,6 +55,7 @@ async function getPackageInfo(packageDir) {
 
 async function publishPackagesIfNeeded(packageInfo) {
   const pkgJson = packageInfo.pkg;
+  console.log('Is nightly version:', Boolean(process.env.COMPILER_NIGHTLY), process.env.COMPILER_NIGHTLY);
   const isAlreadyPublished = await isPackageVersionPublished(pkgJson.name, pkgJson.version);
   if (isAlreadyPublished) {
     console.log('Already published', pkgJson.name, pkgJson.version);
@@ -62,7 +63,6 @@ async function publishPackagesIfNeeded(packageInfo) {
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
   const publishArgs = ['-w', pkgJson.name, 'publish'];
-  console.log('Is nightly version:', Boolean(process.env.COMPILER_NIGHTLY), process.env.COMPILER_NIGHTLY);
   if (process.env.COMPILER_NIGHTLY) {
     publishArgs.push('--tag', 'nightly');
   }

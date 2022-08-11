@@ -61,11 +61,11 @@ async function publishPackagesIfNeeded(packageInfo) {
     return;
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
-  const publishArgs = ['workspace', pkgJson.name, 'publish', `--new-version=${pkgJson.version}`];
+  const publishArgs = ['-w', pkgJson.name, 'publish'];
   if (process.env.COMPILER_NIGHTLY ) {
     publishArgs.push('--tag', 'nightly');
   }
-  await runCommand('yarn', publishArgs);
+  await runCommand('npm', publishArgs);
 }
 
 (async () => {

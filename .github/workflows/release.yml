@@ -35,7 +35,7 @@ jobs:
           bazel-version: '4.2.2'
       - uses: actions/checkout@v2
         with:
-          refs: master
+          ref: master
           submodules: recursive
       - name: Set compiler submodule to release branch
         working-directory: compiler

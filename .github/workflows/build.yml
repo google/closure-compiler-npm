@@ -340,5 +340,7 @@ jobs:
           git config --global user.email "github-bot@github.com"
           git config --global user.name "Github Bot"
           ./build-scripts/create-nightly-version.js
+      - name: Configure yarn
+        run: yarn config set registry https://registry.npmjs.org/
       - name: Publish packages to npm
         run: yarn publish-packages

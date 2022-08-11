@@ -29,10 +29,27 @@ const path = require('path');
 const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
+const isNightlyVersion = process.env.COMPILER_NIGHTLY === 'true';
 
 async function isPackageVersionPublished(packageName, version) {
-  return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
+  const isPublished = await fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
       .then((res) => res.ok);
+
+  if (!isPublished) {
+    return false;
+  }
+
+  const packageInfoResponse = await fetch(`https://registry.npmjs.org/${encodeURI(packageName)}`);
+  if (!packageInfoResponse.ok) {
+    return false;
+  }
+
+  const packageDetail = await packageInfoResponse.json();
+  console.log(packageDetail['dist-tags']);
+  if (isNightlyVersion) {
+    return packageDetail['dist-tags'].nightly === version;
+  }
+  return packageDetail['dist-tags'].latest === version;
 }
 
 async function isValidPackagePath(packageDir) {
@@ -55,7 +72,6 @@ async function getPackageInfo(packageDir) {
 
 async function publishPackagesIfNeeded(packageInfo) {
   const pkgJson = packageInfo.pkg;
-  console.log('Is nightly version:', Boolean(process.env.COMPILER_NIGHTLY), process.env.COMPILER_NIGHTLY);
   const isAlreadyPublished = await isPackageVersionPublished(pkgJson.name, pkgJson.version);
   if (isAlreadyPublished) {
     console.log('Already published', pkgJson.name, pkgJson.version);
@@ -63,7 +79,7 @@ async function publishPackagesIfNeeded(packageInfo) {
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
   const publishArgs = ['-w', pkgJson.name, 'publish'];
-  if (process.env.COMPILER_NIGHTLY) {
+  if (isNightlyVersion) {
     publishArgs.push('--tag', 'nightly');
   }
   await runCommand('npm', publishArgs);

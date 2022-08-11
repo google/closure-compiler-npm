@@ -51,8 +51,8 @@ jobs:
           git config --global user.name "Github Bot"
           git add compiler
           yarn version --new-version ${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0
-#          git push origin master
-#          git push origin v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0
+          git push origin master
+          git push origin v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0
       - name: Create GitHub Release
         run: |
           curl \

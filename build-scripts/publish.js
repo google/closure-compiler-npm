@@ -23,6 +23,7 @@
  * Packages can only be published after all their dependencies have been successfully published.
  */
 
+const fetch = require('node-fetch');
 const fs = require('fs/promises');
 const graphlib = require('graphlib');
 const path = require('path');

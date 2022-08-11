@@ -76,11 +76,13 @@ async function publishPackagesIfNeeded(packageInfo) {
     return;
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
-  const publishArgs = ['publish', '-w', pkgJson.name, '--registry=https://registry.npmjs.org/'];
+  const publishArgs = ['publish', '--registry=https://registry.npmjs.org/'];
   if (process.env.COMPILER_NIGHTLY ) {
     publishArgs.push('--npm-tag', 'nightly');
   }
-  await runCommand('npm', publishArgs);
+  await runCommand('npm', publishArgs, {
+    cwd: packageInfo.path
+  });
 }
 
 (async () => {

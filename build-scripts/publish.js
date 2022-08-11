@@ -23,7 +23,6 @@
  * Packages can only be published after all their dependencies have been successfully published.
  */
 
-const fetch = require('node-fetch');
 const fs = require('fs/promises');
 const graphlib = require('graphlib');
 const path = require('path');
@@ -33,6 +32,7 @@ const packagesDirPath = path.resolve(__dirname, '../packages');
 const npmrcPath = path.resolve(process.env.HOME, '.npmrc');
 
 async function isPackageVersionPublished(packageName, version) {
+  const {default: fetch} = await import('node-fetch');
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
       .then((res) => res.ok);
 }

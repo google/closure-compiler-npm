@@ -29,7 +29,7 @@ const path = require('path');
 const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
-const npmrcPath = path.resolve(process.env.HOME, '.npmrc');
+const npmrcPath = process.env.NPM_CONFIG_USERCONFIG;
 
 async function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
@@ -56,10 +56,11 @@ async function getPackageInfo(packageDir) {
 
 async function setupNpm() {
   // For npm publication to work, the NPM token must be stored in the .npmrc file
+  console.log('Current .npmrc file:\n', await fs.readFile(npmrcPath, 'utf8'));
   if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
-    await fs.writeFile(
+    await fs.appendFile(
         npmrcPath,
-        `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\nregistry=https://registry.npmjs.org/`,
+        `\n//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}`,
         'utf8');
   }
 }

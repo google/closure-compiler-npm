@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      releases: write
     env:
       FORCE_COLOR: '1'
       NODE_VERSION: '18.x'

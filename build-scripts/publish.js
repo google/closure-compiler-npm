@@ -76,7 +76,7 @@ async function publishPackagesIfNeeded(packageInfo) {
     return;
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
-  const publishArgs = ['workspace', packageInfo.name, 'publish', `--new-version=${pkgJson.version}`];
+  const publishArgs = ['workspace', pkgJson.name, 'publish', `--new-version=${pkgJson.version}`];
   if (process.env.COMPILER_NIGHTLY ) {
     publishArgs.push('--tag', 'nightly');
   }

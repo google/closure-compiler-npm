@@ -43,6 +43,7 @@
     "**/glob-stream/**/glob-parent": "^5.1.2",
     "**/glob-watcher/**/chokidar/**/glob-parent": "^5.1.2",
     "**/gulp-cli/**/yargs-parser": "^13.1.2",
+    "**/gulp-mocha/**/mocha": "^10.0.0",
     "**/union-value/**/set-value": "^2.0.1"
   },
   "scripts": {

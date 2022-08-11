@@ -29,7 +29,6 @@ const path = require('path');
 const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
-const npmrcPath = process.env.NPM_CONFIG_USERCONFIG;
 
 async function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
@@ -54,21 +53,6 @@ async function getPackageInfo(packageDir) {
   };
 }
 
-async function setupNpm() {
-  // For npm publication to work, the NPM token must be stored in the .npmrc file
-  console.log('Current .npmrc file:\n', await fs.readFile(npmrcPath, 'utf8'));
-  if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
-    await fs.appendFile(
-        npmrcPath,
-        `\n//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}`,
-        'utf8');
-  }
-}
-
-async function cleanupNpmrc() {
-  await fs.unlink(npmrcPath);
-}
-
 async function publishPackagesIfNeeded(packageInfo) {
   const pkgJson = packageInfo.pkg;
   const isAlreadyPublished = await isPackageVersionPublished(pkgJson.name, pkgJson.version);
@@ -85,7 +69,6 @@ async function publishPackagesIfNeeded(packageInfo) {
 }
 
 (async () => {
-  await setupNpm();
   const packagesDirEntries = await fs.readdir(packagesDirPath);
   // build a graph of the interdependencies of projects and only publish
   const graph = new graphlib.Graph({directed: true, compound: false});
@@ -130,4 +113,4 @@ async function publishPackagesIfNeeded(packageInfo) {
   }
 })().catch((e) => {
   throw e;
-}).finally(cleanupNpmrc);
+});

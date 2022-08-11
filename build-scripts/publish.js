@@ -29,6 +29,7 @@ const path = require('path');
 const runCommand = require('./run-command');
 
 const packagesDirPath = path.resolve(__dirname, '../packages');
+const npmrcPath = path.resolve(process.env.HOME, '.npmrc');
 
 async function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
@@ -38,8 +39,9 @@ async function isPackageVersionPublished(packageName, version) {
 async function isValidPackagePath(packageDir) {
   const packageJsonPath = `${packageDir}/package.json`;
   try {
+    // check to see if the file already exists - if so do nothing
     await fs.stat(packageJsonPath);
-    return true
+    return true;
   } catch {
     return false;
   }
@@ -52,6 +54,20 @@ async function getPackageInfo(packageDir) {
   };
 }
 
+async function setupNpm() {
+  // For npm publication to work, the NPM token must be stored in the .npmrc file
+  if (process.env.GITHUB_ACTIONS && process.env.NPM_TOKEN) {
+    await fs.writeFile(
+        npmrcPath,
+        `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}\nregistry=https://registry.npmjs.org/`,
+        'utf8');
+  }
+}
+
+async function cleanupNpmrc() {
+  await fs.unlink(npmrcPath);
+}
+
 async function publishPackagesIfNeeded(packageInfo) {
   const pkgJson = packageInfo.pkg;
   const isAlreadyPublished = await isPackageVersionPublished(pkgJson.name, pkgJson.version);
@@ -60,16 +76,15 @@ async function publishPackagesIfNeeded(packageInfo) {
     return;
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
-  const publishArgs = [];
+  const publishArgs = ['workspace', pkgJson.name, 'publish', `--new-version=${pkgJson.version}`];
   if (process.env.COMPILER_NIGHTLY ) {
-    publishArgs.push('--npm-tag', 'nightly');
+    publishArgs.push('--tag', 'nightly');
   }
-  await runCommand('npm', ['publish'].concat(publishArgs), {
-    cwd: packageInfo.path
-  });
+  await runCommand('yarn', publishArgs);
 }
 
 (async () => {
+  await setupNpm();
   const packagesDirEntries = await fs.readdir(packagesDirPath);
   // build a graph of the interdependencies of projects and only publish
   const graph = new graphlib.Graph({directed: true, compound: false});
@@ -112,4 +127,6 @@ async function publishPackagesIfNeeded(packageInfo) {
       throw new Error('Unable to publish packages: cyclical dependencies encountered.');
     }
   }
-})().catch((e) => { throw e });
+})().catch((e) => {
+  throw e;
+}).finally(cleanupNpmrc);

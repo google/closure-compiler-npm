@@ -87,7 +87,7 @@ jobs:
           architecture: x64
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Setup upx
@@ -153,7 +153,7 @@ jobs:
           architecture: x64
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Install upx
@@ -215,7 +215,7 @@ jobs:
           architecture: x64
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Download compiler jar
@@ -285,9 +285,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org/
       - name: Download compiler jar
         uses: actions/download-artifact@v2
         with:
@@ -339,5 +340,7 @@ jobs:
           git config --global user.email "github-bot@github.com"
           git config --global user.name "Github Bot"
           ./build-scripts/create-nightly-version.js
+      - name: Configure yarn
+        run: yarn config set registry https://registry.npmjs.org/
       - name: Publish packages to npm
         run: yarn publish-packages

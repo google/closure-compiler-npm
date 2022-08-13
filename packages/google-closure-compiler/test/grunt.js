@@ -30,6 +30,12 @@ require('mocha');
 
 process.on('unhandledRejection', e => { throw e; });
 
+const javaOnly = process.argv.find((arg) => arg == '--java-only');
+const platforms = ['java'];
+if (!javaOnly) {
+  platforms.push('native');
+}
+
 const assertNoError = new should.Assertion('grunt');
 assertNoError.params = {
   operator: 'should not fail with an error',
@@ -125,7 +131,7 @@ describe('grunt-google-closure-compiler', function() {
     Object.defineProperty(ClosureCompiler.prototype, 'run', originalCompilerRunMethod);
   });
 
-  ['java', 'native'].forEach(platform => {
+  platforms.forEach(platform => {
     describe(`${platform} version`, function() {
       let closureCompiler;
       this.slow(10000);

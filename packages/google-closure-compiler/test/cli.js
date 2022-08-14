@@ -26,6 +26,12 @@ const should = require('should');
 const runCommand = require('../../../build-scripts/run-command');
 require('mocha');
 
+const javaOnly = process.argv.find((arg) => arg == '--java-only');
+const platforms = ['java'];
+if (!javaOnly) {
+  platforms.push('native');
+}
+
 process.on('unhandledRejection', e => { throw e; });
 
 describe('command line interface', function() {
@@ -37,21 +43,23 @@ describe('command line interface', function() {
     cliPath = `node ${cliPath}`;
   }
 
-  it('chooses an acceptable platform automatically', done => {
-    function complete(arg) {
-      should(arg).not.be.instanceof(Error);
-      const {stdout, sderr, exitCode} = arg;
-      should(exitCode).equal(0);
-      should(stdout.length).above(0);
-      done();
-    }
+  if (!javaOnly) {
+    it('chooses an acceptable platform automatically', done => {
+      function complete(arg) {
+        should(arg).not.be.instanceof(Error);
+        const {stdout, sderr, exitCode} = arg;
+        should(exitCode).equal(0);
+        should(stdout.length).above(0);
+        done();
+      }
 
-    runCommand(`${cliPath} --js test/fixtures/one.js`, {stdio: 'pipe'})
-      .then(complete)
-      .catch(complete);
-  });
+      runCommand(`${cliPath} --js test/fixtures/one.js`, {stdio: 'pipe'})
+          .then(complete)
+          .catch(complete);
+    });
+  }
 
-  ['java', 'native'].forEach(platform => {
+  platforms.forEach(platform => {
     describe(`${platform} version`, function() {
       it('--help flag', done => {
         function complete(arg) {

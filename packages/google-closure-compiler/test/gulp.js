@@ -33,6 +33,12 @@ const streamFilter = require('gulp-filter');
 
 require('mocha');
 
+const javaOnly = process.argv.find((arg) => arg == '--java-only');
+const platforms = ['java'];
+if (!javaOnly) {
+  platforms.push('native');
+}
+
 process.on('unhandledRejection', e => { throw e; });
 
 describe('gulp-google-closure-compiler', function() {
@@ -58,7 +64,7 @@ describe('gulp-google-closure-compiler', function() {
     Object.defineProperty(ClosureCompiler.prototype, 'run', originalCompilerRunMethod);
   });
 
-  ['java', 'native'].forEach(platform => {
+  platforms.forEach(platform => {
     describe(`${platform} version`, function() {
       const closureCompiler = compilerPackage.gulp();
 

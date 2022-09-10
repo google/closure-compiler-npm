@@ -3,6 +3,8 @@ name: Build CI
 on:
   push:
     branches: [ master ]
+  workflow_call:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
   schedule:
@@ -273,7 +275,7 @@ jobs:
   publish-packages:
     name: Publish Packages
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_call' }}
     env:
       NODE_VERSION: '18.x'
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}

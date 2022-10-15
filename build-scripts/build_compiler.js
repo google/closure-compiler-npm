@@ -37,7 +37,7 @@ const path = require("path");
 const runCommand = require("./run-command");
 const childProcess = require("child_process");
 
-const compilerTargetName = "compiler_unshaded_deploy.jar";
+const compilerTargetName = "compiler_uberjar_deploy.jar";
 const compilerJavaBinaryPath = `./compiler/bazel-bin/${compilerTargetName}`;
 
 async function main() {

@@ -37,47 +37,6 @@ const path = require("path");
 const runCommand = require("./run-command");
 const childProcess = require("child_process");
 
-const compilerTargetName = "compiler_unshaded_deploy.jar";
-const compilerJavaBinaryPath = `./compiler/bazel-bin/${compilerTargetName}`;
-
-async function main() {
-  console.log(process.platform, process.arch, compilerVersion);
-
-  const { exitCode } = await runCommand(
-    "bazelisk",
-    [
-      "build",
-      "--color=yes",
-      `//:${compilerTargetName}`,
-      `--define=COMPILER_VERSION=${compilerVersion}`,
-    ],
-    { cwd: "./compiler" }
-  );
-  if (exitCode !== 0) {
-    throw new Error(exitCode);
-  }
-
-  return Promise.all([
-    copy(
-      compilerJavaBinaryPath,
-      "./packages/google-closure-compiler-java/compiler.jar"
-    ),
-    copy(
-      compilerJavaBinaryPath,
-      "./packages/google-closure-compiler-linux/compiler.jar"
-    ),
-    copy(
-      compilerJavaBinaryPath,
-      "./packages/google-closure-compiler-osx/compiler.jar"
-    ),
-    copy(
-      compilerJavaBinaryPath,
-      "./packages/google-closure-compiler-windows/compiler.jar"
-    ),
-    copy("./compiler/contrib", "./packages/google-closure-compiler/contrib"),
-  ]);
-}
-
 /**
  * The compiler version that will be built.
  *
@@ -87,12 +46,54 @@ async function main() {
  * @type {string}
  */
 const compilerVersion = process.env.COMPILER_NIGHTLY == 'true'
-  ? "SNAPSHOT-1.0"
-  : String(
-      childProcess.execSync("git tag --points-at HEAD", {
-        cwd: "./compiler",
-      })
+    ? 'SNAPSHOT-1.0'
+    : String(
+        childProcess.execSync('git tag --points-at HEAD', {
+            cwd: './compiler',
+        })
     ).trim();
+
+const compilerTargetName = compilerVersion === 'SNAPSHOT-1.0' || parseInt(compilerVersion.slice(1), 10) > 20221004 ?
+    'compiler_uber_deploy.jar' : 'compiler_unshaded_deploy.jar';
+const compilerJavaBinaryPath = `./compiler/bazel-bin/${compilerTargetName}`;
+
+async function main() {
+  console.log(process.platform, process.arch, compilerVersion);
+
+  const { exitCode } = await runCommand(
+    'bazelisk',
+    [
+      'build',
+      '--color=yes',
+      `//:${compilerTargetName}`,
+      `--define=COMPILER_VERSION=${compilerVersion}`,
+    ],
+    { cwd: './compiler' }
+  );
+  if (exitCode !== 0) {
+    throw new Error(exitCode);
+  }
+
+  return Promise.all([
+    copy(
+      compilerJavaBinaryPath,
+      './packages/google-closure-compiler-java/compiler.jar'
+    ),
+    copy(
+      compilerJavaBinaryPath,
+      './packages/google-closure-compiler-linux/compiler.jar'
+    ),
+    copy(
+      compilerJavaBinaryPath,
+      './packages/google-closure-compiler-osx/compiler.jar'
+    ),
+    copy(
+      compilerJavaBinaryPath,
+      './packages/google-closure-compiler-windows/compiler.jar'
+    ),
+    copy('./compiler/contrib', './packages/google-closure-compiler/contrib'),
+  ]);
+}
 
 /**
  * @param {string} src path to source file or folder

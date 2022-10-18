@@ -54,7 +54,7 @@ const compilerVersion = process.env.COMPILER_NIGHTLY == 'true'
     ).trim();
 
 const compilerTargetName = compilerVersion === 'SNAPSHOT-1.0' || parseInt(compilerVersion.slice(1), 10) > 20221004 ?
-    'compiler_uber_deploy.jar' : 'compiler_unshaded_deploy.jar';
+    'compiler_uberjar_deploy.jar' : 'compiler_unshaded_deploy.jar';
 const compilerJavaBinaryPath = `./compiler/bazel-bin/${compilerTargetName}`;
 
 async function main() {

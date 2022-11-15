@@ -42,7 +42,6 @@ jobs:
           git pull https://github.com/google/closure-compiler.git master
           git log -1 | cat
       - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Yarn and maven cache
         uses: actions/cache@v3
@@ -112,7 +111,6 @@ jobs:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
         uses: actions/cache@v3
@@ -178,7 +176,6 @@ jobs:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
         uses: actions/cache@v3
@@ -242,8 +239,9 @@ jobs:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
+      - name: Log Github Env
+        run: type $GITHUB_ENV
       - name: Cache yarn
         uses: actions/cache@v3
         id: yarn-cache
@@ -322,7 +320,6 @@ jobs:
           chmod 755 packages/google-closure-compiler-osx/compiler
           chmod 755 packages/google-closure-compiler-windows/compiler.exe
       - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
         uses: actions/cache@v3

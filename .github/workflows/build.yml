@@ -239,9 +239,8 @@ jobs:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Get yarn cache directory path
-        run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
-      - name: Log Github Env
-        run: type $GITHUB_ENV
+        # See https://stackoverflow.com/a/66737579/1211524
+        run: echo "yarn_cache_dir=$(yarn cache dir)" >> $env:GITHUB_ENV
       - name: Cache yarn
         uses: actions/cache@v3
         id: yarn-cache

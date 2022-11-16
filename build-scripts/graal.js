@@ -33,7 +33,6 @@ process.on('unhandledRejection', error => {
 });
 
 const NATIVE_IMAGE_BUILD_ARGS = [
-  '-H:+StaticExecutableWithDynamicLibC',
   '-H:+ReportUnsupportedElementsAtRuntime',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
@@ -56,6 +55,11 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   '-jar',
   path.resolve(process.cwd(), 'compiler.jar')
 ];
+
+if (process.platform !== 'darwin') {
+  // MacOS does not support building statically linked images
+  NATIVE_IMAGE_BUILD_ARGS.unshift('-H:+StaticExecutableWithDynamicLibC');
+}
 
 runCommand(`native-image${process.platform === 'win32' ? '.cmd' : ''}`, NATIVE_IMAGE_BUILD_ARGS)
     .catch(e => {

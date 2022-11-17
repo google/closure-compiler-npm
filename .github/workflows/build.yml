@@ -42,13 +42,12 @@ jobs:
           git pull https://github.com/google/closure-compiler.git master
           git log -1 | cat
       - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Yarn and maven cache
         uses: actions/cache@v3
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ env.yarn_cache_dir }}
             ~/.m2/repository
           key: ${{ runner.os }}-yarn-mvn-java11-${{ hashFiles('**/yarn.lock', '**/pom.xml') }}
       - name: Install packages
@@ -102,23 +101,22 @@ jobs:
           tar -xf upx-$UPX_VERSION-amd64_linux.tar.xz
           mv ./upx-$UPX_VERSION-amd64_linux/upx /usr/local/bin/upx
       - name: Download compiler jar
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
       - name: Download contrib folder
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
         uses: actions/cache@v3
         id: yarn-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          path: ${{ env.yarn_cache_dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
@@ -168,23 +166,22 @@ jobs:
       - name: Install upx
         run: brew install upx
       - name: Download compiler jar
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
       - name: Download contrib folder
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
         uses: actions/cache@v3
         id: yarn-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          path: ${{ env.yarn_cache_dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
@@ -232,23 +229,23 @@ jobs:
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Download compiler jar
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
       - name: Download contrib folder
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        # See https://stackoverflow.com/a/66737579/1211524
+        run: echo "yarn_cache_dir=$(yarn cache dir)" >> $env:GITHUB_ENV
       - name: Cache yarn
         uses: actions/cache@v3
         id: yarn-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          path: ${{ env.yarn_cache_dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
@@ -292,27 +289,27 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: https://registry.npmjs.org/
       - name: Download compiler jar
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
       - name: Download Linux image
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Linux image
           path: packages/google-closure-compiler-linux/
       - name: Download MacOS image
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: MacOS image
           path: packages/google-closure-compiler-osx/
       - name: Download Windows image
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Windows image
           path: packages/google-closure-compiler-windows/
       - name: Download contrib folder
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
@@ -322,13 +319,12 @@ jobs:
           chmod 755 packages/google-closure-compiler-osx/compiler
           chmod 755 packages/google-closure-compiler-windows/compiler.exe
       - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
         uses: actions/cache@v3
         id: yarn-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          path: ${{ env.yarn_cache_dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-

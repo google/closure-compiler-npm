@@ -163,8 +163,9 @@ jobs:
           java-version: '17'
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install upx
-        run: brew install upx
+#        # See https://github.com/google/closure-compiler-npm/issues/265
+#      - name: Install upx
+#        run: brew install upx
       - name: Download compiler jar
         uses: actions/download-artifact@v3
         with:
@@ -192,7 +193,7 @@ jobs:
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
-          upx compiler
+#          upx compiler
       - name: Tests
         run: yarn workspaces run test --colors
       - name: Upload artifacts

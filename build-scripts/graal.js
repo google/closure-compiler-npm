@@ -56,6 +56,11 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   path.resolve(process.cwd(), 'compiler.jar')
 ];
 
+if (process.platform !== 'darwin') {
+  // MacOS does not support building statically linked images
+  NATIVE_IMAGE_BUILD_ARGS.unshift('-H:+StaticExecutableWithDynamicLibC');
+}
+
 runCommand(`native-image${process.platform === 'win32' ? '.cmd' : ''}`, NATIVE_IMAGE_BUILD_ARGS)
     .catch(e => {
       console.error(e);

@@ -30,13 +30,13 @@ const Semver = require('semver');
 const spawn = require('child_process').spawnSync;
 require('mocha');
 
-const compilerVersionMatch = /^Version: v(\d+)(?:[-\.][a-z0-9][-a-z0-9]*)*$/m;
+const compilerVersionMatch = /^Version: v(\d+)$/m;
 
 process.on('unhandledRejection', e => { throw e; });
 
 const assertError = new should.Assertion('compiler version');
 assertError.params = {
-  operator: 'should be a semver parseabe',
+  operator: 'should be a semver parseable',
 };
 const isNightlyBuild = /^true|1$/i.test(process.env.COMPILER_NIGHTLY);
 

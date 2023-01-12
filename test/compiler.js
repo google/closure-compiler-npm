@@ -27,9 +27,10 @@ const compilerPackage = require('google-closure-compiler');
 const Compiler = compilerPackage.compiler;
 const packageInfo = require('../package.json');
 const Semver = require('semver');
-const compilerVersionMatch = require('../build-scripts/version-match');
 const spawn = require('child_process').spawnSync;
 require('mocha');
+
+const compilerVersionMatch = /^Version: v(\d+)(?:[-\.][a-z0-9][-a-z0-9]*)*$/m;
 
 process.on('unhandledRejection', e => { throw e; });
 

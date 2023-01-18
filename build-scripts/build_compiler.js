@@ -32,10 +32,9 @@
 "use strict";
 
 const ncp = require("ncp");
-const fs = require("fs");
-const path = require("path");
 const runCommand = require("./run-command");
-const childProcess = require("child_process");
+const packageInfo = require("../package.json");
+const semver = require("semver");
 
 /**
  * The compiler version that will be built.
@@ -47,11 +46,7 @@ const childProcess = require("child_process");
  */
 const compilerVersion = process.env.COMPILER_NIGHTLY == 'true'
     ? 'SNAPSHOT-1.0'
-    : String(
-        childProcess.execSync('git tag --points-at HEAD', {
-            cwd: './compiler',
-        })
-    ).trim();
+    : `v${semver.major(packageInfo.version)}`;
 
 const compilerTargetName = compilerVersion === 'SNAPSHOT-1.0' || parseInt(compilerVersion.slice(1), 10) > 20221004 ?
     'compiler_uberjar_deploy.jar' : 'compiler_unshaded_deploy.jar';

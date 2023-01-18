@@ -27,15 +27,16 @@ const compilerPackage = require('google-closure-compiler');
 const Compiler = compilerPackage.compiler;
 const packageInfo = require('../package.json');
 const Semver = require('semver');
-const compilerVersionMatch = require('../build-scripts/version-match');
 const spawn = require('child_process').spawnSync;
 require('mocha');
+
+const compilerVersionMatch = /^Version: v(\d+)$/m;
 
 process.on('unhandledRejection', e => { throw e; });
 
 const assertError = new should.Assertion('compiler version');
 assertError.params = {
-  operator: 'should be a semver parseabe',
+  operator: 'should be a semver parseable',
 };
 const isNightlyBuild = /^true|1$/i.test(process.env.COMPILER_NIGHTLY);
 

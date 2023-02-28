@@ -64,4 +64,4 @@ jobs:
   trigger-publication:
     name: Trigger Build and Publish
     needs: create-release
-    uses: ./.github/workflows/build.yml
+    uses: google/closure-compiler-npm/.github/workflows/build.yml@master

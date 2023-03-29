@@ -7,7 +7,8 @@
  1. Run the [Compiler release workflow](https://github.com/google/closure-compiler-npm/actions/workflows/release.yml)
      * For the `COMPILER_VERSION_NUMBER` input, use the actual version number here without the `v`.
  2. Verify the workflow runs successfully. It will push the release commit and tag.
- 3. Verify the Build CI workflow triggered from the commit builds and publishes the release successfully.
+ 3. Manually run the [Compiler Build CI workflow](https://github.com/google/closure-compiler-npm/actions/workflows/build.yml)
+ 4. Verify the new version published to npm.
 
 ## Deploying changes to the package CLIs or plugins
 

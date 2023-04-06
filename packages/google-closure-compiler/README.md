@@ -22,7 +22,7 @@ are monitored by multiple Closure Compiler team members.
 You may also post in the
 [Closure Compiler Discuss Google Group](https://groups.google.com/forum/#!forum/closure-compiler-discuss).
 
-*Please don't cross post to both Stackoverflow and Closure Compiler Discuss.*
+*Please don't cross post to both Stack Overflow and Closure Compiler Discuss.*
 
 The compiler is distributed as a Java jar or as Mac OS, Linux and Windows native binaries.
 

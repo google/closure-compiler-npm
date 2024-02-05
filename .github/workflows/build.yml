@@ -344,5 +344,4 @@ jobs:
       - name: Configure yarn
         run: yarn config set registry https://registry.npmjs.org/
       - name: Publish packages to npm
-        #run: yarn publish-packages
-        run: echo "Skipping yarn publish-packages step"
+        run: yarn publish-packages

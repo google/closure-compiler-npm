@@ -54,7 +54,7 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   '-H:-UseServiceLoaderFeature',
   '-H:Log=registerResource:3',
   '--initialize-at-build-time',
-  '--color=always',
+  '--color:always',
   '-jar',
   path.resolve(process.cwd(), 'compiler.jar')
 ];

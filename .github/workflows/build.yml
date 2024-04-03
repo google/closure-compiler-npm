@@ -64,12 +64,12 @@ jobs:
       - name: Tests
         run: node_modules/.bin/mocha --colors
       - name: Upload contrib folder
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Contrib folder
           path: compiler/contrib
       - name: Upload compiler jar
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/compiler.jar
@@ -294,7 +294,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: https://registry.npmjs.org/

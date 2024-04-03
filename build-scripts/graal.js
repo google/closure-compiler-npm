@@ -52,6 +52,7 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   }),
   '-H:+ReportExceptionStackTraces',
   '--initialize-at-build-time',
+  '--color=always',
   '-jar',
   path.resolve(process.cwd(), 'compiler.jar')
 ];

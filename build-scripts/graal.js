@@ -57,7 +57,12 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   path.resolve(process.cwd(), 'compiler.jar')
 ];
 
-runCommand(`native-image${process.platform === 'win32' ? '.cmd' : ''}`, NATIVE_IMAGE_BUILD_ARGS)
+const spawnOpts = {};
+if (process.platform === 'win32') {
+  spawnOpts.shell = true;
+}
+
+runCommand(`native-image${process.platform === 'win32' ? '.cmd' : ''}`, NATIVE_IMAGE_BUILD_ARGS, spawnOpts)
     .catch(e => {
       console.error(e);
       process.exit(1);

@@ -60,7 +60,8 @@ jobs:
       - name: Install packages
         run: yarn install --colors=always
       - name: Build jar
-        run: ./build-scripts/build_compiler.js
+        # unset ANDROID_HOME to prevent bazel from trying to use the Android SDK 
+        run: unset ANDROID_HOME && ./build-scripts/build_compiler.js
       - name: Tests
         run: node_modules/.bin/mocha --colors
       - name: Upload contrib folder

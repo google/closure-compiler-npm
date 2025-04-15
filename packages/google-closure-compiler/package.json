@@ -45,6 +45,7 @@
   },
   "optionalDependencies": {
     "google-closure-compiler-linux": "^20240317.0.0",
+    "google-closure-compiler-linux-arm64": "^20240317.0.0",
     "google-closure-compiler-macos": "^20240317.0.0",
     "google-closure-compiler-windows": "^20240317.0.0"
   },

@@ -36,6 +36,12 @@ function getNativeImagePath() {
     } catch (e) {
     }
   }
+  if (process.platform === 'linux' && ['arm64'].includes(process.arch)) {
+    try {
+      return require('google-closure-compiler-linux-arm64');
+    } catch (e) {
+    }
+  }
 }
 
 function getFirstSupportedPlatform(platforms) {

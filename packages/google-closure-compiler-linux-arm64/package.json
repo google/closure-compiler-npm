@@ -1,9 +1,9 @@
 {
-  "name": "google-closure-compiler-linux",
+  "name": "google-closure-compiler-linux-arm64",
   "version": "20240317.0.0",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler using Java",
   "main": "index.js",
-  "repository": "https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-linux",
+  "repository": "https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-linux-arm64",
   "homepage": "https://developers.google.com/closure/compiler/",
   "author": "Chad Killingsworth <chadkillingsworth@gmail.com>",
   "license": "Apache-2.0",

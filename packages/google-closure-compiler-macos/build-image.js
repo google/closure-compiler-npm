@@ -27,11 +27,11 @@ const {DIM, RESET} = require('../../build-scripts/colors');
 const runCommand = require('../../build-scripts/run-command');
 
 if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
-  process.stdout.write(`  ${DIM}google-closure-compiler-osx build binary already exists${RESET}\n`);
+  process.stdout.write(`  ${DIM}google-closure-compiler-macos build binary already exists${RESET}\n`);
 } else if (process.platform !== 'darwin') {
-  process.stdout.write(`  ${DIM}google-closure-compiler-osx build wrong platform${RESET}\n`);
+  process.stdout.write(`  ${DIM}google-closure-compiler-macos build wrong platform${RESET}\n`);
 } else {
-  process.stdout.write(`  ${DIM}google-closure-compiler-osx building image${RESET}\n`);
+  process.stdout.write(`  ${DIM}google-closure-compiler-macos building image${RESET}\n`);
   runCommand('node', ['../../build-scripts/graal.js'])
       .then(({exitCode}) => {
         process.exitCode = exitCode || 0;

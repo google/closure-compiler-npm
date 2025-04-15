@@ -361,6 +361,7 @@ jobs:
       FORCE_COLOR: '1'
     needs:
       - build-linux
+      - build-linux-aarm64
       - build-macos
       - build-windows
     steps:

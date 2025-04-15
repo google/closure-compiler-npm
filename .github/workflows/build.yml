@@ -204,7 +204,7 @@ jobs:
       - name: Install packages
         run: yarn install --colors=always
       - name: Build image
-        working-directory: packages/google-closure-compiler-linux
+        working-directory: packages/google-closure-compiler-linux-aarm64
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
@@ -214,8 +214,8 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Linux image
-          path: packages/google-closure-compiler-linux/compiler
+          name: Linux arm64 image
+          path: packages/google-closure-compiler-linux-aarm64/compiler
 
   # Build the native image on MacOS
   build-macos:
@@ -381,6 +381,11 @@ jobs:
         with:
           name: Linux image
           path: packages/google-closure-compiler-linux/
+      - name: Download Linux aarm64 image
+        uses: actions/download-artifact@v4
+        with:
+          name: Linux arm64 image
+          path: packages/google-closure-compiler-linux-arm64/
       - name: Download MacOS image
         uses: actions/download-artifact@v4
         with:

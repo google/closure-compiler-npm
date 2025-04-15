@@ -28,8 +28,9 @@ const path = require('path');
 
 // Maps of the os marketing name to the platform name used in package.json os restriction fields
 const osRestrictions = new Map([
-    ['osx', {os: ['darwin'], cpu: ['x32', 'x64', 'arm64']}],
+    ['osx', {os: ['darwin'], cpu: ['arm64']}],
     ['linux', {os: ['linux'], cpu: ['x32', 'x64']}],
+    ['linux-arm64', {os: ['linux'], cpu: ['arm64']}],
     ['windows', {os: ['win32'], cpu: ['x32', 'x64']}]
 ]);
 

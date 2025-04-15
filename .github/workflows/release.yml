@@ -16,7 +16,7 @@ jobs:
       contents: write
     env:
       FORCE_COLOR: '1'
-      NODE_VERSION: '20.x'
+      NODE_VERSION: '22.x'
     steps:
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4

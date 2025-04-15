@@ -18,7 +18,7 @@
 function getNativeImagePath() {
   if (process.platform === 'darwin') {
     try {
-      return require('google-closure-compiler-osx');
+      return require('packages/google-closure-compiler-macos');
     } catch (e) {
       return;
     }

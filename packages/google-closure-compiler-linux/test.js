@@ -22,7 +22,7 @@ const nativeImagePath = require('./');
 const {RED, GREEN, DIM, RESET} = require('../../build-scripts/colors');
 
 process.stdout.write('google-closure-compiler-linux\n');
-if (process.platform !== 'linux') {
+if (process.platform !== 'linux' || !['x64','x32'].includes(process.arch)) {
   process.stdout.write(`  ${DIM}skipping tests - incorrect platform${RESET}\n`);
 } else if (fs.existsSync(nativeImagePath)) {
   process.stdout.write(`  ${GREEN}✓${RESET} ${DIM}compiler binary exists${RESET}\n`);

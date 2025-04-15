@@ -149,8 +149,8 @@ jobs:
   # Build the native image on Linux
   # The runner image determines GLIBC compatibility and should not be changed without
   # understanding the impact. See https://github.com/google/closure-compiler-npm/issues/280
-  build-linux-aarm64:
-    name: Build Linux Native Image for aarm processors
+  build-linux-arm64:
+    name: Build Linux Native Image for arm processors
     needs: build-compiler
     runs-on: arm-ubuntu-arm-22.04-4core
     env:
@@ -204,7 +204,7 @@ jobs:
       - name: Install packages
         run: yarn install --colors=always
       - name: Build image
-        working-directory: packages/google-closure-compiler-linux-aarm64
+        working-directory: packages/google-closure-compiler-linux-arm64
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
@@ -215,7 +215,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Linux arm64 image
-          path: packages/google-closure-compiler-linux-aarm64/compiler
+          path: packages/google-closure-compiler-linux-arm64/compiler
 
   # Build the native image on MacOS
   build-macos:
@@ -270,7 +270,7 @@ jobs:
       - name: Install packages
         run: yarn install --colors=always
       - name: Build image
-        working-directory: packages/google-closure-compiler-osx
+        working-directory: packages/google-closure-compiler-macos
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
@@ -281,7 +281,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MacOS image
-          path: packages/google-closure-compiler-osx/compiler
+          path: packages/google-closure-compiler-macos/compiler
 
   # Build the native image on Windows
   build-windows:
@@ -289,7 +289,7 @@ jobs:
     needs: build-compiler
     runs-on: windows-latest
     env:
-      NODE_VERSION: '24.x'
+      NODE_VERSION: '22.x'
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
@@ -361,7 +361,7 @@ jobs:
       FORCE_COLOR: '1'
     needs:
       - build-linux
-      - build-linux-aarm64
+      - build-linux-arm64
       - build-macos
       - build-windows
     steps:
@@ -381,7 +381,7 @@ jobs:
         with:
           name: Linux image
           path: packages/google-closure-compiler-linux/
-      - name: Download Linux aarm64 image
+      - name: Download Linux arm64 image
         uses: actions/download-artifact@v4
         with:
           name: Linux arm64 image
@@ -390,7 +390,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: MacOS image
-          path: packages/google-closure-compiler-osx/
+          path: packages/google-closure-compiler-macos/
       - name: Download Windows image
         uses: actions/download-artifact@v4
         with:
@@ -404,7 +404,8 @@ jobs:
       - name: Mark binaries executable
         run: |
           chmod 755 packages/google-closure-compiler-linux/compiler
-          chmod 755 packages/google-closure-compiler-osx/compiler
+          chmod 755 packages/google-closure-compiler-linux-arm64/compiler
+          chmod 755 packages/google-closure-compiler-macos/compiler
           chmod 755 packages/google-closure-compiler-windows/compiler.exe
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV

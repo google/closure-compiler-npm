@@ -81,7 +81,7 @@ jobs:
   build-linux:
     name: Build Linux Native Image
     needs: build-compiler
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       NODE_VERSION: '20.x'
       FORCE_COLOR: '1'
@@ -152,7 +152,7 @@ jobs:
   build-linux-arm64:
     name: Build Linux Native Image for arm processors
     needs: build-compiler
-    runs-on: arm-ubuntu-arm-22.04-4core
+    runs-on: arm-ubuntu-arm-24.04-4core
     env:
       NODE_VERSION: '20.x'
       FORCE_COLOR: '1'

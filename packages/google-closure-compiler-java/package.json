@@ -2,6 +2,7 @@
   "name": "google-closure-compiler-java",
   "version": "20240317.0.0",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler using Java",
+  "type": "module",
   "main": "index.js",
   "repository": "https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-java",
   "homepage": "https://developers.google.com/closure/compiler/",
@@ -27,5 +28,8 @@
     "build": "echo \"google-closure-compiler-java build\"",
     "test": "node ./test.js",
     "prepublishOnly": "node ../../build-scripts/ensure-file-exists.js compiler.jar"
+  },
+  "devDependencies": {
+    "chalk": "5.x"
   }
 }

@@ -61,7 +61,7 @@ jobs:
         run: yarn install --colors=always
       - name: Build jar
         # unset ANDROID_HOME to prevent bazel from trying to use the Android SDK
-        run: unset ANDROID_HOME && ./build-scripts/build_compiler.js
+        run: unset ANDROID_HOME && ./build-scripts/build-compiler.js
       - name: Tests
         run: node_modules/.bin/mocha --colors
       - name: Upload contrib folder
@@ -69,6 +69,11 @@ jobs:
         with:
           name: Contrib folder
           path: compiler/contrib
+      - name: Upload externs folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: Externs folder
+          path: compiler/externs
       - name: Upload compiler jar
         uses: actions/upload-artifact@v4
         with:
@@ -120,6 +125,11 @@ jobs:
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
+      - name: Download externs folder
+        uses: actions/download-artifact@v4
+        with:
+          name: Externs folder
+          path: packages/google-closure-compiler/externs
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
@@ -191,6 +201,11 @@ jobs:
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
+      - name: Download externs folder
+        uses: actions/download-artifact@v4
+        with:
+          name: Externs folder
+          path: packages/google-closure-compiler/externs
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
@@ -257,6 +272,11 @@ jobs:
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
+      - name: Download externs folder
+        uses: actions/download-artifact@v4
+        with:
+          name: Externs folder
+          path: packages/google-closure-compiler/externs
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
@@ -320,6 +340,11 @@ jobs:
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
+      - name: Download externs folder
+        uses: actions/download-artifact@v4
+        with:
+          name: Externs folder
+          path: packages/google-closure-compiler/externs
       - name: Get yarn cache directory path
         # See https://stackoverflow.com/a/66737579/1211524
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $env:GITHUB_ENV
@@ -401,6 +426,11 @@ jobs:
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
+      - name: Download externs folder
+        uses: actions/download-artifact@v4
+        with:
+          name: Externs folder
+          path: packages/google-closure-compiler/externs
       - name: Mark binaries executable
         run: |
           chmod 755 packages/google-closure-compiler-linux/compiler

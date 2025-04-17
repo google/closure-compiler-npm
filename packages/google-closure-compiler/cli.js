@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
-const {getNativeImagePath, getFirstSupportedPlatform} = require('./lib/utils');
-const parseArgs = require('minimist');
+import Compiler from './lib/node/index.js';
+import {getNativeImagePath, getFirstSupportedPlatform} from './lib/utils.js';
+import parseArgs from 'minimist';
 
 const compilerFlags = parseArgs(process.argv.slice(2));
 
@@ -59,7 +59,6 @@ Object.keys(compilerFlags).forEach((flag) => {
   }
 });
 
-const Compiler = require('./lib/node/closure-compiler');
 let args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
   if (/^--platform/.test(args[i])) {

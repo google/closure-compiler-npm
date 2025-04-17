@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The Closure Compiler Authors.
+ * Copyright 2019 The Closure Compiler Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,5 +14,8 @@
  * limitations under the License.
  */
 
-const path = require('path');
-module.exports = path.resolve(__dirname, 'compiler');
+import path from 'node:path';
+import { fileURLToPath, URL } from 'node:url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+export default path.resolve(__dirname, 'compiler');

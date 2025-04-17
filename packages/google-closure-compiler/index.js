@@ -20,21 +20,18 @@
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
 
-'use strict';
+import path from 'node:path';
+import {fileURLToPath, URL} from 'node:url';
+export {default as JAR_PATH} from 'google-closure-compiler-java';
 
-// defer loading modules. The jscomp file is rather large. Don't load it unless it's actually referenced.
-class Main {
-  static get grunt() {
-    return require('./lib/grunt');
-  }
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+export const CONTRIB_PATH = path.resolve(__dirname, './contrib');
+export const EXTERNS_PATH = path.resolve(__dirname, './externs');
 
-  static get gulp() {
-    return require('./lib/gulp');
-  }
-
-  static get compiler() {
-    return require('./lib/node/closure-compiler');
-  }
-}
-
-module.exports = Main;
+export {default as grunt} from './lib/grunt/index.js';
+export {default as gulp} from './lib/gulp/index.js';
+export {
+  default as compiler,
+  default,
+  javaPath,
+} from './lib/node/index.js';

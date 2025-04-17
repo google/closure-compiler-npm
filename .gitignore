@@ -3,6 +3,7 @@ npm-debug.log
 yarn-error.log
 /lerna-debug.log
 /packages/google-closure-compiler/contrib/
+/packages/google-closure-compiler/externs/
 /packages/google-closure-compiler-java/compiler.jar
 /packages/google-closure-compiler-linux/compiler.jar
 /packages/google-closure-compiler-linux/compiler

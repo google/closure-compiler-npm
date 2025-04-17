@@ -13,47 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+import {createRequire} from 'node:module';
+const require = createRequire(import.meta.url);
 
-function getNativeImagePath() {
+export const getNativeImagePath = () => {
   if (process.platform === 'darwin') {
     try {
-      return require('google-closure-compiler-macos');
+      return require('google-closure-compiler-macos').default;
     } catch (e) {
       return;
     }
   }
   if (process.platform === 'win32') {
     try {
-      return require('google-closure-compiler-windows');
+      return require('google-closure-compiler-windows').default;
     } catch (e) {
       return;
     }
   }
   if (process.platform === 'linux' && ['x64','x32'].includes(process.arch)) {
     try {
-      return require('google-closure-compiler-linux');
+      return require('google-closure-compiler-linux').default;
     } catch (e) {
     }
   }
   if (process.platform === 'linux' && ['arm64'].includes(process.arch)) {
     try {
-      return require('google-closure-compiler-linux-arm64');
+      return require('google-closure-compiler-linux-arm64').default;
     } catch (e) {
     }
   }
-}
+};
 
-function getFirstSupportedPlatform(platforms) {
+export const getFirstSupportedPlatform = (platforms) => {
   const platform = platforms.find((platform, index) => {
     switch (platform.toLowerCase()) {
-      case "java":
+      case 'java':
         if (index === platforms.length - 1) {
           return true;
         }
         return process.env.JAVA_HOME;
 
-      case "native":
+      case 'native':
         if (getNativeImagePath()) {
           return true;
         }
@@ -63,9 +64,4 @@ function getFirstSupportedPlatform(platforms) {
     throw new Error('No supported platform for closure-compiler found.');
   }
   return platform;
-}
-
-module.exports = {
-  getNativeImagePath,
-  getFirstSupportedPlatform
 };

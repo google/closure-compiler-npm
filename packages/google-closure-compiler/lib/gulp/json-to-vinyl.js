@@ -20,16 +20,17 @@
  *
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
-
-'use strict';
-
-const File = require('vinyl');
+import File from 'vinyl';
 
 /**
- * @param {string} input string of json encoded files
- * @return {Array<Object>}
+ * @param {!Array<!{
+ *     path: string,
+ *     src: string,
+ *     sourceMap: (string|undefined)
+ *   }>} fileList array of file objects
+ * @return {!Array<!File>}
  */
-module.exports = fileList => {
+export default (fileList) => {
   let outputFiles = [];
   for (let i = 0; i < fileList.length; i++) {
     const file = new File({
@@ -44,4 +45,3 @@ module.exports = fileList => {
 
   return outputFiles;
 };
-

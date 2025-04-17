@@ -20,14 +20,12 @@
  *
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
-'use strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {Readable} from 'node:stream';
+import File from 'vinyl';
 
-const fs = require('fs');
-const path = require('path');
-const Readable = require('stream').Readable;
-const File = require('vinyl');
-
-class VinylStream extends Readable {
+export default class VinylStream extends Readable {
   constructor(files, opts) {
     super({objectMode: true});
     this._base = path.resolve(opts.base || process.cwd());
@@ -35,26 +33,22 @@ class VinylStream extends Readable {
     this.resume();
   }
 
-  _read() {
+  async _read() {
     if (this._files.length === 0) {
       this.push(null);
       return;
     }
     const filepath = this._files.shift();
     const fullpath = path.resolve(this._base, filepath);
-    fs.readFile(fullpath, (err, data) => {
-      if (err) {
-        this.emit('error', err);
-        return;
-      }
-
+    try {
+      const data = await fs.readFile(fullpath);
       this.push(new File({
         base: this._base,
         path: fullpath,
         contents: data
       }));
-    });
+    } catch (err) {
+      this.emit('error', err);
+    }
   }
-}
-
-module.exports = VinylStream;
+};

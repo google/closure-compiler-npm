@@ -15,14 +15,16 @@
  * limitations under the License.
  */
 
-const fs = require('fs');
-const javaPath = require('./');
-const {RED, GREEN, DIM, RESET} = require('../../build-scripts/colors');
+import fs from 'node:fs';
+import javaPath from './index.js';
+import chalk from 'chalk';
+
+const dimWhite = (text) => chalk.dim(chalk.white(text));
 
 process.stdout.write('google-closure-compiler-java\n');
 if (fs.existsSync(javaPath)) {
-  process.stdout.write(`  ${GREEN}✓${RESET} ${DIM}compiler jar exists${RESET}\n`);
+  process.stdout.write(`  ${chalk.greenBright('✓')} ${dimWhite('compiler jar exists')}\n`);
 } else {
-  process.stdout.write(`  ${RED}compiler jar does not exist${RESET}\n`);
+  process.stdout.write(`  ${chalk.red('compiler jar does not exist')}\n`);
   process.exitCode = 1;
 }

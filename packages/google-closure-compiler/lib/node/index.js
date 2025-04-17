@@ -20,15 +20,15 @@
  *
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
+import {spawn} from 'node:child_process';
+import compilerPath from 'google-closure-compiler-java';
 
-'use strict';
+/**
+ * @type {string}
+ */
+export const javaPath = 'java';
 
-const spawn = require('child_process').spawn;
-const compilerPath = require('google-closure-compiler-java');
-const path = require('path');
-const contribPath = path.resolve(__dirname, '../../contrib');
-
-class Compiler {
+export default class Compiler {
   /**
    * @param {Object<string,string>|Array<string>} args
    * @param {Array<String>=} extraCommandArgs
@@ -36,13 +36,11 @@ class Compiler {
   constructor(args, extraCommandArgs) {
     this.commandArguments = [];
     this.extraCommandArgs = extraCommandArgs;
-
-    if (Compiler.JAR_PATH) {
-      this.JAR_PATH = Compiler.JAR_PATH;
-    }
+    this.JAR_PATH = compilerPath;
+    this.javaPath = javaPath;
 
     if (Array.isArray(args)) {
-      this.commandArguments = this.commandArguments.concat(args.slice());
+      this.commandArguments.push(...args);
     } else {
       for (let key in args) {
         if (Array.isArray(args[key])) {
@@ -56,15 +54,18 @@ class Compiler {
         }
       }
     }
+
+    /** @type {function(...*)|null} */
+   this.logger = null;
+
+    /** @type {Object<string, string>} */
+    this.spawnOptions = undefined;
   }
 
-  /**
-   * @param {function(number, string, string)=} callback
-   * @return {child_process.ChildProcess}
-   */
+  /** @param {function(number, string, string)=} callback */
   run(callback) {
     if (this.JAR_PATH) {
-      this.commandArguments.unshift('-jar', Compiler.JAR_PATH);
+      this.commandArguments.unshift('-jar', this.JAR_PATH);
       if (this.extraCommandArgs) {
         this.commandArguments.unshift(...this.extraCommandArgs);
       }
@@ -80,22 +81,22 @@ class Compiler {
     if (callback) {
       if (compileProcess.stdout) {
         compileProcess.stdout.setEncoding('utf8');
-        compileProcess.stdout.on('data', data => {
+        compileProcess.stdout.on('data', (data) => {
           stdOutData += data;
         });
-        compileProcess.stdout.on('error', err => {
+        compileProcess.stdout.on('error', (err) => {
           stdErrData += err.toString();
         });
       }
 
       if (compileProcess.stderr) {
         compileProcess.stderr.setEncoding('utf8');
-        compileProcess.stderr.on('data', data => {
+        compileProcess.stderr.on('data', (data) => {
           stdErrData += data;
         });
       }
 
-      compileProcess.on('close',  code => {
+      compileProcess.on('close',  (code) => {
         if (code !== 0) {
           stdErrData = this.prependFullCommand(stdErrData);
         }
@@ -103,7 +104,7 @@ class Compiler {
         callback(code, stdOutData, stdErrData);
       });
 
-      compileProcess.on('error', err => {
+      compileProcess.on('error', (err) => {
         callback(1, stdOutData,
             this.prependFullCommand('Process spawn error. Is java in the path?\n' + err.message));
       });
@@ -117,7 +118,7 @@ class Compiler {
    * @return {string}
    */
   getFullCommand() {
-    return this.javaPath + ' ' + this.commandArguments.join(' ');
+    return `${this.javaPath} ${this.commandArguments.join(' ')}`;
   }
 
   /**
@@ -125,7 +126,7 @@ class Compiler {
    * @return {string}
    */
   prependFullCommand(msg) {
-    return this.getFullCommand() + '\n\n' + msg + '\n\n';
+    return `${this.getFullCommand()}\n\n${msg}\n\n`;
   }
 
   /**
@@ -134,7 +135,7 @@ class Compiler {
    * @return {string}
    */
   formatArgument(key, val) {
-    let normalizedKey = key.replace(/[A-Z]/g, match => `_${match.toLowerCase()}`);
+    let normalizedKey = key.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
     normalizedKey = normalizedKey.replace(/^--/, '');
 
     if (val === undefined || val === null) {
@@ -143,29 +144,4 @@ class Compiler {
 
     return `--${normalizedKey}=${val}`;
   }
-}
-
-/**
- * @const
- * @type {string}
- */
-Compiler.JAR_PATH = compilerPath;
-
-/**
- * @type {string}
- */
-Compiler.prototype.javaPath = 'java';
-
-/** @type {function(...*)|null} */
-Compiler.prototype.logger = null;
-
-/** @type {Object<string, string>} */
-Compiler.prototype.spawnOptions = undefined;
-
-/** @type {string} */
-Compiler.COMPILER_PATH = compilerPath;
-
-/** @type {string} */
-Compiler.CONTRIB_PATH = contribPath;
-
-module.exports = Compiler;
+};

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 /**
  * @fileoverview
  *
@@ -23,8 +22,8 @@
  * Also set correct architectures. In order to execute `yarn install` in the main package, the current architecture
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
 // Maps of the os marketing name to the platform name used in package.json os restriction fields
 const osRestrictions = new Map([

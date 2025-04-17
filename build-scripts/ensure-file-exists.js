@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-const fs = require('fs');
-const colors = require('./colors');
+import fs from 'node:fs';
+import chalk from 'chalk';
 
 if (!fs.existsSync(process.argv[2])) {
-  process.stderr.write(`${colors.RED}${process.argv[2]} file is missing${colors.RESET}\n`);
+  process.stderr.write(chalk.red(`${process.argv[2]} file is missing\n`));
   process.exitCode = 1;
 }

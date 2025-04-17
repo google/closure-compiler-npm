@@ -20,41 +20,40 @@
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
 
-'use strict';
-
-const should = require('should');
-const compilerPackage = require('../');
-const {compiler: Compiler, jsCompiler} = compilerPackage;
-require('mocha');
+import {default as Compiler, JAR_PATH, CONTRIB_PATH, EXTERNS_PATH} from '../index.js';
 
 process.on('unhandledRejection', e => { throw e; });
 
 describe('closure-compiler node bindings', () => {
+  it('should export a property for the jar path', () => {
+    expect(JAR_PATH).toMatch(/[\/\\]compiler\.jar$/);
+  });
+
+  it('should export a property for the contrib folder', () => {
+    expect(CONTRIB_PATH).toMatch(/[\/\\]contrib$/);
+  });
+
+  it('should export a property for the externs folder', () => {
+    expect(EXTERNS_PATH).toMatch(/[\/\\]externs$/);
+  });
+
   describe('java version', () => {
-    it('should have a static property for the jar path', () => {
-      Compiler.COMPILER_PATH.should.match(/[\/\\]compiler\.jar$/);
-    });
-
-    it('should have a static property for the contrib folder', () => {
-      Compiler.CONTRIB_PATH.should.match(/[\/\\]contrib$/);
-    });
-
-    it('should error when java is not in the path', function (done) {
-      this.slow(1000);
-
+    it('should error when java is not in the path', async () => {
       const compiler = new Compiler({version: true});
       compiler.javaPath = 'DOES_NOT_EXIST';
       let hasRun = false;
-      compiler.run(function (exitCode, stdout, stderr) {
-        if (hasRun) {
-          return;
-        }
-        hasRun = true;
-
-        exitCode.should.not.eql(0);
-        stderr.indexOf('Is java in the path?').should.be.aboveOrEqual(0);
-        done();
+      await new Promise((resolve) => {
+        compiler.run((exitCode, stdout, stderr) => {
+          if (hasRun) {
+            return;
+          }
+          hasRun = true;
+          expect(exitCode).not.toBe(0);
+          expect(stderr.indexOf('Is java in the path?')).toBeGreaterThanOrEqual(0);
+          resolve();
+        });
       });
+      expect(hasRun).toBe(true);
     });
 
     it('should normalize an options object to an arguments array', () => {
@@ -66,55 +65,48 @@ describe('closure-compiler node bindings', () => {
 
       const expectedArray = ['--one=true', '--two=two',
         '--three=one', '--three=two', '--three=three'];
-      compiler.commandArguments.length.should.eql(expectedArray.length);
+      expect(compiler.commandArguments.length).toBe(expectedArray.length);
       compiler.commandArguments.forEach((item, index) => {
-        expectedArray[index].should.eql(item);
+        expect(expectedArray[index]).toBe(item);
       });
     });
 
-    it('should prepend the -jar argument and compiler path when configured by array', done => {
-      const expectedArray = ['-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+    it('should prepend the -jar argument and compiler path when configured by array', async () => {
+      const expectedArray = ['-jar', JAR_PATH, '--one=true', '--two=two',
         '--three=one', '--three=two', '--three=three'];
 
       const compiler = new Compiler(expectedArray.slice(2));
+      await new Promise((resolve) => compiler.run(resolve));
 
-      compiler.run(() => {
-        compiler.commandArguments.length.should.eql(expectedArray.length);
-        compiler.commandArguments.forEach((item, index) => {
-          expectedArray[index].should.eql(item);
-        });
-        done();
+      expect(compiler.commandArguments.length).toBe(expectedArray.length);
+      compiler.commandArguments.forEach((item, index) => {
+        expect(expectedArray[index]).toBe(item);
       });
     });
 
-    describe('extra command arguments', done => {
-      it('should include initial command arguments when configured by an options object', done => {
-        const expectedArray = ['-Xms2048m', '-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+    describe('extra command arguments', () => {
+      it('should include initial command arguments when configured by an options object', async () => {
+        const expectedArray = ['-Xms2048m', '-jar', JAR_PATH, '--one=true', '--two=two',
           '--three=one', '--three=two', '--three=three'];
 
         const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
+        await new Promise((resolve) => compiler.run(resolve));
 
-        compiler.run(() => {
-          compiler.commandArguments.length.should.eql(expectedArray.length);
-          compiler.commandArguments.forEach(function (item, index) {
-            expectedArray[index].should.eql(item);
-          });
-          done();
+        expect(compiler.commandArguments.length).toBe(expectedArray.length);
+        compiler.commandArguments.forEach(function (item, index) {
+          expect(expectedArray[index]).toBe(item);
         });
       });
 
-      it('should include initial command arguments when configured by array', done => {
-        const expectedArray = ['-Xms2048m', '-jar', Compiler.COMPILER_PATH, '--one=true', '--two=two',
+      it('should include initial command arguments when configured by array', async () => {
+        const expectedArray = ['-Xms2048m', '-jar', JAR_PATH, '--one=true', '--two=two',
           '--three=one', '--three=two', '--three=three'];
 
         const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
-
-        compiler.run(() => {
-          compiler.commandArguments.length.should.eql(expectedArray.length);
-          compiler.commandArguments.forEach(function (item, index) {
-            expectedArray[index].should.eql(item);
-          });
-          done();
+        await new Promise((resolve) => compiler.run(resolve));
+        expect(compiler.commandArguments.length).toBe(expectedArray.length);
+        compiler.commandArguments.forEach(function (item, index) {
+          expect(expectedArray[index]).toBe(item);
         });
       });
     });

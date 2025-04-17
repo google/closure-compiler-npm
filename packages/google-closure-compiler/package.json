@@ -2,7 +2,10 @@
   "name": "google-closure-compiler",
   "version": "20240317.0.0",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler",
-  "repository": "https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/google/closure-compiler-npm.git#master"
+  },
   "keywords": [
     "javascript",
     "compiler",
@@ -45,7 +48,8 @@
   },
   "optionalDependencies": {
     "google-closure-compiler-linux": "^20240317.0.0",
-    "google-closure-compiler-osx": "^20240317.0.0",
+    "google-closure-compiler-linux-arm64": "^20240317.0.0",
+    "google-closure-compiler-macos": "^20240317.0.0",
     "google-closure-compiler-windows": "^20240317.0.0"
   },
   "devDependencies": {

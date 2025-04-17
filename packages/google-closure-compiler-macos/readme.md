@@ -1,4 +1,4 @@
-# google-closure-compiler-osx
+# google-closure-compiler-macos
 
 Mac OS native platform distribution of Closure Compiler.
 

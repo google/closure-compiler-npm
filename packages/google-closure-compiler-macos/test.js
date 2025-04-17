@@ -21,7 +21,7 @@ const {spawn} = require('child_process');
 const nativeImagePath = require('./');
 const {RED, GREEN, DIM, RESET} = require('../../build-scripts/colors');
 
-process.stdout.write('google-closure-compiler-osx\n');
+process.stdout.write('google-closure-compiler-macos\n');
 if (process.platform !== 'darwin') {
   process.stdout.write(`  ${DIM}skipping tests - incorrect platform${RESET}\n`);
 } else if (fs.existsSync(nativeImagePath)) {

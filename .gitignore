@@ -6,10 +6,11 @@ yarn-error.log
 /packages/google-closure-compiler-java/compiler.jar
 /packages/google-closure-compiler-linux/compiler.jar
 /packages/google-closure-compiler-linux/compiler
-/packages/google-closure-compiler-osx/compiler.jar
-/packages/google-closure-compiler-osx/compiler
+/packages/google-closure-compiler-linux-arm64/compiler.jar
+/packages/google-closure-compiler-linux-arm64/compiler
+/packages/google-closure-compiler-macos/compiler.jar
+/packages/google-closure-compiler-macos/compiler
 /packages/google-closure-compiler-windows/compiler.*
-/packages/google-closure-compiler-js/jscomp.js
 /temp
 /publish-log.txt
 .npmrc

@@ -60,7 +60,7 @@ jobs:
       - name: Install packages
         run: yarn install --colors=always
       - name: Build jar
-        # unset ANDROID_HOME to prevent bazel from trying to use the Android SDK 
+        # unset ANDROID_HOME to prevent bazel from trying to use the Android SDK
         run: unset ANDROID_HOME && ./build-scripts/build_compiler.js
       - name: Tests
         run: node_modules/.bin/mocha --colors
@@ -81,9 +81,9 @@ jobs:
   build-linux:
     name: Build Linux Native Image
     needs: build-compiler
-    runs-on: 'ubuntu-24.04'
+    runs-on: ubuntu-24.04
     env:
-      NODE_VERSION: '18.x'
+      NODE_VERSION: '20.x'
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
@@ -106,7 +106,7 @@ jobs:
           native-image-job-reports: 'true'
       - name: Setup upx
         run: |
-          UPX_VERSION=3.96
+          UPX_VERSION=5.0.0
           curl --fail --show-error --location --remote-name "https://github.com/upx/upx/releases/download/v$UPX_VERSION/upx-$UPX_VERSION-amd64_linux.tar.xz"
           tar -xf upx-$UPX_VERSION-amd64_linux.tar.xz
           mv ./upx-$UPX_VERSION-amd64_linux/upx /usr/local/bin/upx
@@ -146,13 +146,84 @@ jobs:
           name: Linux image
           path: packages/google-closure-compiler-linux/compiler
 
+  # Build the native image on Linux
+  # The runner image determines GLIBC compatibility and should not be changed without
+  # understanding the impact. See https://github.com/google/closure-compiler-npm/issues/280
+  build-linux-arm64:
+    name: Build Linux Native Image for arm processors
+    needs: build-compiler
+    runs-on: ubuntu-24.04-arm
+    env:
+      NODE_VERSION: '20.x'
+      FORCE_COLOR: '1'
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: adopt-hotspot
+          java-version: 21
+          java-package: jdk
+          architecture: x64
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: 21
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image-job-reports: 'true'
+      - name: Setup upx
+        run: |
+          UPX_VERSION=5.0.0
+          curl --fail --show-error --location --remote-name "https://github.com/upx/upx/releases/download/v$UPX_VERSION/upx-$UPX_VERSION-arm64_linux.tar.xz"
+          tar -xf upx-$UPX_VERSION-arm64_linux.tar.xz
+          mv ./upx-$UPX_VERSION-arm64_linux/upx /usr/local/bin/upx
+      - name: Download compiler jar
+        uses: actions/download-artifact@v4
+        with:
+          name: Compiler.jar
+          path: packages/google-closure-compiler-java/
+      - name: Download contrib folder
+        uses: actions/download-artifact@v4
+        with:
+          name: Contrib folder
+          path: packages/google-closure-compiler/contrib
+      - name: Get yarn cache directory path
+        run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
+      - name: Cache yarn
+        uses: actions/cache@v4
+        id: yarn-cache
+        with:
+          path: ${{ env.yarn_cache_dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install packages
+        run: yarn install --colors=always
+      - name: Build image
+        working-directory: packages/google-closure-compiler-linux-arm64
+        run: |
+          cp ../google-closure-compiler-java/compiler.jar compiler.jar
+          yarn run build
+          upx compiler
+      - name: Tests
+        run: yarn workspaces run test --colors
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Linux arm64 image
+          path: packages/google-closure-compiler-linux-arm64/compiler
+
   # Build the native image on MacOS
   build-macos:
     name: Build MacOS Native Image
     needs: build-compiler
     runs-on: macos-latest
     env:
-      NODE_VERSION: '20.x'
+      NODE_VERSION: '22.x'
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
@@ -199,7 +270,7 @@ jobs:
       - name: Install packages
         run: yarn install --colors=always
       - name: Build image
-        working-directory: packages/google-closure-compiler-osx
+        working-directory: packages/google-closure-compiler-macos
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
@@ -210,7 +281,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MacOS image
-          path: packages/google-closure-compiler-osx/compiler
+          path: packages/google-closure-compiler-macos/compiler
 
   # Build the native image on Windows
   build-windows:
@@ -218,7 +289,7 @@ jobs:
     needs: build-compiler
     runs-on: windows-latest
     env:
-      NODE_VERSION: '20.x'
+      NODE_VERSION: '22.x'
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
@@ -284,12 +355,13 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
     env:
-      NODE_VERSION: '20.x'
+      NODE_VERSION: '22.x'
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}
       FORCE_COLOR: '1'
     needs:
       - build-linux
+      - build-linux-arm64
       - build-macos
       - build-windows
     steps:
@@ -309,11 +381,16 @@ jobs:
         with:
           name: Linux image
           path: packages/google-closure-compiler-linux/
+      - name: Download Linux arm64 image
+        uses: actions/download-artifact@v4
+        with:
+          name: Linux arm64 image
+          path: packages/google-closure-compiler-linux-arm64/
       - name: Download MacOS image
         uses: actions/download-artifact@v4
         with:
           name: MacOS image
-          path: packages/google-closure-compiler-osx/
+          path: packages/google-closure-compiler-macos/
       - name: Download Windows image
         uses: actions/download-artifact@v4
         with:
@@ -327,7 +404,8 @@ jobs:
       - name: Mark binaries executable
         run: |
           chmod 755 packages/google-closure-compiler-linux/compiler
-          chmod 755 packages/google-closure-compiler-osx/compiler
+          chmod 755 packages/google-closure-compiler-linux-arm64/compiler
+          chmod 755 packages/google-closure-compiler-macos/compiler
           chmod 755 packages/google-closure-compiler-windows/compiler.exe
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV

@@ -28,7 +28,7 @@ const runCommand = require('../../build-scripts/run-command');
 
 if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
   process.stdout.write(`  ${DIM}google-closure-compiler-linux binary already exists${RESET}\n`);
-} else if (process.platform !== 'linux' || ['x86', 'x64'].includes(process.arch)) {
+} else if (process.platform !== 'linux' || !['x32', 'x64'].includes(process.arch)) {
   process.stdout.write(`  ${DIM}google-closure-compiler-linux build wrong platform${RESET}\n`);
 } else {
   process.stdout.write(`  ${DIM}google-closure-compiler-linux building image${RESET}\n`);

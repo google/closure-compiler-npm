@@ -6,7 +6,8 @@
     "packages": [
       "packages/google-closure-compiler-java",
       "packages/google-closure-compiler-linux",
-      "packages/google-closure-compiler-osx",
+      "packages/google-closure-compiler-linux-arm64",
+      "packages/google-closure-compiler-macos",
       "packages/google-closure-compiler-windows",
       "packages/google-closure-compiler"
     ],

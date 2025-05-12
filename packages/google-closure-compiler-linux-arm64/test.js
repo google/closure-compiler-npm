@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Copyright 2018 The Closure Compiler Authors.
+ * Copyright 2025 The Closure Compiler Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ const {spawn} = require('child_process');
 const nativeImagePath = require('./');
 const {RED, GREEN, DIM, RESET} = require('../../build-scripts/colors');
 
-process.stdout.write('google-closure-compiler-linux\n');
-if (process.platform !== 'linux' || !['x64','x32'].includes(process.arch)) {
+process.stdout.write('google-closure-compiler-linux-arm64\n');
+if (process.platform !== 'linux' || process.arch !== 'arm64') {
   process.stdout.write(`  ${DIM}skipping tests - incorrect platform${RESET}\n`);
 } else if (fs.existsSync(nativeImagePath)) {
   process.stdout.write(`  ${GREEN}✓${RESET} ${DIM}compiler binary exists${RESET}\n`);

@@ -63,7 +63,7 @@ jobs:
         # unset ANDROID_HOME to prevent bazel from trying to use the Android SDK
         run: unset ANDROID_HOME && ./build-scripts/build-compiler.js
       - name: Tests
-        run: node_modules/.bin/mocha --colors
+        run: yarn test --colors=always
       - name: Upload contrib folder
         uses: actions/upload-artifact@v4
         with:

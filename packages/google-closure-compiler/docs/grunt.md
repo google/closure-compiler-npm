@@ -6,7 +6,7 @@ Task targets, files and options may be specified according to the grunt
 Include the plugin in your Gruntfile.js:
 
 ```js
-import {grunt as gruntPlugin} from 'google-closure-compiler';
+import {CONTRIB_PATH, grunt as gruntPlugin} from 'google-closure-compiler';
 
 gruntPlugin(grunt, {
   platform: ['native', 'java'],
@@ -39,6 +39,8 @@ grunt.initConfig({
         'dest/output.min.js': ['src/js/**/*.js']
       },
       options: {
+        js: '/node_modules/google-closure-library/**.js',
+        externs: `${CONTRIB_PATH}/externs/jquery-1.9.js`,
         compilation_level: 'SIMPLE',
         language_in: 'ECMASCRIPT5_STRICT',
         create_source_map: 'dest/output.min.js.map',

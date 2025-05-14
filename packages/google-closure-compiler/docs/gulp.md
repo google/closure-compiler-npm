@@ -88,7 +88,19 @@ be allocated. Both the grunt and gulp plugins support this.
 ```js
 import {gulp as closureCompiler} from 'google-closure-compiler';
 
-closureCompiler({
-  extraArguments: ['-Xms2048m']
+gulp.task('js-compile', function () {
+  return gulp.src('./src/js/**/*.js', {base: './'})
+      .pipe(closureCompiler({
+        compilation_level: 'SIMPLE',
+        warning_level: 'VERBOSE',
+        language_in: 'ECMASCRIPT6_STRICT',
+        language_out: 'ECMASCRIPT5_STRICT',
+        output_wrapper: '(function(){\n%output%\n}).call(this)',
+        js_output_file: 'output.min.js'
+      }, {
+        extraArguments: ['-Xms2048m']
+      }))
+      .pipe(gulp.dest('./dist/js'));
 });
+
 ```

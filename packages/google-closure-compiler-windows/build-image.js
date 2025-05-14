@@ -22,9 +22,11 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import {fileURLToPath, URL} from 'node:url';
 import chalk from 'chalk';
 import runCommand from '../../build-scripts/run-command.js';
 
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const dimWhite = (text) => chalk.dim(chalk.white(text));
 
 // The windows sdk set env command messes with colors, so reset the console back to default

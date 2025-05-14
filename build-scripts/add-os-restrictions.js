@@ -24,6 +24,9 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import {fileURLToPath, URL} from 'node:url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 // Maps of the os marketing name to the platform name used in package.json os restriction fields
 const osRestrictions = new Map([

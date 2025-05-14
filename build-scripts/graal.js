@@ -22,7 +22,10 @@
  */
 
 import path from 'node:path';
+import {fileURLToPath, URL} from 'node:url';
 import runCommand from './run-command.js';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 // This script should catch and handle all rejected promises.
 // If it ever fails to do so, report that and exit immediately.

@@ -30,7 +30,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const dimWhite = (text) => chalk.dim(chalk.white(text));
 
 // The windows sdk set env command messes with colors, so reset the console back to default
-process.stdout.write(reset(''));
+process.stdout.write(chalk.reset(''));
 
 if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
   process.stdout.write(dimWhite(`  google-closure-compiler-windows binary already exists\n`));

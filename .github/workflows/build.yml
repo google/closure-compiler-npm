@@ -149,7 +149,7 @@ jobs:
           yarn run build
           upx compiler
       - name: Tests
-        run: yarn workspaces run test --colors
+        run: yarn workspaces run test --color
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -225,7 +225,7 @@ jobs:
           yarn run build
           upx compiler
       - name: Tests
-        run: yarn workspaces run test --colors
+        run: yarn workspaces run test --color
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -296,7 +296,7 @@ jobs:
           yarn run build
 #          upx compiler
       - name: Tests
-        run: yarn workspaces run test --colors
+        run: yarn workspaces run test --color
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -367,7 +367,7 @@ jobs:
         shell: cmd
         run: |
           echo "Running Tests"
-          yarn workspaces run test --colors
+          yarn workspaces run test --color
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

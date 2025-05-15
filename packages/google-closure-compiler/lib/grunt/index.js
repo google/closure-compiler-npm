@@ -85,7 +85,6 @@ export default (grunt, pluginOptions) => {
 
     return new Promise((resolve, reject) => {
       let stream;
-      const args = {};
       let gulpOpts = {
         ...gulpCompilerOptions,
         streamMode: 'IN',

@@ -24,9 +24,6 @@ jobs:
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       FORCE_COLOR: '1'
     steps:
-      - name: Switch Commit
-        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
-        if: ${{ inputs.release-tag != '' }}
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -46,6 +43,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+          ref: ${{ inputs.release-tag || '' }}
       - name: Fetch submodule tags
         working-directory: compiler
         run: git fetch --tags https://github.com/google/closure-compiler.git
@@ -99,9 +97,6 @@ jobs:
       NODE_VERSION: '20.x'
       FORCE_COLOR: '1'
     steps:
-      - name: Switch Commit
-        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
-        if: ${{ inputs.release-tag != '' }}
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -110,6 +105,8 @@ jobs:
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
@@ -178,9 +175,6 @@ jobs:
       NODE_VERSION: '20.x'
       FORCE_COLOR: '1'
     steps:
-      - name: Switch Commit
-        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
-        if: ${{ inputs.release-tag != '' }}
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -189,6 +183,8 @@ jobs:
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
@@ -255,9 +251,6 @@ jobs:
       NODE_VERSION: '22.x'
       FORCE_COLOR: '1'
     steps:
-      - name: Switch Commit
-        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
-        if: ${{ inputs.release-tag != '' }}
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -266,6 +259,8 @@ jobs:
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
@@ -329,9 +324,6 @@ jobs:
       NODE_VERSION: '22.x'
       FORCE_COLOR: '1'
     steps:
-      - name: Switch Commit
-        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
-        if: ${{ inputs.release-tag != '' }}
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -340,6 +332,8 @@ jobs:
           java-package: jdk
           architecture: x64
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
@@ -410,10 +404,9 @@ jobs:
       - build-macos
       - build-windows
     steps:
-      - name: Switch Commit
-        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
-        if: ${{ inputs.release-tag != '' }}
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:

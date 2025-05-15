@@ -14,29 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 /**
  * @fileoverview
  *
  * Check to see if the graal native image for this platform should be built
  */
 
-const fs = require('fs');
-const path = require('path');
-const {DIM, RESET} = require('../../build-scripts/colors');
-const runCommand = require('../../build-scripts/run-command');
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath, URL} from 'node:url';
+import chalk from 'chalk';
+import runCommand from '../../build-scripts/run-command.js';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const dimWhite = (text) => chalk.dim(chalk.white(text));
 
 // The windows sdk set env command messes with colors, so reset the console back to default
-process.stdout.write(RESET);
+process.stdout.write(chalk.reset(''));
 
 if (fs.existsSync(path.resolve(__dirname, 'compiler'))) {
-  process.stdout.write(`  ${DIM}google-closure-compiler-windows binary already exists${RESET}\n`);
+  process.stdout.write(dimWhite(`  google-closure-compiler-windows binary already exists\n`));
   process.exit(0);
 } else if (process.platform !== 'win32') {
-  process.stdout.write(`  ${DIM}google-closure-compiler-windows build wrong platform${RESET}\n`);
+  process.stdout.write(dimWhite(`  google-closure-compiler-windows build wrong platform\n`));
   process.exit(0);
 } else {
-  process.stdout.write(`  ${DIM}google-closure-compiler-windows building image${RESET}\n`);
+  process.stdout.write(dimWhite(`  google-closure-compiler-windows building image\n`));
   runCommand('node', ['../../build-scripts/graal.js'])
       .then(({exitCode}) => {
         process.exitCode = exitCode || 0;

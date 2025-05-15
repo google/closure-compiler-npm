@@ -14,5 +14,8 @@
  * limitations under the License.
  */
 
-const path = require('path');
-module.exports = path.resolve(__dirname, 'compiler.exe');
+import path from 'node:path';
+import { fileURLToPath, URL } from 'node:url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+export default path.resolve(__dirname, 'compiler.exe');

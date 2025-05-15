@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 /**
  * @fileoverview
  *
@@ -22,8 +21,11 @@
  * Intended to be run with a working directory of the intended package.
  */
 
-const path = require('path');
-const runCommand = require('./run-command');
+import path from 'node:path';
+import {fileURLToPath, URL} from 'node:url';
+import runCommand from './run-command.js';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 // This script should catch and handle all rejected promises.
 // If it ever fails to do so, report that and exit immediately.

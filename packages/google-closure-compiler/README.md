@@ -84,7 +84,6 @@ The compiler package also includes build tool plugins for [Grunt](http://gruntjs
 
  * [Grunt Plugin](https://github.com/google/closure-compiler-npm/blob/master/packages/google-closure-compiler/docs/grunt.md)
  * [Gulp Plugin](https://github.com/google/closure-compiler-npm/blob/master/packages/google-closure-compiler/docs/gulp.md)
- * [Webpack Plugin](https://github.com/webpack-contrib/closure-webpack-plugin)
 
 ### Community Maintained Plugins
 Additionally, community members have created plugins leveraging this library.
@@ -97,35 +96,11 @@ Additionally, community members have created plugins leveraging this library.
 Override the path before first use.
 
 ```
-const Compiler = require('google-closure-compiler');
-
-Compiler.prototype.javaPath = '/node_modules/MODULE_NAME/jre/jre1.8.0_131.jre/Contents/Home/bin/java';
+import Compiler from 'google-closure-compiler';
 
 const compiler = new Compiler({args});
+compiler.javaPath = '/node_modules/MODULE_NAME/jre/jre1.8.0_131.jre/Contents/Home/bin/java';
 ```
-
-### Running the compiler using nailgun
-*Note: nailgun users are encouraged to try the native binary versions where available.*
-
-This gets around the long startup time of Google Closure Compiler using
-[Nailgun](https://github.com/facebook/nailgun), which runs a single java process in the background
-and keeps all of the classes loaded.
-
-First you need to install closure-gun by running the following command.
-```bash
-npm install closure-gun
-```
-
-Then point the package to use closure-gun rather than the JDK.
-
-```js
-const compilerPackage = require('google-closure-compiler');
-
-compilerPackage.compiler.JAR_PATH = undefined;
-compilerPackage.compiler.prototype.javaPath = './node_modules/.bin/closure-gun'
-```
-
-Note that when using gulp, Only invocations without gulp.src work with nailgun.
 
 ## Native Node Usage (for Plugin Authors)
 A low-level node class is included to facilitate spawning the compiler jar as a process from Node.
@@ -134,10 +109,10 @@ In addition, it exposes a static property with the path to the compiler jar file
 ### Java Version
 
 ```js
-const ClosureCompiler = require('google-closure-compiler').compiler;
+import ClosureCompiler, {COMPILER_PATH, CONTRIB_PATH} from 'google-closure-compiler';
 
-console.log(ClosureCompiler.COMPILER_PATH); // absolute path to the compiler jar
-console.log(ClosureCompiler.CONTRIB_PATH); // absolute path to the contrib folder which contain externs
+console.log(COMPILER_PATH); // absolute path to the compiler jar
+console.log(CONTRIB_PATH); // absolute path to the contrib folder which contain externs
 
 const closureCompiler = new ClosureCompiler({
   js: 'file-one.js',

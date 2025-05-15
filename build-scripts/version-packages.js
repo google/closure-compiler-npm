@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-'use strict';
 /**
  * @fileoverview
  *
@@ -23,10 +22,12 @@
  * Update any dependencies on other packages in this project.
  */
 
-const fs = require('fs');
-const path = require('path');
-const childProcess = require('child_process');
+import childProcess from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath, URL} from 'node:url';
 
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const newVersion = process.env.npm_package_version;
 const packagesDirPath = path.resolve(__dirname, '../packages');
 const packages = fs.readdirSync(packagesDirPath);

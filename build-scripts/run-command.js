@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
-
-const {spawn} = require('child_process');
+import {spawn} from 'node:child_process';
 
 /**
  * Execute a shell command as a promise which resolves to an Array of the form
@@ -28,7 +26,7 @@ const {spawn} = require('child_process');
  * @param {Object=} spawnOpts
  * @return {!Promise<!{stdout: string, stderr: string, exitCode: number}>}
  */
-function runCommand(cmd, args, spawnOpts) {
+export default function(cmd, args, spawnOpts) {
   if (!spawnOpts && args && !Array.isArray(args)) {
     spawnOpts = args;
     args = undefined;
@@ -41,9 +39,10 @@ function runCommand(cmd, args, spawnOpts) {
     args = commandParts.slice(1);
   }
   // child process should inherit stdin/out/err from this process unless spawnOpts says otherwise
-  spawnOpts = Object.assign({}, {
-    stdio: 'inherit'
-  }, spawnOpts);
+  spawnOpts = {
+    stdio: 'inherit',
+    ...spawnOpts,
+  };
 
   let externalProcess;
   const promise = new Promise((resolve, reject) => {
@@ -51,7 +50,7 @@ function runCommand(cmd, args, spawnOpts) {
     let stderr = '';
 
     externalProcess = spawn(cmd, args, spawnOpts);
-    externalProcess.on('error', err => {
+    externalProcess.on('error', (err) => {
       if (!err) {
         err = new Error(stderr || 'external process error');
       } else if (!(err instanceof Error)) {
@@ -62,7 +61,7 @@ function runCommand(cmd, args, spawnOpts) {
       err.exitCode = 1;
       reject(err);
     });
-    externalProcess.on('close', exitCode => {
+    externalProcess.on('close', (exitCode) => {
       if (exitCode != 0) {
         const err = new Error(`non-zero exit code ${exitCode}`);
         err.stdout = stdout;
@@ -73,12 +72,12 @@ function runCommand(cmd, args, spawnOpts) {
       resolve({stdout, stderr, exitCode});
     });
     if (externalProcess.stdout) {
-      externalProcess.stdout.on('data', data => {
+      externalProcess.stdout.on('data', (data) => {
         stdout += data.toString();
       });
     }
     if (externalProcess.stderr) {
-      externalProcess.stderr.on('data', data => {
+      externalProcess.stderr.on('data', (data) => {
         stderr += data.toString();
       });
     }
@@ -86,5 +85,3 @@ function runCommand(cmd, args, spawnOpts) {
   promise.childProcess = externalProcess;
   return promise;
 }
-
-module.exports = runCommand;

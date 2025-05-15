@@ -20,11 +20,10 @@
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
 
-'use strict';
+import {createRequire} from 'node:module';
+import runCommand from '../../../build-scripts/run-command.js';
 
-const should = require('should');
-const runCommand = require('../../../build-scripts/run-command');
-require('mocha');
+const require = createRequire(import.meta.url);
 
 const javaOnly = process.argv.find((arg) => arg == '--java-only');
 const platforms = ['java'];
@@ -32,130 +31,96 @@ if (!javaOnly) {
   platforms.push('native');
 }
 
-process.on('unhandledRejection', e => { throw e; });
+process.on('unhandledRejection', (e) => { throw e; });
 
-describe('command line interface', function() {
-  this.timeout(45000);
-  this.slow(10000);
-
+describe('command line interface', () => {
   let cliPath = require.resolve('../cli.js');
   if (process.platform === 'win32') {
     cliPath = `node ${cliPath}`;
   }
 
   if (!javaOnly) {
-    it('chooses an acceptable platform automatically', done => {
-      function complete(arg) {
-        should(arg).not.be.instanceof(Error);
-        const {stdout, sderr, exitCode} = arg;
-        should(exitCode).equal(0);
-        should(stdout.length).above(0);
-        done();
-      }
-
-      runCommand(`${cliPath} --js test/fixtures/one.js`, {stdio: 'pipe'})
-          .then(complete)
-          .catch(complete);
+    it('chooses an acceptable platform automatically', async () => {
+      const retVal = await runCommand(`${cliPath} --js test/fixtures/one.js`, {stdio: 'pipe'});
+      expect(retVal).not.toBeInstanceOf(Error);
+      const {stdout, exitCode} = retVal;
+      expect(exitCode).toBe(0);
+      expect(stdout.length).toBeGreaterThan(0);
     });
   }
 
-  platforms.forEach(platform => {
-    describe(`${platform} version`, function() {
-      it('--help flag', done => {
-        function complete(arg) {
-          should(arg).not.be.instanceof(Error);
-          const {stdout, sderr, exitCode} = arg;
-          should(stdout.length).above(0);
-          should(exitCode).equal(0);
-          done();
-        }
-
-        runCommand(`${cliPath} --platform=${platform} --help`, {stdio: 'pipe'})
-          .then(complete)
-          .catch(complete);
+  platforms.forEach((platform) => {
+    describe(`${platform} version`, () => {
+      it('--help flag', async () => {
+        const retVal =
+            await runCommand(`${cliPath} --platform=${platform} --help`, {stdio: 'pipe'});
+        expect(retVal).not.toBeInstanceOf(Error);
+        const {stdout, exitCode} = retVal;
+        expect(exitCode).toBe(0);
+        expect(stdout.length).toBeGreaterThan(0);
       });
 
-      it('invalid flag', done => {
-        function complete(arg) {
-          should(arg).be.instanceof(Error);
-          should.exist(arg.exitCode);
-          should(arg.exitCode).not.equal(0);
-          done();
+      it('invalid flag', async () => {
+        try {
+          await runCommand(`${cliPath} --platform=${platform} --foo=bar --js=test/fixtures/one.js`, {stdio: 'pipe'});
+          fail('should have thrown');
+        } catch (err) {
+          expect(err).toBeInstanceOf(Error);
+          const {exitCode} = err;
+          expect(exitCode).toBeDefined();
+          expect(exitCode).not.toBe(0);
         }
-
-        runCommand(`${cliPath} --platform=${platform} --foo=bar --js=test/fixtures/one.js`, {stdio: 'pipe'})
-          .then(complete)
-          .catch(complete);
       });
 
-      it('compile successfully', done => {
-        function complete(arg) {
-          if (arg instanceof Error) {
-            console.error(arg);
-          }
-          should(arg).not.be.instanceof(Error);
-          const {stdout, sderr, exitCode} = arg;
-          should(exitCode).equal(0);
-          should(stdout.length).above(0);
-          should(stdout.indexOf("console.log")).above(-1);
-          done();
+      it('compile successfully', async () => {
+        const retVal =
+            await runCommand(`${cliPath} --platform=${platform} --js=test/fixtures/one.js --use_types_for_optimization`, {stdio: 'pipe'});
+        if (retVal instanceof Error) {
+          console.error(retVal);
         }
-
-        runCommand(`${cliPath} --platform=${platform} --js=test/fixtures/one.js --use_types_for_optimization`, {stdio: 'pipe'})
-          .then(complete)
-          .catch(complete);
+        expect(retVal).not.toBeInstanceOf(Error);
+        const {stdout, exitCode} = retVal;
+        expect(exitCode).toBe(0);
+        expect(stdout.length).toBeGreaterThan(0);
+        expect(stdout.indexOf('console.log')).toBeGreaterThan(-1);
       });
 
-      it('accept piped input', done => {
-        function complete(arg) {
-          should(arg).not.be.instanceof(Error);
-          const {stdout, sderr, exitCode} = arg;
-          should(exitCode).equal(0);
-          should(stdout.length).above(0);
-          should(stdout.indexOf('alert("hello world")')).above(-1);
-          done();
-        }
-
+      it('accept piped input', async () => {
         const cmd = runCommand(`${cliPath} --platform=${platform}`, {stdio: 'pipe'});
-        cmd
-          .then(complete)
-          .catch(complete);
-
         cmd.childProcess.stdin.setEncoding('utf8');
         cmd.childProcess.stdin.end('alert("hello world")');
+
+        const retVal = await cmd;
+        expect(retVal).not.toBeInstanceOf(Error);
+        const {exitCode, stdout} = retVal;
+        expect(exitCode).toBe(0);
+        expect(stdout.length).toBeGreaterThan(0);
+        expect(stdout.indexOf('alert("hello world")')).toBeGreaterThan(-1);
       });
 
-      it('read input js files', done => {
-        function complete(arg) {
-          should(arg).not.be.instanceof(Error);
-          const {stdout, sderr, exitCode} = arg;
-          should(exitCode).equal(0);
-          should(stdout.length).above(0);
-          should(stdout.indexOf('console.log')).above(-1);
-          done();
-        }
-
-        runCommand(`${cliPath} --platform=${platform} --js=test/fixtures/one.js`, {stdio: 'pipe'})
-          .then(complete, complete);
+      it('read input js files', async () => {
+        const retVal = await runCommand(`${cliPath} --platform=${platform} --js=test/fixtures/one.js`, {stdio: 'pipe'});
+        expect(retVal).not.toBeInstanceOf(Error);
+        const {stdout, exitCode} = retVal;
+        expect(exitCode).toBe(0);
+        expect(stdout.length).toBeGreaterThan(0);
+        expect(stdout.indexOf('console.log')).toBeGreaterThan(-1);
       });
 
-      it('read extern files', done => {
-        function complete(arg) {
-          should(arg).not.be.instanceof(Error);
-          const {stdout, sderr, exitCode} = arg;
-          should(exitCode).equal(0);
-          should(stdout.length).above(0);
-          should(stdout.indexOf('externalMethod')).above(-1);
-          done();
-        }
-
+      it('read extern files', async () => {
         const cmd = runCommand(
             `${cliPath} --platform=${platform} --warning_level=VERBOSE --externs=test/fixtures/extern.js`,
-            {stdio: 'pipe'});
-        cmd.then(complete, complete);
-
+            {stdio: 'pipe'},
+        );
         cmd.childProcess.stdin.setEncoding('utf8');
         cmd.childProcess.stdin.end('externalMethod("foo")');
+
+        const retVal = await cmd;
+        expect(retVal).not.toBeInstanceOf(Error);
+        const {stdout, exitCode} = retVal;
+        expect(exitCode).toBe(0);
+        expect(stdout.length).toBeGreaterThan(0);
+        expect(stdout.indexOf('externalMethod')).toBeGreaterThan(-1);
       });
     });
   });

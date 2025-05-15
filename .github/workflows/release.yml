@@ -49,7 +49,7 @@ jobs:
       - name: Install packages
         run: yarn install --colors=always
       - name: Build jar
-        run: ./build-scripts/build_compiler.js
+        run: ./build-scripts/build-compiler.js
       - name: Create release commit and tag
         run: |
           git config --global user.email "github-bot@github.com"

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-'use strict';
 /**
  * @fileoverview
  *
@@ -23,11 +22,12 @@
  * Packages can only be published after all their dependencies have been successfully published.
  */
 
-const fs = require('fs/promises');
-const graphlib = require('graphlib');
-const path = require('path');
-const runCommand = require('./run-command');
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import graphlib from 'graphlib';
+import {fileURLToPath, URL} from 'node:url';
 
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const packagesDirPath = path.resolve(__dirname, '../packages');
 const isNightlyVersion = process.env.COMPILER_NIGHTLY === 'true';
 

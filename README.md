@@ -21,7 +21,8 @@ Bare bones distributions intended for developers who want to author against a sp
 
  - Java build: [google-closure-compiler-java](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-java)
  - Native Linux build: [google-closure-compiler-linux](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-linux)
- - Native OSX build: [google-closure-compiler-osx](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-osx)
+ - Native Linux (arm64) build: [google-closure-compiler-linux-arm64](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-linux-arm64)
+ - Native MacOS build: [google-closure-compiler-macos](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-macos)
  - Native Windows build: [google-closure-compiler-windows](https://github.com/google/closure-compiler-npm/tree/master/packages/google-closure-compiler-windows)
 
 ## License

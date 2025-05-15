@@ -14,4 +14,8 @@
  * limitations under the License.
  */
 
-module.exports = require.resolve('./compiler.jar');
+import path from 'node:path';
+import { fileURLToPath, URL } from 'node:url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+export default path.resolve(__dirname, 'compiler.jar');

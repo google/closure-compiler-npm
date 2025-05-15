@@ -29,12 +29,15 @@
  * commit. This is for regular integration testing of the compiler with the various tests in this repo's packages.
  * In this case the compiler will be built as a SNAPSHOT.
  */
-"use strict";
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath, URL} from 'node:url';
+import ncp from 'ncp';
+import semver from 'semver';
+import runCommand from './run-command.js';
 
-const ncp = require("ncp");
-const runCommand = require("./run-command");
-const packageInfo = require("../package.json");
-const semver = require("semver");
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const packageInfo = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8'));
 
 /**
  * The compiler version that will be built.
@@ -44,7 +47,7 @@ const semver = require("semver");
  *
  * @type {string}
  */
-const compilerVersion = process.env.COMPILER_NIGHTLY == 'true'
+const compilerVersion = process.env.COMPILER_NIGHTLY === 'true'
     ? 'SNAPSHOT-1.0'
     : `v${semver.major(packageInfo.version)}`;
 

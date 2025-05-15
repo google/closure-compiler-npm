@@ -21,30 +21,42 @@
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
 
-'use strict';
-
-function json_file(src, path, source_map) {
-  const filejson = {
-    src: src
-  };
-
-  if (path) {
-    filejson.path = path;
-  }
-
-  if (source_map) {
-    filejson.sourceMap = source_map;
-  }
-
-  return filejson;
-}
+import path from 'node:path';
 
 /**
- * @param {Array<Object>} files
+ * @param {string} src
+ * @param {string=} path
+ * @param {string=} sourceMap
+ * @return {{
+ *   src: string,
+ *   path: string|undefined,
+ *   sourceMap: string|undefined,
+ * }}
+ */
+const json_file = (src, path, sourceMap) => {
+  return {
+    src: src,
+    ...(path !== undefined ? {path} : undefined),
+    ...(sourceMap !== undefined ? {sourceMap} : undefined),
+  };
+};
+
+/**
+ * @param {!Array<!{
+ *   src: string,
+ *   path: string|undefined,
+ *   sourceMap: string|undefined,
+ * }>} files
  * @return {string}
  */
-module.exports = files => {
-  const path = require('path');
+export default (files) => {
+  /**
+   * @type {!Array<!{
+   *   src: string,
+   *   path: string|undefined,
+   *   sourceMap: string|undefined,
+   * }>}
+   */
   const jsonFiles = [];
   for (let i = 0; i < files.length; i++) {
     jsonFiles.push(

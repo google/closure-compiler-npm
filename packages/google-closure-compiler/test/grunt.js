@@ -19,37 +19,21 @@
  *
  * @author Chad Killingsworth (chadkillingsworth@gmail.com)
  */
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath, URL} from 'node:url';
+import ClosureCompiler from '../lib/node/index.js';
+import gruntPlugin from '../lib/grunt/index.js';
 
-'use strict';
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-const should = require('should');
-const fs = require('fs');
-const path = require('path');
-const ClosureCompiler = require('../lib/node/closure-compiler');
-require('mocha');
-
-process.on('unhandledRejection', e => { throw e; });
+process.on('unhandledRejection', (e) => { throw e; });
 
 const javaOnly = process.argv.find((arg) => arg == '--java-only');
 const platforms = ['java'];
 if (!javaOnly) {
   platforms.push('native');
 }
-
-const assertNoError = new should.Assertion('grunt');
-assertNoError.params = {
-  operator: 'should not fail with an error',
-};
-
-const assertError = new should.Assertion('grunt');
-assertError.params = {
-  operator: 'should have failed with an error',
-};
-
-const assertNoWarning = new should.Assertion('grunt');
-assertNoWarning.params = {
-  operator: 'should not log a warning',
-};
 
 /**
  * Grunt plugins are very hard to test. In this case we're passing a mock grunt object
@@ -91,9 +75,12 @@ const mockGrunt = {
 
 function gruntTaskOptions(options) {
   options = options || {};
-  return function(defaults) {
-    const baseOpts = JSON.parse(JSON.stringify(defaults || {}));
-    return Object.assign(baseOpts, options);
+  return (defaults)  => {
+    const baseOpts = structuredClone(defaults || {});
+    return {
+      ...baseOpts,
+      ...options,
+    };
   };
 }
 
@@ -109,52 +96,41 @@ function getGruntTaskObject(fileObj, options, asyncDone) {
   };
 }
 
-describe('grunt-google-closure-compiler', function() {
+describe('grunt-google-closure-compiler', () => {
   let originalCompilerRunMethod;
   let platformUtilized;
 
-  before(() => {
-    originalCompilerRunMethod = Object.getOwnPropertyDescriptor(ClosureCompiler.prototype, 'run');
-    Object.defineProperty(ClosureCompiler.prototype, 'run', {
-      value: function(...args) {
-        const retVal = originalCompilerRunMethod.value.apply(this, args);
-        platformUtilized = /^java/.test(this.getFullCommand()) ? 'java' : 'native';
-        return retVal;
-      },
-      writable: true,
-      enumerable: false,
-      configurable: true
-    });
+  beforeEach(() => {
+    platformUtilized = undefined;
+    originalCompilerRunMethod = ClosureCompiler.prototype.run;
+    spyOn(ClosureCompiler.prototype, 'run')
+        .and.callFake(function(...args) {
+          const retVal = originalCompilerRunMethod.apply(this, args);
+          platformUtilized = /^java/.test(this.getFullCommand()) ? 'java' : 'native';
+          return retVal;
+        });
   });
 
-  after(() => {
-    Object.defineProperty(ClosureCompiler.prototype, 'run', originalCompilerRunMethod);
-  });
-
-  platforms.forEach(platform => {
-    describe(`${platform} version`, function() {
+  platforms.forEach((platform) => {
+    describe(`${platform} version`, () => {
       let closureCompiler;
-      this.slow(10000);
-      this.timeout(45000);
-
       beforeEach(() => {
-        closureCompiler = require('../').grunt(mockGrunt, {platform});
+        closureCompiler = gruntPlugin(mockGrunt, {platform});
       });
 
-      afterEach(() => {
+      const ensureCorrectPlatformUtilized = () => {
         if (platformUtilized) {
-          should.equal(platform, platformUtilized);
+          expect(platform).toBe(platformUtilized);
         }
-        platformUtilized = undefined;
-      });
+      };
 
-      it('should emit an error for invalid options', function(done) {
-        this.retries(3); // this test can be flaky
+      it('should emit an error for invalid options', (done) => {
         let didFail = false;
         let gruntWarning;
 
+        debugger;
         let taskObj;
-        const completed = new Promise(resolve => {
+        const completed = new Promise((resolve) => {
           taskObj = getGruntTaskObject([{
             dest: 'unused.js',
             src: [__dirname + '/fixtures/one.js']
@@ -165,17 +141,17 @@ describe('grunt-google-closure-compiler', function() {
           });
         });
 
-        const logWarning = new Promise(resolve => {
-          mockGrunt.log.warn = msg => {
+        const logWarning = new Promise((resolve) => {
+          mockGrunt.log.warn = (msg) => {
             gruntWarning = msg;
             console.warn(gruntWarning);
             resolve();
           };
         });
 
-        const failWarning = new Promise(resolve => {
+        const failWarning = new Promise((resolve) => {
           mockGrunt.fail.warn = (err, code) => {
-            should(err).startWith('Compilation error');
+            expect(err).toMatch(/^Compilation error/);
             console.warn(err);
             didFail = true;
             resolve();
@@ -183,24 +159,28 @@ describe('grunt-google-closure-compiler', function() {
         });
 
         Promise.all([completed, logWarning, failWarning]).then(() => {
-          should(didFail).be.eql(true);
-          should(gruntWarning).not.be.eql(undefined);
+          expect(didFail).toBe(true);
+          expect(gruntWarning).toBeDefined();
+          ensureCorrectPlatformUtilized();
           done();
+        }).catch((err) => {
+          fail('should not fail');
         });
 
         closureCompiler.call(taskObj);
       });
 
-      it('should warn if files cannot be found', function (done) {
+      it('should warn if files cannot be found', (done) => {
         function taskDone() {
-          should(gruntWarnings.length).be.eql(2);
-          gruntWarnings[0].should.endWith('not found');
-          gruntWarnings[1].should.endWith('not written because src files were empty');
+          expect(gruntWarnings.length).toBe(2);
+          expect(gruntWarnings[0]).toMatch(/not found$/);
+          expect(gruntWarnings[1]).toMatch(/not written because src files were empty$/);
+          ensureCorrectPlatformUtilized();
           done();
         }
 
         let gruntWarnings = [];
-        mockGrunt.log.warn = msg => {
+        mockGrunt.log.warn = (msg) => {
           gruntWarnings.push(msg);
         };
 
@@ -220,29 +200,27 @@ describe('grunt-google-closure-compiler', function() {
         closureCompiler.call(taskObj);
       });
 
-      it('should run once for each destination', function (done) {
-        this.timeout(45000);
-        this.slow(10000);
-
+      it('should run once for each destination', (done) => {
         const fileOneDest = 'test/out/one.js';
         const fileTwoDest = 'test/out/two.js';
 
         function taskDone() {
           const fileOne = fs.statSync(fileOneDest);
-          should(fileOne.isFile()).be.eql(true);
+          expect(fileOne.isFile()).toBe(true);
           fs.unlinkSync(fileOneDest);
 
           const fileTwo = fs.statSync(fileTwoDest);
-          should(fileTwo.isFile()).be.eql(true);
+          expect(fileTwo.isFile()).toBe(true);
           fs.unlinkSync(fileTwoDest);
 
           fs.rmdirSync('test/out');
+          ensureCorrectPlatformUtilized();
           done();
         }
 
         mockGrunt.fail.warn = (err, code) => {
           console.error(err);
-          assertNoError.fail();
+          fail('should not caused an error');
           taskDone();
         };
 
@@ -258,15 +236,12 @@ describe('grunt-google-closure-compiler', function() {
         closureCompiler.call(taskObj);
       });
 
-      it('should run when grunt provides no files', function (done) {
-        this.timeout(30000);
-        this.slow(10000);
-
+      it('should run when grunt provides no files', (done) => {
         const fileOneDest = 'test/out/one.js';
 
         function taskDone() {
           const fileOne = fs.statSync(fileOneDest);
-          should(fileOne.isFile()).be.eql(true);
+          expect(fileOne.isFile()).toBe(true);
           fs.unlinkSync(fileOneDest);
 
           fs.rmdirSync('test/out');
@@ -274,7 +249,7 @@ describe('grunt-google-closure-compiler', function() {
         }
 
         mockGrunt.fail.warn = (err, code) => {
-          assertNoError.fail();
+          fail('should not caused an error');
           taskDone();
         };
 
@@ -287,25 +262,24 @@ describe('grunt-google-closure-compiler', function() {
         });
 
         closureCompiler.call(taskObj);
+        ensureCorrectPlatformUtilized();
       });
 
-      it('should support an arguments array', function (done) {
-        this.timeout(30000);
-        this.slow(10000);
-
+      it('should support an arguments array', (done) => {
         const fileOneDest = 'test/out/one.js';
 
         function taskDone() {
           const fileOne = fs.statSync(fileOneDest);
-          should(fileOne.isFile()).be.eql(true);
+          expect(fileOne.isFile()).toBe(true);
           fs.unlinkSync(fileOneDest);
 
           fs.rmdirSync('test/out');
+          ensureCorrectPlatformUtilized();
           done();
         }
 
         mockGrunt.fail.warn = (err, code) => {
-          assertNoError.fail();
+          fail('should not caused an error');
           taskDone();
         };
 

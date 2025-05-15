@@ -15,58 +15,59 @@
  * limitations under the License.
  */
 
-const fs = require('fs');
-const path = require('path');
-const {spawn} = require('child_process');
-const nativeImagePath = require('./');
-const {RED, GREEN, DIM, RESET} = require('../../build-scripts/colors');
+import {spawn} from 'node:child_process';
+import fs from 'node:fs';
+import chalk from 'chalk';
+import nativeImagePath from './index.js';
+
+const dimWhite = (text) => chalk.dim(chalk.white(text));
 
 process.stdout.write('google-closure-compiler-windows\n');
 if (process.platform !== 'win32') {
-  process.stdout.write(`  ${DIM}skipping tests - incorrect platform${RESET}\n`);
+  process.stdout.write(dimWhite(`  skipping tests - incorrect platform\n`));
 } else if (fs.existsSync(nativeImagePath)) {
-  process.stdout.write(`  ${GREEN}✓${RESET} ${DIM}compiler binary exists${RESET}\n`);
+  process.stdout.write(`  ${chalk.greenBright('✓')} ${dimWhite('compiler binary exists')}\n`);
   new Promise(
       (resolve, reject) => {
         const compilerTest = spawn(
-          nativeImagePath,
+            nativeImagePath,
             ['--version'],
             {stdio: 'inherit'});
-        compilerTest.on('error', err => {
+        compilerTest.on('error', (err) => {
           reject(err);
         });
-        compilerTest.on('close', exitCode => {
+        compilerTest.on('close', (exitCode) => {
           if (exitCode != 0) {
             return reject('non zero exit code');
           }
           process.stdout.write(
-              `  ${GREEN}✓${RESET} ${DIM}compiler version successfully reported${RESET}\n`);
+              `  ${chalk.greenBright('✓')} ${dimWhite('compiler version successfully reported')}\n`);
           resolve();
         });
       })
       .then(() => new Promise((resolve, reject) => {
         const compilerTest = spawn(
-          nativeImagePath,
+            nativeImagePath,
             ['--help'],
             {stdio: 'inherit'});
-        compilerTest.on('error', err => {
+        compilerTest.on('error', (err) => {
           reject(err);
         });
-        compilerTest.on('close', exitCode => {
+        compilerTest.on('close', (exitCode) => {
           if (exitCode != 0) {
             return reject('non zero exit code');
           }
           process.stdout.write(
-              `  ${GREEN}✓${RESET} ${DIM}compiler help successfully reported${RESET}\n`);
+              `  ${chalk.greenBright('✓')} ${dimWhite('compiler help successfully reported')}\n`);
           resolve();
         });
       }))
-      .catch(err => {
+      .catch((err) => {
         process.stderr.write((err || '').toString() + '\n');
-        process.stdout.write(`  ${RED}compiler execution tests failed${RESET}\n`);
+        process.stdout.write(`  ${chalk.red('compiler execution tests failed')}\n`);
         process.exitCode = 1;
       });
 } else {
-  process.stdout.write(`  ${RED}compiler binary does not exist${RESET}\n`);
+  process.stdout.write(`  ${chalk.red('compiler binary does not exist')}\n`);
   process.exitCode = 1;
 }

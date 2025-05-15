@@ -7,7 +7,7 @@ Options are a direct match to the compiler flags without the leading "--".
 ## Basic Configuration Example:
 
 ```js
-const closureCompiler = require('google-closure-compiler').gulp();
+import {gulp as closureCompiler} from 'google-closure-compiler';
 
 gulp.task('js-compile', function () {
   return gulp.src('./src/js/**/*.js', {base: './'})
@@ -35,13 +35,12 @@ compiler. With large source sets this may require a large amount of memory.
 Closure-compiler can natively expand file globs which will greatly alleviate this issue.
 
 ```js
-const compilerPackage = require('google-closure-compiler');
-const closureCompiler = compilerPackage.gulp();
+import {gulp as closureCompiler, CONTRIB_PATH} from 'google-closure-compiler';
 
 gulp.task('js-compile', function () {
   return closureCompiler({
         js: './src/js/**.js',
-        externs: compilerPackage.compiler.CONTRIB_PATH + '/externs/jquery-1.9.js',
+        externs: `${CONTRIB_PATH}/externs/jquery-1.9.js`,
         compilation_level: 'SIMPLE',
         warning_level: 'VERBOSE',
         language_in: 'ECMASCRIPT6_STRICT',
@@ -63,8 +62,8 @@ this behavior.
 The gulp plugin supports gulp sourcemaps.
 
 ```js
-const closureCompiler = require('google-closure-compiler').gulp();
-const sourcemaps = require('gulp-sourcemaps');
+import {gulp as closureCompiler} from 'google-closure-compiler';
+import sourcemaps from 'gulp-sourcemaps';
 
 gulp.task('js-compile', function () {
   return gulp.src('./src/js/**/*.js', {base: './'})
@@ -87,7 +86,21 @@ Some users may wish to pass the java vm extra arguments - such as to specify the
 be allocated. Both the grunt and gulp plugins support this.
 
 ```js
-const closureCompiler = require('google-closure-compiler').gulp({
-  extraArguments: ['-Xms2048m']
+import {gulp as closureCompiler} from 'google-closure-compiler';
+
+gulp.task('js-compile', function () {
+  return gulp.src('./src/js/**/*.js', {base: './'})
+      .pipe(closureCompiler({
+        compilation_level: 'SIMPLE',
+        warning_level: 'VERBOSE',
+        language_in: 'ECMASCRIPT6_STRICT',
+        language_out: 'ECMASCRIPT5_STRICT',
+        output_wrapper: '(function(){\n%output%\n}).call(this)',
+        js_output_file: 'output.min.js'
+      }, {
+        extraArguments: ['-Xms2048m']
+      }))
+      .pipe(gulp.dest('./dist/js'));
 });
+
 ```

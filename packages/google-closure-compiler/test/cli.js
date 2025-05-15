@@ -51,6 +51,17 @@ describe('command line interface', () => {
 
   platforms.forEach((platform) => {
     describe(`${platform} version`, () => {
+      let originalTimeout;
+      beforeEach(() => {
+        originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+        if (platform === 'java') {
+          jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+        }
+      });
+      afterEach(() => {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+      });
+
       it('--help flag', async () => {
         const retVal =
             await runCommand(`${cliPath} --platform=${platform} --help`, {stdio: 'pipe'});

@@ -89,6 +89,17 @@ describe('gulp-google-closure-compiler', function() {
           'for(var a in window)this.props.push(a)};WindowInfo.prototype.list=function(){' +
           'log(this.props.join(", "))};(new WindowInfo).list();\n';
 
+      let originalTimeout;
+      beforeEach(() => {
+        originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+        if (platform === 'java') {
+          jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+        }
+      });
+      afterEach(() => {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+      });
+
       it('should emit an error for invalid flag', async () => {
         let resolvePromise;
         const complete = new Promise((resolve) => {

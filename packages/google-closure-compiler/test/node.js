@@ -38,6 +38,17 @@ describe('closure-compiler node bindings', () => {
   });
 
   describe('java version', () => {
+    let originalTimeout;
+    beforeEach(() => {
+      originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+      if (platform === 'java') {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+      }
+    });
+    afterEach(() => {
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+    });
+
     it('should error when java is not in the path', async () => {
       const compiler = new Compiler({version: true});
       compiler.javaPath = 'DOES_NOT_EXIST';

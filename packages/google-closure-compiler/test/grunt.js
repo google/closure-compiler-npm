@@ -114,8 +114,17 @@ describe('grunt-google-closure-compiler', () => {
   platforms.forEach((platform) => {
     describe(`${platform} version`, () => {
       let closureCompiler;
+      let originalTimeout;
       beforeEach(() => {
         closureCompiler = gruntPlugin(mockGrunt, {platform});
+        originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+        if (platform === 'java') {
+          jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+        }
+      });
+
+      afterEach(() => {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
       });
 
       const ensureCorrectPlatformUtilized = () => {

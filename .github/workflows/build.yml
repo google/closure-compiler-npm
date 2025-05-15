@@ -392,7 +392,7 @@ jobs:
   publish-packages:
     name: Publish Packages
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' }}
     env:
       NODE_VERSION: '22.x'
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}

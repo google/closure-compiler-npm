@@ -22,22 +22,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: adopt-hotspot
-          java-version: 21
-          java-package: jdk
-          architecture: x64
-      - name: Setup Bazelisk
-        uses: bazel-contrib/setup-bazel@0.8.1
-        with:
-          # Avoid downloading Bazel every time.
-          bazelisk-cache: true
-          # Store build cache per workflow.
-          disk-cache: ${{ github.workflow }}
-          # Share repository cache between workflows.
-          repository-cache: true
       - uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -46,10 +30,6 @@ jobs:
         run: |
           git fetch --tags https://github.com/google/closure-compiler.git
           git checkout v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}
-      - name: Install packages
-        run: yarn install --colors=always
-      - name: Build jar
-        run: ./build-scripts/build-compiler.js
       - name: Create release commit and tag
         run: |
           git config --global user.email "github-bot@github.com"
@@ -66,3 +46,9 @@ jobs:
             -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
             https://api.github.com/repos/google/closure-compiler-npm/releases \
             -d '{"tag_name":"v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0","name":"${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0","body":"Closure-compiler ${{ github.event.inputs.COMPILER_VERSION_NUMBER }} release","draft":false,"prerelease":false,"generate_release_notes":true}'
+
+  call-build-workflow:
+    needs: create-release
+    uses: ./.github/workflows/build.yml
+    with:
+      release-tag: v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0

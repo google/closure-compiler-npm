@@ -4,6 +4,11 @@ on:
   push:
     branches: [ master ]
   workflow_dispatch: {}
+  workflow_call:
+    inputs:
+      release-tag:
+        required: true
+        type: string
   pull_request:
     branches: [ master ]
   schedule:
@@ -19,6 +24,9 @@ jobs:
       COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       FORCE_COLOR: '1'
     steps:
+      - name: Switch Commit
+        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
+        if: ${{ inputs.release-tag != '' }}
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -91,6 +99,9 @@ jobs:
       NODE_VERSION: '20.x'
       FORCE_COLOR: '1'
     steps:
+      - name: Switch Commit
+        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
+        if: ${{ inputs.release-tag != '' }}
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -167,6 +178,9 @@ jobs:
       NODE_VERSION: '20.x'
       FORCE_COLOR: '1'
     steps:
+      - name: Switch Commit
+        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
+        if: ${{ inputs.release-tag != '' }}
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -241,6 +255,9 @@ jobs:
       NODE_VERSION: '22.x'
       FORCE_COLOR: '1'
     steps:
+      - name: Switch Commit
+        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
+        if: ${{ inputs.release-tag != '' }}
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -312,6 +329,9 @@ jobs:
       NODE_VERSION: '22.x'
       FORCE_COLOR: '1'
     steps:
+      - name: Switch Commit
+        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
+        if: ${{ inputs.release-tag != '' }}
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -390,6 +410,9 @@ jobs:
       - build-macos
       - build-windows
     steps:
+      - name: Switch Commit
+        run: git fetch --tags && git checkout --recurse-submodules ${{ inputs.release-tag }}
+        if: ${{ inputs.release-tag != '' }}
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4

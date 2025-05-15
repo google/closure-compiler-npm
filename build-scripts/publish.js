@@ -26,6 +26,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import graphlib from 'graphlib';
 import {fileURLToPath, URL} from 'node:url';
+import runCommand from './run-command.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const packagesDirPath = path.resolve(__dirname, '../packages');

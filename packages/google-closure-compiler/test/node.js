@@ -41,9 +41,7 @@ describe('closure-compiler node bindings', () => {
     let originalTimeout;
     beforeEach(() => {
       originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-      if (platform === 'java') {
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-      }
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
     });
     afterEach(() => {
       jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;

@@ -71,12 +71,11 @@ gitProcess.on('close', (exitCode) => {
     const versionTags = tags.join('').trim().split(/\n/);
     let oldestNewVersion;
     for (const versionTag of versionTags) {
-      let newerVersion;
-      try {
-        newerVersion = semver(`${versionTag.slice(1)}.0.0`);
-      } catch {
+      // Only process version tags of an expected format: v########
+      if (!/^v\d{8}$/.test(versionTag)) {
         continue;
       }
+      const newerVersion = semver(`${versionTag.slice(1)}.0.0`);
       if (
         newerVersion.major > currentVersion.major &&
         (!oldestNewVersion || oldestNewVersion.major > newerVersion.major)

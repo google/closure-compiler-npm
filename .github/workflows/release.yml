@@ -30,6 +30,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Cache yarn
+        uses: actions/cache@v4
+        id: yarn-cache
+        with:
+          path: ${{ env.yarn_cache_dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install packages
+        run: yarn install --colors=always
       - name: Fetch compiler submodule tags
         working-directory: compiler
         run: git fetch --tags https://github.com/google/closure-compiler.git

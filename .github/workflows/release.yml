@@ -33,7 +33,7 @@ jobs:
         id: version-number
         if: ${{ github.event.inputs.COMPILER_VERSION_NUMBER == '' }}
         run: |
-          echo "COMPILER_VERSION_NUMBER='$(./build-scripts/checkout-newer-version.js)'" >> "$GITHUB_ENV"
+          echo "COMPILER_VERSION_NUMBER=$(./build-scripts/checkout-newer-version-tag.js)" >> "$GITHUB_ENV"
           echo "${{env.COMPILER_VERSION_NUMBER}}"
           echo "$COMPILER_VERSION_NUMBER"
           echo "COMPILER_VERSION_NUMBER='$COMPILER_VERSION_NUMBER'" >> "$GITHUB_OUTPUT"

@@ -11,9 +11,6 @@ on:
         type: string
   pull_request:
     branches: [ master ]
-  schedule:
-    # Daily at 12pm UTC
-    - cron: '0 12 * * *'
 
 jobs:
   # Build the compiler jar file from the submodule
@@ -21,7 +18,6 @@ jobs:
     name: Build Compiler
     runs-on: ubuntu-latest
     env:
-      COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
@@ -47,13 +43,6 @@ jobs:
       - name: Fetch submodule tags
         working-directory: compiler
         run: git fetch --tags https://github.com/google/closure-compiler.git
-      - name: Update compiler submodule to master if nightly build
-        if: ${{ env.COMPILER_NIGHTLY == 'true' }}
-        working-directory: compiler
-        run: |
-          git checkout master
-          git pull https://github.com/google/closure-compiler.git master
-          git log -1 | cat
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Yarn and maven cache
@@ -395,7 +384,6 @@ jobs:
     if: ${{ github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' }}
     env:
       NODE_VERSION: '22.x'
-      COMPILER_NIGHTLY: ${{ github.event_name == 'schedule' }}
       NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}
       FORCE_COLOR: '1'
     needs:
@@ -467,12 +455,6 @@ jobs:
         run: yarn install --colors=always
       - name: Prepare for publish
         run: ./build-scripts/add-os-restrictions.js
-      - name: Create the nightly version
-        if: ${{ env.COMPILER_NIGHTLY == 'true' }}
-        run: |
-          git config --global user.email "github-bot@github.com"
-          git config --global user.name "Github Bot"
-          ./build-scripts/create-nightly-version.js
       - name: Configure yarn
         run: yarn config set registry https://registry.npmjs.org/
       - name: Publish packages to npm

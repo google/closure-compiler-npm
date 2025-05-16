@@ -54,15 +54,12 @@ jobs:
         if: ${{ github.event.inputs.COMPILER_VERSION_NUMBER != '' }}
         run: |
           echo "COMPILER_VERSION_NUMBER=${{ github.event.inputs.COMPILER_VERSION_NUMBER }}" >> "$GITHUB_ENV"
-      - name: Ensure compiler version defined
-        if: ${{ env.COMPILER_VERSION_NUMBER == '' }}
-        run: |
-          gh run cancel ${{ github.run_id }}
-          gh run watch ${{ github.run_id }}
       - name: Set compiler submodule to provided release branch
+        if: ${{ env.COMPILER_VERSION_NUMBER != '' }}
         working-directory: compiler
         run: git checkout v${{ env.COMPILER_VERSION_NUMBER }}
       - name: Create release commit and tag
+        if: ${{ env.COMPILER_VERSION_NUMBER != '' }}
         run: |
           git config --global user.email "github-bot@github.com"
           git config --global user.name "Github Bot"
@@ -71,6 +68,7 @@ jobs:
           git push origin master
           git push origin v${{ env.COMPILER_VERSION_NUMBER }}.0.0
       - name: Create GitHub Release
+        if: ${{ env.COMPILER_VERSION_NUMBER != '' }}
         run: |
           curl \
             -X POST \

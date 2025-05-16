@@ -34,6 +34,8 @@ jobs:
         if: ${{ github.event.inputs.COMPILER_VERSION_NUMBER == '' }}
         run: |
           echo "COMPILER_VERSION_NUMBER='$(./build-scripts/checkout-newer-version.js)'" >> "$GITHUB_ENV"
+          echo "${{env.COMPILER_VERSION_NUMBER}}"
+          echo "$COMPILER_VERSION_NUMBER"
           echo "COMPILER_VERSION_NUMBER='$COMPILER_VERSION_NUMBER'" >> "$GITHUB_OUTPUT"
       - name: Set compiler submodule to provided release branch
         if: ${{ github.event.inputs.COMPILER_VERSION_NUMBER != '' }}
@@ -41,12 +43,14 @@ jobs:
         run: |
           git checkout v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}
           echo "COMPILER_VERSION_NUMBER='${{ github.event.inputs.COMPILER_VERSION_NUMBER }}'" >> "$GITHUB_ENV"
+          echo "${{env.COMPILER_VERSION_NUMBER}}"
+          echo "$COMPILER_VERSION_NUMBER"
       - name: Ensure compiler version defined
         if: env.COMPILER_VERSION_NUMBER == ''
         run: |
           gh run cancel ${{ github.run_id }}
           gh run watch ${{ github.run_id }}
-      - name: Use Node.js ${{ env.NODE_VERSION }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}

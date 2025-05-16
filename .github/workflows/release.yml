@@ -53,7 +53,7 @@ jobs:
       - name: Set compiler version to provided value
         if: ${{ github.event.inputs.COMPILER_VERSION_NUMBER != '' }}
         run: |
-          echo "COMPILER_VERSION_NUMBER='${{ github.event.inputs.COMPILER_VERSION_NUMBER }}'" >> "$GITHUB_ENV"
+          echo "COMPILER_VERSION_NUMBER=${{ github.event.inputs.COMPILER_VERSION_NUMBER }}" >> "$GITHUB_ENV"
       - name: Ensure compiler version defined
         if: ${{ env.COMPILER_VERSION_NUMBER == '' }}
         run: |

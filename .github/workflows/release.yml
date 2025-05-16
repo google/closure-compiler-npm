@@ -5,8 +5,11 @@ on:
     inputs:
       COMPILER_VERSION_NUMBER:
         description: 'Compiler version to base release from'
-        required: true
+        required: false
         type: string
+  schedule:
+    # Daily at 12pm UTC
+    - cron: '0 12 * * *'
 
 jobs:
   create-release:
@@ -14,30 +17,47 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      COMPILER_VERSION_NUMBER: ${{ env.COMPILER_VERSION_NUMBER }}
     env:
       FORCE_COLOR: '1'
       NODE_VERSION: '22.x'
     steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Fetch compiler submodule tags
+        working-directory: compiler
+        run: git fetch --tags https://github.com/google/closure-compiler.git
+      - name: Find compiler submodule newer release tag
+        id: version-number
+        if: ${{ github.event.inputs.COMPILER_VERSION_NUMBER == '' }}
+        run: |
+          echo "COMPILER_VERSION_NUMBER='$(./build-scripts/checkout-newer-version.js)'" >> "$GITHUB_ENV"
+          echo "COMPILER_VERSION_NUMBER='$COMPILER_VERSION_NUMBER'" >> "$GITHUB_OUTPUT"
+      - name: Set compiler submodule to provided release branch
+        if: ${{ github.event.inputs.COMPILER_VERSION_NUMBER != '' }}
+        working-directory: compiler
+        run: |
+          git checkout v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}
+          echo "COMPILER_VERSION_NUMBER='${{ github.event.inputs.COMPILER_VERSION_NUMBER }}'" >> "$GITHUB_ENV"
+      - name: Ensure compiler version defined
+        if: env.COMPILER_VERSION_NUMBER == ''
+        run: |
+          gh run cancel ${{ github.run_id }}
+          gh run watch ${{ github.run_id }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Set compiler submodule to release branch
-        working-directory: compiler
-        run: |
-          git fetch --tags https://github.com/google/closure-compiler.git
-          git checkout v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}
       - name: Create release commit and tag
         run: |
           git config --global user.email "github-bot@github.com"
           git config --global user.name "Github Bot"
           git add compiler
-          yarn version --new-version ${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0
+          yarn version --new-version ${{ env.COMPILER_VERSION_NUMBER }}.0.0
           git push origin master
-          git push origin v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0
+          git push origin v${{ env.COMPILER_VERSION_NUMBER }}.0.0
       - name: Create GitHub Release
         run: |
           curl \
@@ -45,10 +65,11 @@ jobs:
             -H 'Accept: application/vnd.github+json' \
             -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
             https://api.github.com/repos/google/closure-compiler-npm/releases \
-            -d '{"tag_name":"v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0","name":"${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0","body":"Closure-compiler ${{ github.event.inputs.COMPILER_VERSION_NUMBER }} release","draft":false,"prerelease":false,"generate_release_notes":true}'
+            -d '{"tag_name":"v${{ env.COMPILER_VERSION_NUMBER }}.0.0","name":"${{ env.COMPILER_VERSION_NUMBER }}.0.0","body":"Closure-compiler ${{ env.COMPILER_VERSION_NUMBER }} release","draft":false,"prerelease":false,"generate_release_notes":true}'
 
   build:
     needs: create-release
+    if: ${{ needs.create-release.outputs.COMPILER_VERSION_NUMBER != '' }}
     uses: ./.github/workflows/build.yml
     with:
-      release-tag: v${{ github.event.inputs.COMPILER_VERSION_NUMBER }}.0.0
+      release-tag: v${{ needs.create-release.outputs.COMPILER_VERSION_NUMBER }}.0.0

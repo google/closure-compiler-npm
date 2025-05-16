@@ -9,6 +9,9 @@ on:
       release-tag:
         required: true
         type: string
+    secrets:
+      NPM_PUBLISH_AUTH_TOKEN:
+        required: true
   pull_request:
     branches: [ master ]
 

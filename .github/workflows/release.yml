@@ -85,3 +85,5 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       release-tag: v${{ needs.create-release.outputs.COMPILER_VERSION_NUMBER }}.0.0
+    secrets:
+      NPM_PUBLISH_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_AUTH_TOKEN }}

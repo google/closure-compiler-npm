@@ -24,14 +24,14 @@ jobs:
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: adopt-hotspot
           java-version: 21
           java-package: jdk
           architecture: x64
       - name: Setup Bazelisk
-        uses: bazel-contrib/setup-bazel@0.8.1
+        uses: bazel-contrib/setup-bazel@e8776f58fb6a6e9055cbaf1b38c52ccc5247e9c4 # 0.14.0
         with:
           # Avoid downloading Bazel every time.
           bazelisk-cache: true
@@ -39,7 +39,7 @@ jobs:
           disk-cache: ${{ github.workflow }}
           # Share repository cache between workflows.
           repository-cache: true
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           submodules: recursive
           ref: ${{ inputs.release-tag || '' }}
@@ -49,7 +49,7 @@ jobs:
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Yarn and maven cache
-        uses: actions/cache@v4
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         with:
           path: |
             ${{ env.yarn_cache_dir }}
@@ -63,17 +63,17 @@ jobs:
       - name: Tests
         run: yarn test:root --color
       - name: Upload contrib folder
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: Contrib folder
           path: compiler/contrib
       - name: Upload externs folder
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: Externs folder
           path: compiler/externs
       - name: Upload compiler jar
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/compiler.jar
@@ -90,20 +90,20 @@ jobs:
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: adopt-hotspot
           java-version: 21
           java-package: jdk
           architecture: x64
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: graalvm/setup-graalvm@v1
+      - uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
           java-version: 21
           distribution: 'graalvm-community'
@@ -116,24 +116,24 @@ jobs:
           tar -xf upx-$UPX_VERSION-amd64_linux.tar.xz
           mv ./upx-$UPX_VERSION-amd64_linux/upx /usr/local/bin/upx
       - name: Download compiler jar
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
       - name: Download contrib folder
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Download externs folder
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Externs folder
           path: packages/google-closure-compiler/externs
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
-        uses: actions/cache@v4
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         id: yarn-cache
         with:
           path: ${{ env.yarn_cache_dir }}
@@ -151,7 +151,7 @@ jobs:
       - name: Tests
         run: yarn workspaces run test --color
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: Linux image
           path: packages/google-closure-compiler-linux/compiler
@@ -168,20 +168,20 @@ jobs:
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: adopt-hotspot
           java-version: 21
           java-package: jdk
           architecture: x64
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: graalvm/setup-graalvm@v1
+      - uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
           java-version: 21
           distribution: 'graalvm-community'
@@ -194,24 +194,24 @@ jobs:
           tar -xf upx-$UPX_VERSION-arm64_linux.tar.xz
           mv ./upx-$UPX_VERSION-arm64_linux/upx /usr/local/bin/upx
       - name: Download compiler jar
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
       - name: Download contrib folder
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Download externs folder
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Externs folder
           path: packages/google-closure-compiler/externs
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
-        uses: actions/cache@v4
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         id: yarn-cache
         with:
           path: ${{ env.yarn_cache_dir }}
@@ -229,7 +229,7 @@ jobs:
       - name: Tests
         run: yarn workspaces run test --color
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: Linux arm64 image
           path: packages/google-closure-compiler-linux-arm64/compiler
@@ -244,20 +244,20 @@ jobs:
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: adopt-hotspot
           java-version: 21
           java-package: jdk
           architecture: x64
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: graalvm/setup-graalvm@v1
+      - uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
           java-version: 21
           distribution: 'graalvm-community'
@@ -267,24 +267,24 @@ jobs:
 #      - name: Install upx
 #        run: brew install upx
       - name: Download compiler jar
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
       - name: Download contrib folder
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Download externs folder
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Externs folder
           path: packages/google-closure-compiler/externs
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
-        uses: actions/cache@v4
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         id: yarn-cache
         with:
           path: ${{ env.yarn_cache_dir }}
@@ -302,7 +302,7 @@ jobs:
       - name: Tests
         run: yarn workspaces run test --color
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: MacOS image
           path: packages/google-closure-compiler-macos/compiler
@@ -317,37 +317,37 @@ jobs:
       FORCE_COLOR: '1'
     steps:
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: adopt-hotspot
           java-version: 21
           java-package: jdk
           architecture: x64
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: graalvm/setup-graalvm@v1
+      - uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
           java-version: 21
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
       - name: Download compiler jar
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
       - name: Download contrib folder
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Download externs folder
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Externs folder
           path: packages/google-closure-compiler/externs
@@ -355,7 +355,7 @@ jobs:
         # See https://stackoverflow.com/a/66737579/1211524
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $env:GITHUB_ENV
       - name: Cache yarn
-        uses: actions/cache@v4
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         id: yarn-cache
         with:
           path: ${{ env.yarn_cache_dir }}
@@ -375,7 +375,7 @@ jobs:
           echo "Running Tests"
           yarn workspaces run test --color
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: Windows image
           path: packages/google-closure-compiler-windows/compiler.exe
@@ -395,46 +395,46 @@ jobs:
       - build-macos
       - build-windows
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: https://registry.npmjs.org/
       - name: Download compiler jar
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Compiler.jar
           path: packages/google-closure-compiler-java/
       - name: Download Linux image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Linux image
           path: packages/google-closure-compiler-linux/
       - name: Download Linux arm64 image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Linux arm64 image
           path: packages/google-closure-compiler-linux-arm64/
       - name: Download MacOS image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: MacOS image
           path: packages/google-closure-compiler-macos/
       - name: Download Windows image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Windows image
           path: packages/google-closure-compiler-windows/
       - name: Download contrib folder
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Contrib folder
           path: packages/google-closure-compiler/contrib
       - name: Download externs folder
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
           name: Externs folder
           path: packages/google-closure-compiler/externs
@@ -447,7 +447,7 @@ jobs:
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Cache yarn
-        uses: actions/cache@v4
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         id: yarn-cache
         with:
           path: ${{ env.yarn_cache_dir }}

@@ -64,7 +64,7 @@
   },
   "scripts": {
     "build": "echo \"google-closure-compiler build\"",
-    "test": "jasmine --reporter=jasmine-console-reporter test/*.js --"
+    "test": "./test/support/jasmine.sh --reporter=jasmine-console-reporter 'test/*.js'"
   },
   "engines": {
     "node": ">=18"

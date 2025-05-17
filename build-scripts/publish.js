@@ -30,7 +30,6 @@ import runCommand from './run-command.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const packagesDirPath = path.resolve(__dirname, '../packages');
-const isNightlyVersion = process.env.COMPILER_NIGHTLY === 'true';
 
 async function isPackageVersionPublished(packageName, version) {
   return fetch(`https://registry.npmjs.org/${encodeURI(packageName)}/${version}`)
@@ -64,9 +63,6 @@ async function publishPackagesIfNeeded(packageInfo) {
   }
   console.log('Publishing', pkgJson.name, pkgJson.version);
   const publishArgs = ['-w', pkgJson.name, 'publish'];
-  if (isNightlyVersion) {
-    publishArgs.push('--tag', 'nightly');
-  }
   await runCommand('npm', publishArgs);
 }
 

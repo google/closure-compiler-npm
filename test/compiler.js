@@ -34,13 +34,29 @@ const compilerVersionMatch = /^Version: v(\d+)$/m;
 
 process.on('unhandledRejection', (e) => { throw e; });
 
-const isNightlyBuild = /^true|1$/i.test(process.env.COMPILER_NIGHTLY);
+describe('compiler.jar', function () {
+  it('should not be a snapshot build', async () => {
+    const compiler = new Compiler({version: true});
+    const {stdout} = await new Promise((resolve) =>
+      compiler.run((exitCode, stdout, stderr) =>
+        resolve({
+          exitCode,
+          stdout,
+          stderr,
+        })
+      )
+    );
+    let versionInfo = (stdout || '').match(compilerVersionMatch);
+    expect(versionInfo).not.toBeNullish();
+    versionInfo = versionInfo || [];
+    expect(versionInfo.length).toBe(2);
+    expect(versionInfo[1].indexOf('SNAPSHOT')).toBeLessThan(0);
+  });
 
-if (!isNightlyBuild) {
-  describe('compiler.jar', function () {
-    it('should not be a snapshot build', async () => {
-      const compiler = new Compiler({version: true});
-      const {stdout} = await new Promise((resolve) =>
+  it('version should be equal to the package major version', async () => {
+    const compiler = new Compiler({version: true});
+    const packageVer = new Semver(packageInfo.version);
+    const {stdout} = await new Promise((resolve) =>
         compiler.run((exitCode, stdout, stderr) =>
           resolve({
             exitCode,
@@ -48,57 +64,37 @@ if (!isNightlyBuild) {
             stderr,
           })
         )
-      );
-      let versionInfo = (stdout || '').match(compilerVersionMatch);
-      expect(versionInfo).not.toBeNullish();
-      versionInfo = versionInfo || [];
-      expect(versionInfo.length).toBe(2);
-      expect(versionInfo[1].indexOf('SNAPSHOT')).toBeLessThan(0);
-    });
+    );
+    let versionInfo = (stdout || '').match(compilerVersionMatch);
+    expect(versionInfo).not.toBeNullish();
+    versionInfo = versionInfo || [];
+    expect(versionInfo.length).toBe(2);
 
-    it('version should be equal to the package major version', async () => {
-      const compiler = new Compiler({version: true});
-      const packageVer = new Semver(packageInfo.version);
-      const {stdout} = await new Promise((resolve) =>
-          compiler.run((exitCode, stdout, stderr) =>
-            resolve({
-              exitCode,
-              stdout,
-              stderr,
-            })
-          )
-      );
-      let versionInfo = (stdout || '').match(compilerVersionMatch);
-      expect(versionInfo).not.toBeNullish();
-      versionInfo = versionInfo || [];
-      expect(versionInfo.length).toBe(2);
-
-      let compilerVersion;
-      try {
-        console.log(versionInfo[1] + '.0.0');
-        compilerVersion = new Semver(versionInfo[1] + '.0.0');
-      } catch (e) {
-        fail('should be a semver parseable');
-      }
-      expect(compilerVersion.major).toBe(packageVer.major);
-    });
+    let compilerVersion;
+    try {
+      console.log(versionInfo[1] + '.0.0');
+      compilerVersion = new Semver(versionInfo[1] + '.0.0');
+    } catch (e) {
+      fail('should be a semver parseable');
+    }
+    expect(compilerVersion.major).toBe(packageVer.major);
   });
+});
 
-  describe('compiler submodule', () => {
-    it('should be synced to the tagged commit', () => {
-      const gitCmd = spawn('git', ['tag', '--points-at', 'HEAD'], {
-        cwd: './compiler'
-      });
-      expect(gitCmd.status).toBe(0);
-      console.log(gitCmd.stdout.toString());
-      const currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
-      const packageVer = new Semver(packageInfo.version);
-      const mvnVersion = 'v' + packageVer.major;
-      let normalizedTag = currentTag;
-      if (normalizedTag) {
-        normalizedTag = currentTag.replace(/^([-a-z]+-)?(v\d{8})(.*)$/, '$2');
-      }
-      expect(normalizedTag).toBe(mvnVersion)
+describe('compiler submodule', () => {
+  it('should be synced to the tagged commit', () => {
+    const gitCmd = spawn('git', ['tag', '--points-at', 'HEAD'], {
+      cwd: './compiler'
     });
+    expect(gitCmd.status).toBe(0);
+    console.log(gitCmd.stdout.toString());
+    const currentTag = gitCmd.stdout.toString().replace(/\s/g, '');
+    const packageVer = new Semver(packageInfo.version);
+    const mvnVersion = 'v' + packageVer.major;
+    let normalizedTag = currentTag;
+    if (normalizedTag) {
+      normalizedTag = currentTag.replace(/^([-a-z]+-)?(v\d{8})(.*)$/, '$2');
+    }
+    expect(normalizedTag).toBe(mvnVersion)
   });
-}
+});

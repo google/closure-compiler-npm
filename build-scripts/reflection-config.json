@@ -204,6 +204,11 @@
     "allPublicFields" : true
   },
   {
+    "name": "com.google.javascript.jscomp.ConformanceConfig$LibraryLevelNonAllowlistedConformanceViolationsBehavior",
+    "allPublicMethods" : true,
+    "allPublicFields" : true
+  },
+  {
     "name" : "com.google.javascript.jscomp.ConformanceRules",
     "allDeclaredMethods" : true,
     "allDeclaredFields" : true,

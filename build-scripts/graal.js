@@ -35,24 +35,18 @@ process.on('unhandledRejection', error => {
 });
 
 const NATIVE_IMAGE_BUILD_ARGS = [
-  '-H:+ReportUnsupportedElementsAtRuntime',
+  '-H:+UnlockExperimentalVMOptions',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
   '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
   '-H:+AllowIncompleteClasspath',
   `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
-  '-H:IncludeResources=(externs.zip)|(.*(js|txt|typedast))'.replace(/[\|\(\)]/g, (match) => {
-    if (process.platform === 'win32') {
-      // Escape the '|' character in a  windows batch command
-      // See https://stackoverflow.com/a/16018942/1211524
-      if (match === '|') {
-        return '^^^|';
-      }
-      return `^${match}`;
-    }
-    return '|';
-  }),
+  '-H:IncludeResources=externs\.zip',
+  '-H:IncludeResources=com\/google\/javascript\/.*\.js',
+  '-H:IncludeResources=com\/google\/javascript\/.*\.txt',
+  '-H:IncludeResources=com\/google\/javascript\/.*\.typedast',
   '-H:+ReportExceptionStackTraces',
+  '--report-unsupported-elements-at-runtime',
   '--initialize-at-build-time',
   '--color=always',
   '-jar',

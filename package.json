@@ -48,7 +48,7 @@
   "scripts": {
     "build": "./build-scripts/build.sh",
     "test": "./build-scripts/test.sh",
-    "test:root": "jasmine --reporter=jasmine-console-reporter test/*.js",
+    "test:root": "./packages/google-closure-compiler/test/support/jasmine-launcher.js --reporter=jasmine-console-reporter test/*.js",
     "clean": "./build-scripts/clean.sh",
     "version": "./build-scripts/version-packages.js",
     "publish-packages": "./build-scripts/publish.js"

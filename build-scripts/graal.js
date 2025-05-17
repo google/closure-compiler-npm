@@ -35,6 +35,7 @@ process.on('unhandledRejection', error => {
 });
 
 const NATIVE_IMAGE_BUILD_ARGS = [
+  '-H:+UnlockExperimentalVMOptions',
   '-H:+ReportUnsupportedElementsAtRuntime',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',

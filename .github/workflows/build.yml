@@ -43,6 +43,9 @@ jobs:
         with:
           submodules: recursive
           ref: ${{ inputs.release-tag || '' }}
+      - name: Fetch submodule tags
+        working-directory: compiler
+        run: git fetch --tags https://github.com/google/closure-compiler.git
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Yarn and maven cache

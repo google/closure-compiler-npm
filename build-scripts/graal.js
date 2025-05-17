@@ -36,7 +36,6 @@ process.on('unhandledRejection', error => {
 
 const NATIVE_IMAGE_BUILD_ARGS = [
   '-H:+UnlockExperimentalVMOptions',
-  '-H:+ReportUnsupportedElementsAtRuntime',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
   '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
@@ -47,6 +46,7 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   '-H:IncludeResources=com\/google\/javascript\/.*\.txt',
   '-H:IncludeResources=com\/google\/javascript\/.*\.typedast',
   '-H:+ReportExceptionStackTraces',
+  '--report-unsupported-elements-at-runtime',
   '--initialize-at-build-time',
   '--color=always',
   '-jar',

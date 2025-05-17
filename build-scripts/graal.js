@@ -34,6 +34,18 @@ process.on('unhandledRejection', error => {
   process.exit(1);
 });
 
+const windowsPathReplacer = (match) => {
+  if (process.platform === 'win32') {
+    // Escape the '|' character in a  windows batch command
+    // See https://stackoverflow.com/a/16018942/1211524
+    if (match === '|') {
+      return '^^^|';
+    }
+    return `^${match}`;
+  }
+  return '|';
+};
+
 const NATIVE_IMAGE_BUILD_ARGS = [
   '-H:+ReportUnsupportedElementsAtRuntime',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
@@ -41,17 +53,10 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
   '-H:+AllowIncompleteClasspath',
   `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
-  '-H:IncludeResources=(externs.zip)|(.*(js|txt|typedast))'.replace(/[\|\(\)]/g, (match) => {
-    if (process.platform === 'win32') {
-      // Escape the '|' character in a  windows batch command
-      // See https://stackoverflow.com/a/16018942/1211524
-      if (match === '|') {
-        return '^^^|';
-      }
-      return `^${match}`;
-    }
-    return '|';
-  }),
+  '-H:IncludeResources=externs\.zip'.replace(/[\|\(\)]/g, windowsPathReplacer),
+  '-H:IncludeResources=com\/google\/javascript\/.*\.js'.replace(/[\|\(\)]/g, windowsPathReplacer),
+  '-H:IncludeResources=com\/google\/javascript\/.*\.txt'.replace(/[\|\(\)]/g, windowsPathReplacer),
+  '-H:IncludeResources=com\/google\/javascript\/.*\.typedast'.replace(/[\|\(\)]/g, windowsPathReplacer),
   '-H:+ReportExceptionStackTraces',
   '--initialize-at-build-time',
   '--color=always',

@@ -43,9 +43,6 @@ jobs:
         with:
           submodules: recursive
           ref: ${{ inputs.release-tag || '' }}
-      - name: Fetch submodule tags
-        working-directory: compiler
-        run: git fetch --tags https://github.com/google/closure-compiler.git
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
       - name: Yarn and maven cache
@@ -109,12 +106,6 @@ jobs:
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
-      - name: Setup upx
-        run: |
-          UPX_VERSION=5.0.0
-          curl --fail --show-error --location --remote-name "https://github.com/upx/upx/releases/download/v$UPX_VERSION/upx-$UPX_VERSION-amd64_linux.tar.xz"
-          tar -xf upx-$UPX_VERSION-amd64_linux.tar.xz
-          mv ./upx-$UPX_VERSION-amd64_linux/upx /usr/local/bin/upx
       - name: Download compiler jar
         uses: actions/download-artifact@v4
         with:
@@ -147,7 +138,6 @@ jobs:
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
-          upx compiler
       - name: Tests
         run: yarn workspaces run test --color
       - name: Upload artifacts
@@ -187,12 +177,6 @@ jobs:
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
-      - name: Setup upx
-        run: |
-          UPX_VERSION=5.0.0
-          curl --fail --show-error --location --remote-name "https://github.com/upx/upx/releases/download/v$UPX_VERSION/upx-$UPX_VERSION-arm64_linux.tar.xz"
-          tar -xf upx-$UPX_VERSION-arm64_linux.tar.xz
-          mv ./upx-$UPX_VERSION-arm64_linux/upx /usr/local/bin/upx
       - name: Download compiler jar
         uses: actions/download-artifact@v4
         with:
@@ -225,7 +209,6 @@ jobs:
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
-          upx compiler
       - name: Tests
         run: yarn workspaces run test --color
       - name: Upload artifacts
@@ -263,9 +246,6 @@ jobs:
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
-#        # See https://github.com/google/closure-compiler-npm/issues/265
-#      - name: Install upx
-#        run: brew install upx
       - name: Download compiler jar
         uses: actions/download-artifact@v4
         with:
@@ -298,7 +278,6 @@ jobs:
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
-#          upx compiler
       - name: Tests
         run: yarn workspaces run test --color
       - name: Upload artifacts

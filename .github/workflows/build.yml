@@ -109,12 +109,6 @@ jobs:
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
-      - name: Setup upx
-        run: |
-          UPX_VERSION=5.0.0
-          curl --fail --show-error --location --remote-name "https://github.com/upx/upx/releases/download/v$UPX_VERSION/upx-$UPX_VERSION-amd64_linux.tar.xz"
-          tar -xf upx-$UPX_VERSION-amd64_linux.tar.xz
-          mv ./upx-$UPX_VERSION-amd64_linux/upx /usr/local/bin/upx
       - name: Download compiler jar
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
@@ -147,7 +141,6 @@ jobs:
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
-          upx compiler
       - name: Tests
         run: yarn workspaces run test --color
       - name: Upload artifacts
@@ -187,12 +180,6 @@ jobs:
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
-      - name: Setup upx
-        run: |
-          UPX_VERSION=5.0.0
-          curl --fail --show-error --location --remote-name "https://github.com/upx/upx/releases/download/v$UPX_VERSION/upx-$UPX_VERSION-arm64_linux.tar.xz"
-          tar -xf upx-$UPX_VERSION-arm64_linux.tar.xz
-          mv ./upx-$UPX_VERSION-arm64_linux/upx /usr/local/bin/upx
       - name: Download compiler jar
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
@@ -225,7 +212,6 @@ jobs:
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
-          upx compiler
       - name: Tests
         run: yarn workspaces run test --color
       - name: Upload artifacts
@@ -263,9 +249,6 @@ jobs:
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
-#        # See https://github.com/google/closure-compiler-npm/issues/265
-#      - name: Install upx
-#        run: brew install upx
       - name: Download compiler jar
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # 4.3.0
         with:
@@ -298,7 +281,6 @@ jobs:
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
-#          upx compiler
       - name: Tests
         run: yarn workspaces run test --color
       - name: Upload artifacts

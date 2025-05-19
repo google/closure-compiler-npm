@@ -27,7 +27,6 @@
  */
 
 import stream from 'node:stream';
-import {createRequire} from 'node:module';
 import chalk from 'chalk';
 import File from 'vinyl';
 import applySourceMap from 'vinyl-sourcemaps-apply';
@@ -37,21 +36,27 @@ import jsonToVinyl from './json-to-vinyl.js';
 import Compiler from '../node/index.js';
 import {getNativeImagePath, getFirstSupportedPlatform} from '../utils.js';
 
-const require = createRequire(import.meta.url);
 const PLUGIN_NAME = 'gulp-google-closure-compiler';
 
-let gulpLog;
-try {
-  gulpLog = require('gulp-util').log;
-} catch(e) {
-  gulpLog = console;
-}
+const getLogger = async () => {
+  try {
+    const { default: fancyLog } = await import('fancy-log');
+    return fancyLog;
+  } catch {}
+
+  try {
+    const { default: gulpUtil } = await import('gulp-util');
+    return gulpUtil.log;
+  } catch {}
+
+  return console;
+};
 
 /**
  * Rethrow an error with a custom message.
  * @see https://stackoverflow.com/a/42755876/1211524
  */
-class CustomError extends Error {
+class PluginError extends Error {
   constructor(plugin, message) {
     if (message instanceof Error) {
       super(`Error in ${plugin}`, {cause: message});
@@ -61,20 +66,12 @@ class CustomError extends Error {
   }
 }
 
-const PluginError = (() => {
-  try {
-    return require('gulp-util').PluginError;
-  } catch {
-    return CustomError;
-  }
-})();
-
 class CompilationStream extends stream.Transform {
   constructor(compilationOptions, pluginOptions = {}) {
     super({objectMode: true});
     this.compilationOptions_ = compilationOptions;
     this.streamMode_ = pluginOptions.streamMode || 'BOTH';
-    this.logger_ = pluginOptions.logger || gulpLog;
+    this.logger_ = pluginOptions.logger;
     this.PLUGIN_NAME_ = pluginOptions.pluginName || PLUGIN_NAME;
     this.extraCommandArgs_ = pluginOptions.extraCommandArguments || [];
 
@@ -196,23 +193,30 @@ class CompilationStream extends stream.Transform {
         try {
           outputFiles = JSON.parse(stdOutData);
         } catch (e) {
-          this.emit('error', new PluginError(this.PLUGIN_NAME_, 'Error parsing json encoded files'));
+          const composedError = new Error('Error parsing json encoded files', {cause: e});
+          this.emit('error', new PluginError(this.PLUGIN_NAME_, composedError));
           cb();
           return;
         }
       }
 
+      if (!this.logger_) {
+        this.logger_ = await getLogger();
+      }
       this._compilationComplete(code, outputFiles, stdErrData);
-      cb();
     } catch (err) {
-      this.emit('error', new PluginError(this.PLUGIN_NAME_, err, { showStack: true }));
-      cb();
+      this.emit('error', new PluginError(this.PLUGIN_NAME_, err));
     }
+    cb();
   }
 
   /**
    * @param {number} exitCode
-   * @param {string} compiledJs
+   * @param {Array<!{
+   *     path: string,
+   *     src: string,
+   *     sourceMap: (string|undefined)
+   *   }>} compiledJs
    * @param {string} errors
    * @private
    */

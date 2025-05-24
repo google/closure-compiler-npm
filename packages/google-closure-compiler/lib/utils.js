@@ -17,26 +17,34 @@ import fs from 'node:fs';
 import {createRequire} from 'node:module';
 const require = createRequire(import.meta.url);
 
+/** @type {!Map<string, string>} */
+const platformLookup = new Map([
+  ['darwin', 'macos'],
+  ['win32', 'windows'],
+  ['linux', 'linux'],
+]);
+
+/** @return {string|undefined} */
 export const getNativeImagePath = () => {
-  let compilerPath;
-  switch (process.platform) {
-    case 'darwin':
-      compilerPath = 'google-closure-compiler-macos/compiler';
-      break;
-    case 'win32':
-      compilerPath = 'google-closure-compiler-windows/compiler.exe';
-      break;
-    case 'linux':
-      compilerPath = `google-closure-compiler-linux${process.arch === 'arm64' ? '-arm64' : ''}/compiler`;
-      break;
+  let platform = platformLookup.get(process.platform);
+  let binarySuffix = '';
+  if (!platform) {
+    return;
+  } else if (platform === 'linux' && process.arch === 'arm64') {
+    platform += '-arm64';
+  } else if (platform === 'windows') {
+    binarySuffix = '.exe';
   }
-  if (compilerPath) {
-    try {
-      return require.resolve(compilerPath);
-    } catch {}
-  }
+  const compilerPath = `google-closure-compiler-${platform}/compiler${binarySuffix}`;
+  try {
+    return require.resolve(compilerPath);
+  } catch {}
 };
 
+/**
+ * @param {!Array<string>} platforms
+ * @return {string}
+ */
 export const getFirstSupportedPlatform = (platforms) => {
   const platform = platforms.find((platform, index) => {
     switch (platform.toLowerCase()) {

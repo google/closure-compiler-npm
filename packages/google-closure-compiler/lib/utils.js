@@ -13,38 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import fs from 'node:fs';
 import {createRequire} from 'node:module';
 const require = createRequire(import.meta.url);
 
+/** @type {!Map<string, string>} */
+const platformLookup = new Map([
+  ['darwin', 'macos'],
+  ['win32', 'windows'],
+  ['linux', 'linux'],
+]);
+
+/** @return {string|undefined} */
 export const getNativeImagePath = () => {
-  if (process.platform === 'darwin') {
-    try {
-      return require('google-closure-compiler-macos').default;
-    } catch (e) {
-      return;
-    }
+  let platform = platformLookup.get(process.platform);
+  let binarySuffix = '';
+  if (!platform) {
+    return;
+  } else if (platform === 'linux' && process.arch === 'arm64') {
+    platform += '-arm64';
+  } else if (platform === 'windows') {
+    binarySuffix = '.exe';
   }
-  if (process.platform === 'win32') {
-    try {
-      return require('google-closure-compiler-windows').default;
-    } catch (e) {
-      return;
-    }
-  }
-  if (process.platform === 'linux' && ['x64','x32'].includes(process.arch)) {
-    try {
-      return require('google-closure-compiler-linux').default;
-    } catch (e) {
-    }
-  }
-  if (process.platform === 'linux' && ['arm64'].includes(process.arch)) {
-    try {
-      return require('google-closure-compiler-linux-arm64').default;
-    } catch (e) {
-    }
-  }
+  const compilerPath = `google-closure-compiler-${platform}/compiler${binarySuffix}`;
+  try {
+    return require.resolve(compilerPath);
+  } catch {}
 };
 
+/**
+ * @param {!Array<string>} platforms
+ * @return {string}
+ */
 export const getFirstSupportedPlatform = (platforms) => {
   const platform = platforms.find((platform, index) => {
     switch (platform.toLowerCase()) {

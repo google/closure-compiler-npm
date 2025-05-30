@@ -172,6 +172,7 @@ jobs:
       - name: Build image
         working-directory: packages/google-closure-compiler-linux
         run: |
+          export PATH="$MUSL_HOME/bin:$PATH"
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
       - name: Tests
@@ -225,7 +226,6 @@ jobs:
 
           # Extend the system path and confirm that musl is available by printing its version
           export PATH="$MUSL_HOME/bin:$PATH"
-          echo "$path" >> $GITHUB_PATH
           x86_64-linux-musl-gcc --version
 
           # Build zlib with musl from source and install into the MUSL_HOME directory
@@ -275,6 +275,7 @@ jobs:
       - name: Build image
         working-directory: packages/google-closure-compiler-linux-arm64
         run: |
+          export PATH="$MUSL_HOME/bin:$PATH"
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
       - name: Tests

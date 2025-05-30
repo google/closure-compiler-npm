@@ -65,7 +65,10 @@ switch (process.platform) {
     // On linux, statically link all libraries. Allows usage on systems
     // which are missing or have incompatible versions of GLIBC.
     // See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
-    NATIVE_IMAGE_BUILD_ARGS.unshift('--static', '--libc=musl');
+    if (process.arch !== 'arm64') {
+      NATIVE_IMAGE_BUILD_ARGS.unshift('--libc=musl');
+    }
+    NATIVE_IMAGE_BUILD_ARGS.unshift('--static');
     break;
 }
 

@@ -89,15 +89,37 @@ jobs:
       NODE_VERSION: '20.x'
       FORCE_COLOR: '1'
     steps:
+      - name: Checkout musl
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+        with:
+          repository: kraj/musl
+          ref: c47ad25ea3b484e10326f933e927c0bc8cded3da # patched 1.2.5 version
+          path: musl
       - name: Install musl
         run: |
-          sudo apt-get install -y musl
-          sudo ld-musl-config
+          # See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
+          export MUSL_HOME=$PWD/musl-toolchain
+
+          # Build musl from source
+          pushd musl
+          ./configure --prefix=$MUSL_HOME --static
+          sudo make && make install
+          popd
+
           # Install a symlink for use by native-image
-          sudo ln -s $MUSL_HOME/bin/musl-gcc $MUSL_HOME/bin/x86_64-linux-musl-gcc
+          ln -s $MUSL_HOME/bin/musl-gcc $MUSL_HOME/bin/x86_64-linux-musl-gcc
+
           # Extend the system path and confirm that musl is available by printing its version
           export PATH="$MUSL_HOME/bin:$PATH"
           x86_64-linux-musl-gcc --version
+
+          # Build zlib with musl from source and install into the MUSL_HOME directory
+          curl -O https://zlib.net/fossils/zlib-1.2.13.tar.gz
+          tar -xzvf zlib-1.2.13.tar.gz
+          pushd zlib-1.2.13
+          CC=musl-gcc ./configure --prefix=$MUSL_HOME --static
+          make && make install
+          popd
       - name: Setup Java
         uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
@@ -169,15 +191,37 @@ jobs:
       NODE_VERSION: '20.x'
       FORCE_COLOR: '1'
     steps:
+      - name: Checkout musl
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+        with:
+          repository: kraj/musl
+          ref: c47ad25ea3b484e10326f933e927c0bc8cded3da # patched 1.2.5 version
+          path: musl
       - name: Install musl
         run: |
-          sudo apt-get install -y musl
-          sudo ld-musl-config
+          # See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
+          export MUSL_HOME=$PWD/musl-toolchain
+          
+          # Build musl from source
+          pushd musl
+          ./configure --prefix=$MUSL_HOME --static
+          sudo make && make install
+          popd
+          
           # Install a symlink for use by native-image
-          sudo ln -s $MUSL_HOME/bin/musl-gcc $MUSL_HOME/bin/x86_64-linux-musl-gcc
+          ln -s $MUSL_HOME/bin/musl-gcc $MUSL_HOME/bin/arm64-linux-musl-gcc
+          
           # Extend the system path and confirm that musl is available by printing its version
           export PATH="$MUSL_HOME/bin:$PATH"
-          x86_64-linux-musl-gcc --version
+          arm64-linux-musl-gcc --version
+          
+          # Build zlib with musl from source and install into the MUSL_HOME directory
+          curl -O https://zlib.net/fossils/zlib-1.2.13.tar.gz
+          tar -xzvf zlib-1.2.13.tar.gz
+          pushd zlib-1.2.13
+          CC=musl-gcc ./configure --prefix=$MUSL_HOME --static
+          make && make install
+          popd
       - name: Setup Java
         uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:

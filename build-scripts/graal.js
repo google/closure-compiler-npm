@@ -57,8 +57,15 @@ const NATIVE_IMAGE_BUILD_ARGS = [
 ];
 
 const spawnOpts = {};
-if (process.platform === 'win32') {
-  spawnOpts.shell = true;
+switch (process.platform) {
+  case 'win32':
+    spawnOpts.shell = true;
+    break;
+  case 'linux':
+    // On linux, statically link all libraries. Allows usage on systems
+    // which are missing or have incompatible versions of GLIBC
+    NATIVE_IMAGE_BUILD_ARGS.unshift('--static');
+    break;
 }
 
 runCommand(`native-image${process.platform === 'win32' ? '.cmd' : ''}`, NATIVE_IMAGE_BUILD_ARGS, spawnOpts)

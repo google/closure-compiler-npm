@@ -48,6 +48,8 @@ jobs:
       - name: Fetch submodule tags
         working-directory: compiler
         run: git fetch --tags https://github.com/google/closure-compiler.git
+      - name: Enable yarn caching
+        run: yarn config set enableGlobalCache true
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
@@ -130,6 +132,8 @@ jobs:
           CC=musl-gcc ./configure --prefix=$MUSL_HOME --static
           make && make install
           popd
+      - name: Enable yarn caching
+        run: yarn config set enableGlobalCache true
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
@@ -188,6 +192,8 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
+      - name: Enable yarn caching
+        run: yarn config set enableGlobalCache true
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
@@ -243,6 +249,8 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
+      - name: Enable yarn caching
+        run: yarn config set enableGlobalCache true
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
@@ -298,6 +306,8 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
+      - name: Enable yarn caching
+        run: yarn config set enableGlobalCache true
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
@@ -362,6 +372,8 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
+      - name: Enable yarn caching
+        run: yarn config set enableGlobalCache true
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:

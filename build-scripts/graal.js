@@ -34,32 +34,44 @@ process.on('unhandledRejection', error => {
   process.exit(1);
 });
 
-const NATIVE_IMAGE_BUILD_ARGS = [
-  '-H:+UnlockExperimentalVMOptions',
-  '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
-  '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
-  '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
-  '-H:+AllowIncompleteClasspath',
-  `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
-  '-H:IncludeResources=externs\.zip',
-  '-H:IncludeResources=.*\.typedast',
-  '-H:IncludeResources=com/google/javascript/.*\.js',
-  '-H:IncludeResources=com/google/javascript/.*\.txt',
-  '-H:IncludeResources=lib/.*\.js',
-  '-H:IncludeResources=META-INF/.*\.txt',
-  '-H:+ReportExceptionStackTraces',
-  // '-H:+GenerateEmbeddedResourcesFile', // Available on Graal JDK 24 and newer
-  '--report-unsupported-elements-at-runtime',
-  '--initialize-at-build-time',
-  '--color=always',
-  '-jar',
-  path.resolve(process.cwd(), 'compiler.jar')
-];
+const flagsByPlatformAndArch = new Map([
+  // Statically link libraries when supported. Allows usage on systems
+  // which are missing or have incompatible versions of GLIBC.
+  // Only linux x86 architectures can fully statically link
+  // See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
+  ['linux-x86', ['--static', '--libc=musl']],
+  ['linux-x64', ['--static', '--libc=musl']],
+  ['linux-arm64', ['--static-nolibc']],
+]);
 
-const spawnOpts = {};
-if (process.platform === 'win32') {
-  spawnOpts.shell = true;
-}
+const NATIVE_IMAGE_BUILD_ARGS = ['-H:+UnlockExperimentalVMOptions'].concat(
+  flagsByPlatformAndArch.get(`${process.platform}-${process.arch}`) || [],
+  [
+    '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
+    '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
+    '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
+    '-H:+AllowIncompleteClasspath',
+    `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
+    '-H:IncludeResources=externs\.zip',
+    '-H:IncludeResources=.*\.typedast',
+    '-H:IncludeResources=com/google/javascript/.*\.js',
+    '-H:IncludeResources=com/google/javascript/.*\.txt',
+    '-H:IncludeResources=lib/.*\.js',
+    '-H:IncludeResources=META-INF/.*\.txt',
+    '-H:+ReportExceptionStackTraces',
+    // '-H:+GenerateEmbeddedResourcesFile',
+    '-J--sun-misc-unsafe-memory-access=allow', // See https://github.com/google/closure-compiler/issues/4229
+    '--initialize-at-build-time',
+    '-march=compatibility',
+    '--color=always',
+    '-jar',
+    path.resolve(process.cwd(), 'compiler.jar'),
+  ],
+);
+
+const spawnOpts = {
+  ...(process.platform === 'win32' ? { shell: true } : {}),
+};
 
 runCommand(`native-image${process.platform === 'win32' ? '.cmd' : ''}`, NATIVE_IMAGE_BUILD_ARGS, spawnOpts)
     .catch(e => {

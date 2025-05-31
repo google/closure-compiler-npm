@@ -107,9 +107,17 @@ jobs:
           ref: c47ad25ea3b484e10326f933e927c0bc8cded3da # patched 1.2.5 version
           path: musl
           clean: false
+      - name: Checkout zlib
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+        with:
+          repository: madler/zlib
+          ref: v1.2.13
+          path: zlib-1.2.13
+          clean: false
       - name: Install musl
         run: |
           # See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
+          # We have to build MUSL from source due to ensure recent CVEs are patched
 
           # Build musl from source
           pushd musl
@@ -126,8 +134,6 @@ jobs:
           x86_64-linux-musl-gcc --version
 
           # Build zlib with musl from source and install into the MUSL_HOME directory
-          curl -O https://zlib.net/fossils/zlib-1.2.13.tar.gz
-          tar -xzvf zlib-1.2.13.tar.gz
           pushd zlib-1.2.13
           CC=musl-gcc ./configure --prefix=$MUSL_HOME --static
           make && make install

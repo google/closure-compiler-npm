@@ -69,11 +69,13 @@ switch (process.platform) {
     if (process.arch !== 'arm64') {
       NATIVE_IMAGE_BUILD_ARGS.unshift('--static', '--libc=musl');
     } else {
-      NATIVE_IMAGE_BUILD_ARGS.unshift('--static-nolibc');
+      // Newer Graal versions use the standard flag --static-nolibc
+      NATIVE_IMAGE_BUILD_ARGS.unshift('-H:+StaticExecutableWithDynamicLibC');
     }
     break;
   case 'darwin': {
-    NATIVE_IMAGE_BUILD_ARGS.unshift('--static-nolibc');
+    // Newer Graal versions use the standard flag --static-nolibc
+    NATIVE_IMAGE_BUILD_ARGS.unshift('-H:+StaticExecutableWithDynamicLibC');
     break;
   }
 }

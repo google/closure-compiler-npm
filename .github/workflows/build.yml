@@ -49,7 +49,7 @@ jobs:
         run: git fetch --tags https://github.com/google/closure-compiler.git
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
-      - name: Yarn and maven cache
+      - name: Yarn cache
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         with:
           path: ${{ env.yarn_cache_dir }}
@@ -159,7 +159,7 @@ jobs:
           path: packages/google-closure-compiler/externs
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
-      - name: Cache yarn
+      - name: Yarn cache
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         id: yarn-cache
         with:
@@ -226,7 +226,7 @@ jobs:
           path: packages/google-closure-compiler/externs
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
-      - name: Cache yarn
+      - name: Yarn cache
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         id: yarn-cache
         with:
@@ -290,7 +290,7 @@ jobs:
           path: packages/google-closure-compiler/externs
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
-      - name: Cache yarn
+      - name: Yarn cache
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         id: yarn-cache
         with:
@@ -355,7 +355,7 @@ jobs:
       - name: Get yarn cache directory path
         # See https://stackoverflow.com/a/66737579/1211524
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $env:GITHUB_ENV
-      - name: Cache yarn
+      - name: Yarn cache
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         id: yarn-cache
         with:
@@ -448,7 +448,7 @@ jobs:
           chmod 755 packages/google-closure-compiler-windows/compiler.exe
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
-      - name: Cache yarn
+      - name: Yarn cache
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         id: yarn-cache
         with:

@@ -39,7 +39,8 @@ jobs:
           disk-cache: ${{ github.workflow }}
           # Share repository cache between workflows.
           repository-cache: true
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           submodules: recursive
           ref: ${{ inputs.release-tag || '' }}
@@ -97,7 +98,8 @@ jobs:
           java-version: 21
           java-package: jdk
           architecture: x64
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
       - name: Checkout musl
@@ -111,7 +113,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           repository: madler/zlib
-          ref: v1.2.13
+          ref: 04f42ceca40f73e2978b50e93806c2a18c1281fc # v1.2.13
           path: zlib-1.2.13
           clean: false
       - name: Install musl
@@ -142,7 +144,8 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
+      - name: Install GraalVM
+        uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
           java-version: 21
           distribution: 'graalvm-community'
@@ -207,14 +210,16 @@ jobs:
           java-version: 21
           java-package: jdk
           architecture: x64
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
           java-version: 21
           distribution: 'graalvm-community'
@@ -276,14 +281,16 @@ jobs:
           java-version: 21
           java-package: jdk
           architecture: x64
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
           java-version: 21
           distribution: 'graalvm-community'
@@ -345,14 +352,16 @@ jobs:
           java-version: 21
           java-package: jdk
           architecture: x64
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
           java-version: 21
           distribution: 'graalvm-community'
@@ -417,7 +426,8 @@ jobs:
       - build-macos
       - build-windows
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           ref: ${{ inputs.release-tag || '' }}
       - name: Use Node.js ${{ env.NODE_VERSION }}

@@ -82,6 +82,7 @@ const jasmineProcess = spawn(
     jasmineFlags,
     {
       stdio: 'inherit',
+      ...(process.platform === 'win32' ? { shell: true } : {}),
     },
 );
 

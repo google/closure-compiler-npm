@@ -49,6 +49,8 @@ jobs:
         run: git fetch --tags https://github.com/google/closure-compiler.git
       - name: Get yarn cache directory path
         run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
+      - name: Print yarn cache env variable
+        run: echo "${{ env.yarn_cache_dir }}"
       - name: Yarn cache
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
         with:

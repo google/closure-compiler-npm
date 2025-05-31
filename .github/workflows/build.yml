@@ -116,7 +116,7 @@ jobs:
           ref: 04f42ceca40f73e2978b50e93806c2a18c1281fc # v1.2.13
           path: zlib
           clean: false
-      - name: Install musl
+      - name: Build musl and zlib
         run: |
           # See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
           # We have to build MUSL from source due to ensure recent CVEs are patched

@@ -44,9 +44,8 @@ const flagsByPlatformAndArch = new Map([
   ['linux-arm64', ['-H:+StaticExecutableWithDynamicLibC']], // On Graal JDK 24 and newer, this is --static-nolibc
 ]);
 
-const platformFlags = flagsByPlatformAndArch.get(`${process.platform}-${process.arch}`) || [];
 const NATIVE_IMAGE_BUILD_ARGS = ['-H:+UnlockExperimentalVMOptions'].concat(
-  platformFlags,
+  flagsByPlatformAndArch.get(`${process.platform}-${process.arch}`) || [],
   [
     '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
     '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',

@@ -41,7 +41,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install packages
-        run: yarn install --colors=always
+        run: YARN_ENABLE_COLORS=true yarn install
       - name: Fetch compiler submodule tags
         working-directory: compiler
         run: git fetch --tags https://github.com/google/closure-compiler.git

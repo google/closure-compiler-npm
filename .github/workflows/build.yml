@@ -52,12 +52,12 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: yarn
       - name: Install packages
-        run: yarn install --colors=always
+        run: YARN_ENABLE_COLORS=true yarn install
       - name: Build jar
         # unset ANDROID_HOME to prevent bazel from trying to use the Android SDK
         run: unset ANDROID_HOME && ./build-scripts/build-compiler.js
       - name: Tests
-        run: yarn test:root --color
+        run: YARN_ENABLE_COLORS=true yarn test:root
       - name: Upload contrib folder
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -122,14 +122,14 @@ jobs:
           name: Externs folder
           path: packages/google-closure-compiler/externs
       - name: Install packages
-        run: yarn install --colors=always
+        run: YARN_ENABLE_COLORS=true yarn install
       - name: Build image
         working-directory: packages/google-closure-compiler-linux
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
       - name: Tests
-        run: yarn workspaces run test --color
+        run: YARN_ENABLE_COLORS=true yarn workspaces run test
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -184,14 +184,14 @@ jobs:
           name: Externs folder
           path: packages/google-closure-compiler/externs
       - name: Install packages
-        run: yarn install --colors=always
+        run: YARN_ENABLE_COLORS=true yarn install
       - name: Build image
         working-directory: packages/google-closure-compiler-linux-arm64
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
       - name: Tests
-        run: yarn workspaces run test --color
+        run: YARN_ENABLE_COLORS=true yarn workspaces run test
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -244,14 +244,14 @@ jobs:
           name: Externs folder
           path: packages/google-closure-compiler/externs
       - name: Install packages
-        run: yarn install --colors=always
+        run: YARN_ENABLE_COLORS=true yarn install
       - name: Build image
         working-directory: packages/google-closure-compiler-macos
         run: |
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
       - name: Tests
-        run: yarn workspaces run test --color
+        run: YARN_ENABLE_COLORS=true yarn workspaces run test
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -304,7 +304,7 @@ jobs:
           name: Externs folder
           path: packages/google-closure-compiler/externs
       - name: Install packages
-        run: yarn install --colors=always
+        run: YARN_ENABLE_COLORS=true yarn install
       - name: Build image
         working-directory: packages/google-closure-compiler-windows
         run: |
@@ -314,7 +314,7 @@ jobs:
         shell: cmd
         run: |
           echo "Running Tests"
-          yarn workspaces run test --color
+          YARN_ENABLE_COLORS=true yarn workspaces run test
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -387,7 +387,7 @@ jobs:
           chmod 755 packages/google-closure-compiler-macos/compiler
           chmod 755 packages/google-closure-compiler-windows/compiler.exe
       - name: Install packages
-        run: yarn install --colors=always
+        run: YARN_ENABLE_COLORS=true yarn install
       - name: Prepare for publish
         run: ./build-scripts/add-os-restrictions.js
       - name: Configure yarn

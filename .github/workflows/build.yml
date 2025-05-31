@@ -112,7 +112,7 @@ jobs:
       - name: Build musl and zlib
         run: |
           # See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
-          # We have to build MUSL from source due to ensure recent CVEs are patched
+          # We have to build MUSL from source to ensure recent CVEs are patched
 
           # Build musl from source
           pushd musl

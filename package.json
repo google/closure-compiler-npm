@@ -29,7 +29,6 @@
     "url": "https://github.com/google/closure-compiler/issues"
   },
   "homepage": "https://developers.google.com/closure/compiler/",
-  "dependencies": {},
   "devDependencies": {
     "glob": "11.x",
     "graphlib": "2.x",
@@ -39,11 +38,14 @@
     "semver": "5.x"
   },
   "resolutions": {
-    "**/glob-stream/**/glob-parent": "^5.1.2",
-    "**/glob-watcher": "^6.0.0",
-    "**/gulp-cli/**/debug": "^3.0.0",
-    "**/gulp-cli/**/micromatch": "^4.0.8",
-    "**/gulp-cli/**/yargs-parser": "^13.1.2"
+    "chokidar/glob-parent": "^5.1.2",
+    "expand-brackets/debug": "^3.0.0",
+    "findup-sync/micromatch": "^4.0.8",
+    "glob-stream/glob-parent": "^5.1.2",
+    "glob-watcher": "^6.0.0",
+    "matchdep/micromatch": "^4.0.8",
+    "snapdragon/debug": "^3.0.0",
+    "yargs": "^13.3.0"
   },
   "scripts": {
     "build": "./build-scripts/build.sh",
@@ -52,5 +54,6 @@
     "clean": "./build-scripts/clean.sh",
     "version": "./build-scripts/version-packages.js",
     "publish-packages": "./build-scripts/publish.js"
-  }
+  },
+  "packageManager": "yarn@4.9.1"
 }

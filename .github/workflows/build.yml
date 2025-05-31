@@ -114,7 +114,7 @@ jobs:
         with:
           repository: madler/zlib
           ref: 04f42ceca40f73e2978b50e93806c2a18c1281fc # v1.2.13
-          path: zlib-1.2.13
+          path: zlib
           clean: false
       - name: Install musl
         run: |
@@ -136,7 +136,7 @@ jobs:
           x86_64-linux-musl-gcc --version
 
           # Build zlib with musl from source and install into the MUSL_HOME directory
-          pushd zlib-1.2.13
+          pushd zlib
           CC=musl-gcc ./configure --prefix=$MUSL_HOME --static
           make && make install
           popd

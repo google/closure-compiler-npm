@@ -63,6 +63,7 @@ const NATIVE_IMAGE_BUILD_ARGS = ['-H:+UnlockExperimentalVMOptions'].concat(
     // '-H:+GenerateEmbeddedResourcesFile', // Available on Graal JDK 24 and newer
     '--report-unsupported-elements-at-runtime',
     '--initialize-at-build-time',
+    '-march=compatibility',
     '--color=always',
     '-jar',
     path.resolve(process.cwd(), 'compiler.jar'),

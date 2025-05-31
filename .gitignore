@@ -2,6 +2,7 @@ node_modules
 npm-debug.log
 yarn-error.log
 /lerna-debug.log
+/musl-toolchain
 /packages/google-closure-compiler/contrib/
 /packages/google-closure-compiler/externs/
 /packages/google-closure-compiler-java/compiler.jar
@@ -12,6 +13,7 @@ yarn-error.log
 /packages/google-closure-compiler-macos/compiler.jar
 /packages/google-closure-compiler-macos/compiler
 /packages/google-closure-compiler-windows/compiler.*
-/temp
 /publish-log.txt
+/temp
+/zlib
 .npmrc

@@ -41,31 +41,34 @@ const flagsByPlatformAndArch = new Map([
   // See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
   ['linux-x86', ['--static', '--libc=musl']],
   ['linux-x64', ['--static', '--libc=musl']],
-  ['linux-arm64', ['-H:+StaticExecutableWithDynamicLibC']],
+  ['linux-arm64', ['-H:+StaticExecutableWithDynamicLibC']], // On Graal JDK 24 and newer, this is --static-nolibc
 ]);
 
 const platformFlags = flagsByPlatformAndArch.get(`${process.platform}-${process.arch}`) || [];
-const NATIVE_IMAGE_BUILD_ARGS = platformFlags.concat([
-  '-H:+UnlockExperimentalVMOptions',
-  '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
-  '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
-  '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
-  '-H:+AllowIncompleteClasspath',
-  `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
-  '-H:IncludeResources=externs\.zip',
-  '-H:IncludeResources=.*\.typedast',
-  '-H:IncludeResources=com/google/javascript/.*\.js',
-  '-H:IncludeResources=com/google/javascript/.*\.txt',
-  '-H:IncludeResources=lib/.*\.js',
-  '-H:IncludeResources=META-INF/.*\.txt',
-  '-H:+ReportExceptionStackTraces',
-  // '-H:+GenerateEmbeddedResourcesFile', // Available on Graal JDK 24 and newer
-  '--report-unsupported-elements-at-runtime',
-  '--initialize-at-build-time',
-  '--color=always',
-  '-jar',
-  path.resolve(process.cwd(), 'compiler.jar')
-]);
+const NATIVE_IMAGE_BUILD_ARGS = ['-H:+UnlockExperimentalVMOptions'].concat(
+  platformFlags,
+  [
+    '-H:+UnlockExperimentalVMOptions',
+    '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
+    '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
+    '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',
+    '-H:+AllowIncompleteClasspath',
+    `-H:ReflectionConfigurationFiles=${path.resolve(__dirname, 'reflection-config.json')}`,
+    '-H:IncludeResources=externs\.zip',
+    '-H:IncludeResources=.*\.typedast',
+    '-H:IncludeResources=com/google/javascript/.*\.js',
+    '-H:IncludeResources=com/google/javascript/.*\.txt',
+    '-H:IncludeResources=lib/.*\.js',
+    '-H:IncludeResources=META-INF/.*\.txt',
+    '-H:+ReportExceptionStackTraces',
+    // '-H:+GenerateEmbeddedResourcesFile', // Available on Graal JDK 24 and newer
+    '--report-unsupported-elements-at-runtime',
+    '--initialize-at-build-time',
+    '--color=always',
+    '-jar',
+    path.resolve(process.cwd(), 'compiler.jar'),
+  ],
+);
 
 const spawnOpts = {
   ...(process.platform === 'win32' ? { shell: true } : {}),

@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: adopt-hotspot
-          java-version: 21
+          java-version: 24
           java-package: jdk
           architecture: x64
       - name: Setup Bazelisk
@@ -60,7 +60,7 @@ jobs:
         run: yarn install --colors=always
       - name: Build jar
         # unset ANDROID_HOME to prevent bazel from trying to use the Android SDK
-        run: unset ANDROID_HOME && ./build-scripts/build-compiler.js
+        run: unset ANDROID_HOME && ./build-scripts/update-compiler-libs.js && ./build-scripts/build-compiler.js
       - name: Tests
         run: yarn test:root --color
       - name: Upload contrib folder
@@ -140,7 +140,7 @@ jobs:
       - name: Install GraalVM
         uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
-          java-version: 21
+          java-version: 24
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
@@ -207,7 +207,7 @@ jobs:
       - name: Setup GraalVM
         uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
-          java-version: 21
+          java-version: 24
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
@@ -271,7 +271,7 @@ jobs:
       - name: Setup GraalVM
         uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
-          java-version: 21
+          java-version: 24
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
@@ -335,7 +335,7 @@ jobs:
       - name: Setup GraalVM
         uses: graalvm/setup-graalvm@01ed653ac833fe80569f1ef9f25585ba2811baab # 1.3.3
         with:
-          java-version: 21
+          java-version: 24
           distribution: 'graalvm-community'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'

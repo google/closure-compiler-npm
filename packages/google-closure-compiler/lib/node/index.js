@@ -30,7 +30,7 @@ export const javaPath = 'java';
 
 export default class Compiler {
   /**
-   * @param {Object<string,string>|Array<string>} args
+   * @param {Object<string,string|boolean>|Array<string>} args
    * @param {Array<String>=} extraCommandArgs
    */
   constructor(args, extraCommandArgs) {
@@ -65,7 +65,12 @@ export default class Compiler {
   /** @param {function(number, string, string)=} callback */
   run(callback) {
     if (this.JAR_PATH) {
-      this.commandArguments.unshift('--sun-misc-unsafe-memory-access=allow', '-jar', this.JAR_PATH);
+      this.commandArguments.unshift(
+          '-XX:+IgnoreUnrecognizedVMOptions',
+          '--sun-misc-unsafe-memory-access=allow',
+          '-jar',
+          this.JAR_PATH,
+      );
       if (this.extraCommandArgs) {
         this.commandArguments.unshift(...this.extraCommandArgs);
       }

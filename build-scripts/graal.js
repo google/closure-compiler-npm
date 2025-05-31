@@ -34,7 +34,18 @@ process.on('unhandledRejection', error => {
   process.exit(1);
 });
 
-const NATIVE_IMAGE_BUILD_ARGS = [
+const flagsByPlatformAndArch = new Map([
+  // Statically link libraries when supported. Allows usage on systems
+  // which are missing or have incompatible versions of GLIBC.
+  // Only linux x86 architectures can fully statically link
+  // See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
+  ['linux-x86', ['--static', '--libc=musl']],
+  ['linux-x64', ['--static', '--libc=musl']],
+  ['linux-arm64', ['-H:+StaticExecutableWithDynamicLibC']],
+]);
+
+const platformFlags = flagsByPlatformAndArch.get(`${process.platform}-${process.arch}`) || [];
+const NATIVE_IMAGE_BUILD_ARGS = platformFlags.concat([
   '-H:+UnlockExperimentalVMOptions',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
   '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
@@ -54,31 +65,11 @@ const NATIVE_IMAGE_BUILD_ARGS = [
   '--color=always',
   '-jar',
   path.resolve(process.cwd(), 'compiler.jar')
-];
+]);
 
-const spawnOpts = {};
-switch (process.platform) {
-  case 'win32':
-    spawnOpts.shell = true;
-    break;
-  case 'linux':
-    // On linux, statically link all libraries. Allows usage on systems
-    // which are missing or have incompatible versions of GLIBC.
-    // Only linux x86 architectures can fully statically link
-    // See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
-    if (process.arch !== 'arm64') {
-      NATIVE_IMAGE_BUILD_ARGS.unshift('--static', '--libc=musl');
-    } else {
-      // Newer Graal versions use the standard flag --static-nolibc
-      NATIVE_IMAGE_BUILD_ARGS.unshift('-H:+StaticExecutableWithDynamicLibC');
-    }
-    break;
-  case 'darwin': {
-    // Newer Graal versions use the standard flag --static-nolibc
-    NATIVE_IMAGE_BUILD_ARGS.unshift('-H:+StaticExecutableWithDynamicLibC');
-    break;
-  }
-}
+const spawnOpts = {
+  ...(process.platform === 'win32' ? { shell: true } : {}),
+};
 
 runCommand(`native-image${process.platform === 'win32' ? '.cmd' : ''}`, NATIVE_IMAGE_BUILD_ARGS, spawnOpts)
     .catch(e => {

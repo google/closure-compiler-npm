@@ -42,15 +42,15 @@ export default class Compiler {
     if (Array.isArray(args)) {
       this.commandArguments.push(...args);
     } else {
-      for (let key in args) {
-        if (Array.isArray(args[key])) {
-          for (let i = 0; i < args[key].length; i++) {
+      for (const [key, val] of Object.entries(args)) {
+        if (Array.isArray(val)) {
+          for (let i = 0; i < val.length; i++) {
             this.commandArguments.push(
-                this.formatArgument(key, args[key][i]));
+                this.formatArgument(key, val[i]));
           }
         } else {
           this.commandArguments.push(
-              this.formatArgument(key, args[key]));
+              this.formatArgument(key, val));
         }
       }
     }

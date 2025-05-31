@@ -76,12 +76,13 @@ describe('closure-compiler node bindings', () => {
       expect(hasRun).toBe(true);
     });
 
-    it('should normalize an options object to an arguments array', () => {
+    it('should normalize an options object to an arguments array', async () => {
       const compiler = new Compiler({
         one: true,
         two: 'two',
         three: ['one', 'two', 'three']
       });
+      await new Promise((resolve) => compiler.run(resolve));
 
       const expectedArray = compilerArgs.slice(1);
       expect(compiler.commandArguments.length).toBe(expectedArray.length);

@@ -48,7 +48,6 @@ const platformFlags = flagsByPlatformAndArch.get(`${process.platform}-${process.
 const NATIVE_IMAGE_BUILD_ARGS = ['-H:+UnlockExperimentalVMOptions'].concat(
   platformFlags,
   [
-    '-H:+UnlockExperimentalVMOptions',
     '-H:IncludeResourceBundles=org.kohsuke.args4j.Messages',
     '-H:IncludeResourceBundles=org.kohsuke.args4j.spi.Messages',
     '-H:IncludeResourceBundles=com.google.javascript.jscomp.parsing.ParserConfig',

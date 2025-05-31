@@ -44,13 +44,9 @@ export default class Compiler {
     } else {
       for (const [key, val] of Object.entries(args)) {
         if (Array.isArray(val)) {
-          for (let i = 0; i < val.length; i++) {
-            this.commandArguments.push(
-                this.formatArgument(key, val[i]));
-          }
+          this.commandArguments.push(...val.map((item) => this.formatArgument(key, item)));
         } else {
-          this.commandArguments.push(
-              this.formatArgument(key, val));
+          this.commandArguments.push(this.formatArgument(key, val));
         }
       }
     }

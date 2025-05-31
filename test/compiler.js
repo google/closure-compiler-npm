@@ -37,7 +37,7 @@ process.on('unhandledRejection', (e) => { throw e; });
 describe('compiler.jar', function () {
   it('should not be a snapshot build', async () => {
     const compiler = new Compiler({version: true});
-    const {stdout} = await new Promise((resolve) =>
+    const {exitCode, stdout, stderr} = await new Promise((resolve) =>
       compiler.run((exitCode, stdout, stderr) =>
         resolve({
           exitCode,
@@ -46,6 +46,10 @@ describe('compiler.jar', function () {
         })
       )
     );
+    if (exitCode !== 0 || stderr) {
+      console.error(`${stdout || ''}${stderr || ''}`);
+    }
+    expect(exitCode).toBe(0);
     let versionInfo = (stdout || '').match(compilerVersionMatch);
     expect(versionInfo).not.toBeNullish();
     versionInfo = versionInfo || [];
@@ -56,7 +60,7 @@ describe('compiler.jar', function () {
   it('version should be equal to the package major version', async () => {
     const compiler = new Compiler({version: true});
     const packageVer = new Semver(packageInfo.version);
-    const {stdout} = await new Promise((resolve) =>
+    const {exitCode, stdout, stderr} = await new Promise((resolve) =>
         compiler.run((exitCode, stdout, stderr) =>
           resolve({
             exitCode,
@@ -65,6 +69,10 @@ describe('compiler.jar', function () {
           })
         )
     );
+    if (exitCode !== 0 || stderr) {
+      console.error(`${stdout || ''}${stderr || ''}`);
+    }
+    expect(exitCode).toBe(0);
     let versionInfo = (stdout || '').match(compilerVersionMatch);
     expect(versionInfo).not.toBeNullish();
     versionInfo = versionInfo || [];

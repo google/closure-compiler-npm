@@ -129,7 +129,7 @@ jobs:
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
       - name: Tests
-        run: YARN_ENABLE_COLORS=true yarn workspaces run test
+        run: FORCE_COLOR=1 yarn workspaces foreach -A --no-private run test
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -191,7 +191,7 @@ jobs:
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
       - name: Tests
-        run: YARN_ENABLE_COLORS=true yarn workspaces run test
+        run: FORCE_COLOR=1 yarn workspaces foreach -A --no-private run test
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -251,7 +251,7 @@ jobs:
           cp ../google-closure-compiler-java/compiler.jar compiler.jar
           yarn run build
       - name: Tests
-        run: YARN_ENABLE_COLORS=true yarn workspaces run test
+        run: FORCE_COLOR=1 yarn workspaces foreach -A --no-private run test
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -312,9 +312,7 @@ jobs:
           yarn run build
       - name: Tests
         shell: cmd
-        run: |
-          echo "Running Tests"
-          YARN_ENABLE_COLORS=true yarn workspaces run test
+        run: FORCE_COLOR=1 yarn workspaces foreach -A --no-private run test
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:

@@ -39,6 +39,17 @@ describe('closure-compiler node bindings', () => {
 
   describe('java version', () => {
     let originalTimeout;
+    const compilerArgs = [
+      '-Xms2048m',
+      '--sun-misc-unsafe-memory-access=allow',
+      '-jar',
+      JAR_PATH,
+      '--one=true',
+      '--two=two',
+      '--three=one',
+      '--three=two',
+      '--three=three',
+    ];
     beforeEach(() => {
       originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
       jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
@@ -65,15 +76,15 @@ describe('closure-compiler node bindings', () => {
       expect(hasRun).toBe(true);
     });
 
-    it('should normalize an options object to an arguments array', () => {
+    it('should normalize an options object to an arguments array', async () => {
       const compiler = new Compiler({
         one: true,
         two: 'two',
         three: ['one', 'two', 'three']
       });
+      await new Promise((resolve) => compiler.run(resolve));
 
-      const expectedArray = ['--one=true', '--two=two',
-        '--three=one', '--three=two', '--three=three'];
+      const expectedArray = compilerArgs.slice(1);
       expect(compiler.commandArguments.length).toBe(expectedArray.length);
       compiler.commandArguments.forEach((item, index) => {
         expect(expectedArray[index]).toBe(item);
@@ -81,10 +92,8 @@ describe('closure-compiler node bindings', () => {
     });
 
     it('should prepend the -jar argument and compiler path when configured by array', async () => {
-      const expectedArray = ['-jar', JAR_PATH, '--one=true', '--two=two',
-        '--three=one', '--three=two', '--three=three'];
-
-      const compiler = new Compiler(expectedArray.slice(2));
+      const expectedArray = compilerArgs.slice(1);
+      const compiler = new Compiler(expectedArray.slice(3));
       await new Promise((resolve) => compiler.run(resolve));
 
       expect(compiler.commandArguments.length).toBe(expectedArray.length);
@@ -95,10 +104,13 @@ describe('closure-compiler node bindings', () => {
 
     describe('extra command arguments', () => {
       it('should include initial command arguments when configured by an options object', async () => {
-        const expectedArray = ['-Xms2048m', '-jar', JAR_PATH, '--one=true', '--two=two',
-          '--three=one', '--three=two', '--three=three'];
-
-        const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
+        const args = {
+          one: true,
+          two: 'two',
+          three: ['one', 'two', 'three'],
+        };
+        const expectedArray = compilerArgs;
+        const compiler = new Compiler(args, compilerArgs.slice(0, 1));
         await new Promise((resolve) => compiler.run(resolve));
 
         expect(compiler.commandArguments.length).toBe(expectedArray.length);
@@ -108,10 +120,8 @@ describe('closure-compiler node bindings', () => {
       });
 
       it('should include initial command arguments when configured by array', async () => {
-        const expectedArray = ['-Xms2048m', '-jar', JAR_PATH, '--one=true', '--two=two',
-          '--three=one', '--three=two', '--three=three'];
-
-        const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
+        const expectedArray = compilerArgs;
+        const compiler = new Compiler(expectedArray.slice(4), expectedArray.slice(0, 1));
         await new Promise((resolve) => compiler.run(resolve));
         expect(compiler.commandArguments.length).toBe(expectedArray.length);
         compiler.commandArguments.forEach(function (item, index) {

@@ -106,11 +106,7 @@ describe('closure-compiler node bindings', () => {
         const args = {
           one: true,
           two: 'two',
-          three: [
-            'one',
-            'two',
-            'threee',
-          ],
+          three: ['one', 'two', 'three'],
         };
         const expectedArray = compilerArgs;
         const compiler = new Compiler(args, compilerArgs.slice(0, 1));

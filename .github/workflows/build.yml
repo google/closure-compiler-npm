@@ -22,12 +22,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FORCE_COLOR: '1'
+      JAVA_VERSION: 21
     steps:
       - name: Setup Java
         uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: adopt-hotspot
-          java-version: 21
+          java-version: ${{ env.JAVA_VERSION }}
           java-package: jdk
           architecture: x64
       - name: Setup Bazelisk
@@ -55,7 +56,7 @@ jobs:
           path: |
             ${{ env.yarn_cache_dir }}
             ~/.m2/repository
-          key: ${{ runner.os }}-yarn-mvn-java11-${{ hashFiles('**/yarn.lock', '**/pom.xml') }}
+          key: ${{ runner.os }}-yarn-mvn-java${{ env.JAVA_VERSION }}-${{ hashFiles('**/yarn.lock', '**/pom.xml') }}
       - name: Install packages
         run: yarn install --colors=always
       - name: Build jar

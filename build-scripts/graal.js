@@ -64,12 +64,18 @@ switch (process.platform) {
   case 'linux':
     // On linux, statically link all libraries. Allows usage on systems
     // which are missing or have incompatible versions of GLIBC.
+    // Only linux x86 architectures can fully statically link
     // See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
     if (process.arch !== 'arm64') {
-      NATIVE_IMAGE_BUILD_ARGS.unshift('--libc=musl');
+      NATIVE_IMAGE_BUILD_ARGS.unshift('--static', '--libc=musl');
+    } else {
+      NATIVE_IMAGE_BUILD_ARGS.unshift('--static-nolibc');
     }
-    NATIVE_IMAGE_BUILD_ARGS.unshift('--static');
     break;
+  case 'darwin': {
+    NATIVE_IMAGE_BUILD_ARGS.unshift('--static-nolibc');
+    break;
+  }
 }
 
 runCommand(`native-image${process.platform === 'win32' ? '.cmd' : ''}`, NATIVE_IMAGE_BUILD_ARGS, spawnOpts)

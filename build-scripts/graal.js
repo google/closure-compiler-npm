@@ -41,7 +41,7 @@ const flagsByPlatformAndArch = new Map([
   // See https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
   ['linux-x86', ['--static', '--libc=musl']],
   ['linux-x64', ['--static', '--libc=musl']],
-  ['linux-arm64', ['-H:+StaticExecutableWithDynamicLibC']], // On Graal JDK 24 and newer, this is --static-nolibc
+  ['linux-arm64', ['--static-nolibc']],
 ]);
 
 const NATIVE_IMAGE_BUILD_ARGS = ['-H:+UnlockExperimentalVMOptions'].concat(
@@ -59,8 +59,8 @@ const NATIVE_IMAGE_BUILD_ARGS = ['-H:+UnlockExperimentalVMOptions'].concat(
     '-H:IncludeResources=lib/.*\.js',
     '-H:IncludeResources=META-INF/.*\.txt',
     '-H:+ReportExceptionStackTraces',
-    // '-H:+GenerateEmbeddedResourcesFile', // Available on Graal JDK 24 and newer
-    '--report-unsupported-elements-at-runtime',
+    // '-H:+GenerateEmbeddedResourcesFile',
+    '-J--sun-misc-unsafe-memory-access=allow', // See https://github.com/google/closure-compiler/issues/4229
     '--initialize-at-build-time',
     '-march=compatibility',
     '--color=always',

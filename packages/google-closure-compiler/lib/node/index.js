@@ -65,7 +65,7 @@ export default class Compiler {
   /** @param {function(number, string, string)=} callback */
   run(callback) {
     if (this.JAR_PATH) {
-      this.commandArguments.unshift('-jar', this.JAR_PATH);
+      this.commandArguments.unshift('--sun-misc-unsafe-memory-access=allow', '-jar', this.JAR_PATH);
       if (this.extraCommandArgs) {
         this.commandArguments.unshift(...this.extraCommandArgs);
       }

@@ -60,7 +60,6 @@ const NATIVE_IMAGE_BUILD_ARGS = ['-H:+UnlockExperimentalVMOptions'].concat(
     '-H:IncludeResources=META-INF/.*\.txt',
     '-H:+ReportExceptionStackTraces',
     // '-H:+GenerateEmbeddedResourcesFile', // Available on Graal JDK 24 and newer
-    '-J--sun-misc-unsafe-memory-access=allow',
     '--initialize-at-build-time',
     '-march=compatibility',
     '--color=always',

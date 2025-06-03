@@ -410,7 +410,5 @@ jobs:
         run: YARN_ENABLE_COLORS=true yarn install
       - name: Prepare for publish
         run: ./build-scripts/add-os-restrictions.js
-      - name: Configure yarn
-        run: yarn config set registry https://registry.npmjs.org/
       - name: Publish packages to npm
         run: yarn publish-packages

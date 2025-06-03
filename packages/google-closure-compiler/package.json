@@ -16,9 +16,7 @@
     "gulpplugin",
     "gruntplugin"
   ],
-  "bin": {
-    "google-closure-compiler": "cli.js"
-  },
+  "bin": "cli.js",
   "main": "index.js",
   "contributors": [
     {

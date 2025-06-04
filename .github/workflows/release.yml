@@ -30,16 +30,7 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # 4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Get yarn cache directory path
-        run: echo "yarn_cache_dir=$(yarn cache dir)" >> $GITHUB_ENV
-      - name: Cache yarn
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # 4.2.3
-        id: yarn-cache
-        with:
-          path: ${{ env.yarn_cache_dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          cache: yarn
       - name: Install packages
         run: YARN_ENABLE_COLORS=true yarn install
       - name: Fetch compiler submodule tags
@@ -64,8 +55,12 @@ jobs:
           git config --global user.email "github-bot@github.com"
           git config --global user.name "Github Bot"
           git add compiler
-          yarn version --new-version ${{ env.COMPILER_VERSION_NUMBER }}.0.0
+          yarn version ${{ env.COMPILER_VERSION_NUMBER }}.0.0
+          git add package.json
+          ./build-scripts/version-packages.js
+          git commit -m "v${{ env.COMPILER_VERSION_NUMBER }}.0.0"
           git push origin master
+          git tag -a v${{ env.COMPILER_VERSION_NUMBER }}.0.0 -m "v${{ env.COMPILER_VERSION_NUMBER }}.0.0"
           git push origin v${{ env.COMPILER_VERSION_NUMBER }}.0.0
       - name: Create GitHub Release
         if: ${{ env.COMPILER_VERSION_NUMBER != '' }}

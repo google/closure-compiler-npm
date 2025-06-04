@@ -49,10 +49,12 @@ rootPackageJson.version = newVersion.toString();
 fs.writeFileSync(rootPackageJsonPath, `${JSON.stringify(rootPackageJson, null, 2)}\n`, 'utf8');
 childProcess.execSync(`git add "${rootPackageJsonPath}"`);
 
+const dependencyTypes = ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'];
+
 const packagesDirPath = path.resolve(__dirname, '../packages');
 const packages = fs.readdirSync(packagesDirPath);
 
-packages.forEach((packageName) => {
+for (const packageName of packages) {
   const packageJsonPath = `${packagesDirPath}/${packageName}/package.json`;
   // Only directories that have package.json files are packages in this project.
   // For instance, the google-closure-compiler-js directory only has a readme for historical purposes and should
@@ -60,25 +62,24 @@ packages.forEach((packageName) => {
   try {
     fs.statSync(packageJsonPath); // check if file exists
   } catch {
-    return;
+    continue;
   }
   const pkgJson = JSON.parse(fs.readFileSync(packageJsonPath));
   pkgJson.version = newVersion.toString();
 
-  ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies']
-      .forEach((dependencyType) =>{
-        if (!pkgJson[dependencyType]) {
-          return;
-        }
-        Object.keys(pkgJson[dependencyType]).forEach((dependencyName) => {
-          if (packages.includes(dependencyName)) {
-            pkgJson[dependencyType][dependencyName] = `^${newVersion.toString()}`;
-          }
-        });
-      });
+  for (const dependencyType of dependencyTypes) {
+    if (!pkgJson[dependencyType]) {
+      continue;
+    }
+    for (const dependencyName of Object.keys(pkgJson[dependencyType])) {
+      if (packages.includes(dependencyName)) {
+        pkgJson[dependencyType][dependencyName] = `^${newVersion.toString()}`;
+      }
+    }
+  }
   fs.writeFileSync(packageJsonPath, `${JSON.stringify(pkgJson, null, 2)}\n`, 'utf8');
   childProcess.execSync(`git add "${packageJsonPath}"`);
-});
+}
 
 childProcess.execSync(`yarn install`);
 childProcess.execSync(`git add "${path.resolve(__dirname, '../yarn.lock')}"`);

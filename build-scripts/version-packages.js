@@ -68,10 +68,7 @@ for (const packageName of packages) {
   pkgJson.version = newVersion.toString();
 
   for (const dependencyType of dependencyTypes) {
-    if (!pkgJson[dependencyType]) {
-      continue;
-    }
-    for (const dependencyName of Object.keys(pkgJson[dependencyType])) {
+    for (const dependencyName of Object.keys(pkgJson[dependencyType] || {})) {
       if (packages.includes(dependencyName)) {
         pkgJson[dependencyType][dependencyName] = `^${newVersion.toString()}`;
       }

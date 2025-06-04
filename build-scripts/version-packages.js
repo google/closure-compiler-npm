@@ -26,9 +26,29 @@ import childProcess from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath, URL} from 'node:url';
+import parseArgs from 'minimist';
+import semver from 'semver';
 
+const flags = parseArgs(process.argv.slice(2));
+if (!flags['new-version']) {
+  process.stderr.write(`No new version specified\n`);
+  process.exit();
+}
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const newVersion = process.env.npm_package_version;
+const rootPackageJsonPath = path.resolve(__dirname, '../package.json');
+const rootPackageJson = JSON.parse(fs.readFileSync(rootPackageJsonPath, 'utf-8'));
+const currentVersion = semver(rootPackageJson.version);
+const newVersion = semver(flags['new-version']);
+
+if (!semver.gt(newVersion, currentVersion)) {
+  process.stderr.write(`New version must be greater than current version\n`);
+  process.exit();
+}
+
+rootPackageJson.version = newVersion.toString();
+fs.writeFileSync(rootPackageJsonPath, `${JSON.stringify(rootPackageJson, null, 2)}\n`, 'utf8');
+childProcess.execSync(`git add "${rootPackageJsonPath}"`);
+
 const packagesDirPath = path.resolve(__dirname, '../packages');
 const packages = fs.readdirSync(packagesDirPath);
 
@@ -43,7 +63,7 @@ packages.forEach((packageName) => {
     return;
   }
   const pkgJson = JSON.parse(fs.readFileSync(packageJsonPath));
-  pkgJson.version = newVersion;
+  pkgJson.version = newVersion.toString();
 
   ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies']
       .forEach((dependencyType) =>{
@@ -52,10 +72,15 @@ packages.forEach((packageName) => {
         }
         Object.keys(pkgJson[dependencyType]).forEach((dependencyName) => {
           if (packages.includes(dependencyName)) {
-            pkgJson[dependencyType][dependencyName] = `^${newVersion}`;
+            pkgJson[dependencyType][dependencyName] = `^${newVersion.toString()}`;
           }
         });
       });
   fs.writeFileSync(packageJsonPath, `${JSON.stringify(pkgJson, null, 2)}\n`, 'utf8');
   childProcess.execSync(`git add "${packageJsonPath}"`);
 });
+
+childProcess.execSync(`yarn install`);
+childProcess.execSync(`git add "${path.resolve(__dirname, '../yarn.lock')}"`);
+childProcess.execSync(`git commit -m "v${newVersion.toString()}"`);
+childProcess.execSync(`git tag -a v${newVersion.toString()} -m "v${newVersion.toString()}"`);

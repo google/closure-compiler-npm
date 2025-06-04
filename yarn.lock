@@ -581,6 +581,7 @@ __metadata:
     graphlib: "npm:2.x"
     jasmine: "npm:^5.6.0"
     jasmine-console-reporter: "npm:^3.1.0"
+    minimist: "npm:1.x"
     ncp: "npm:2.x"
     semver: "npm:5.x"
   languageName: unknown

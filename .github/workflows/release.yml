@@ -55,12 +55,8 @@ jobs:
           git config --global user.email "github-bot@github.com"
           git config --global user.name "Github Bot"
           git add compiler
-          yarn version ${{ env.COMPILER_VERSION_NUMBER }}.0.0
-          git add package.json
-          ./build-scripts/version-packages.js
-          git commit -m "v${{ env.COMPILER_VERSION_NUMBER }}.0.0"
+          ./build-scripts/version-packages.js --new-version ${{ env.COMPILER_VERSION_NUMBER }}.0.0
           git push origin master
-          git tag -a v${{ env.COMPILER_VERSION_NUMBER }}.0.0 -m "v${{ env.COMPILER_VERSION_NUMBER }}.0.0"
           git push origin v${{ env.COMPILER_VERSION_NUMBER }}.0.0
       - name: Create GitHub Release
         if: ${{ env.COMPILER_VERSION_NUMBER != '' }}

@@ -34,6 +34,7 @@
     "graphlib": "2.x",
     "jasmine": "^5.6.0",
     "jasmine-console-reporter": "^3.1.0",
+    "minimist": "1.x",
     "ncp": "2.x",
     "semver": "5.x"
   },
@@ -52,7 +53,6 @@
     "test": "./build-scripts/test.sh",
     "test:root": "./build-scripts/jasmine.sh --reporter=jasmine-console-reporter test/*.js",
     "clean": "./build-scripts/clean.sh",
-    "version": "./build-scripts/version-packages.js",
     "publish-packages": "./build-scripts/publish.js"
   },
   "packageManager": "yarn@4.9.1"

@@ -76,8 +76,6 @@ jobs:
           path: packages/google-closure-compiler-java/compiler.jar
 
   # Build the native image on Linux
-  # The runner image determines GLIBC compatibility and should not be changed without
-  # understanding the impact. See https://github.com/google/closure-compiler-npm/issues/280
   build-linux:
     name: Build Linux Native Image
     needs: build-compiler

@@ -47,7 +47,7 @@ if (!semver.gt(newVersion, currentVersion)) {
 
 rootPackageJson.version = newVersion.toString();
 fs.writeFileSync(rootPackageJsonPath, `${JSON.stringify(rootPackageJson, null, 2)}\n`, 'utf8');
-childProcess.execSync(`git add "${rootPackageJsonPath}"`);
+childProcess.execSync(`git add "${rootPackageJsonPath}"`, {stdio: 'inherit'});
 
 const dependencyTypes = ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'];
 
@@ -75,10 +75,10 @@ for (const packageName of packages) {
     }
   }
   fs.writeFileSync(packageJsonPath, `${JSON.stringify(pkgJson, null, 2)}\n`, 'utf8');
-  childProcess.execSync(`git add "${packageJsonPath}"`);
+  childProcess.execSync(`git add "${packageJsonPath}"`, {stdio: 'inherit'});
 }
 
-childProcess.execSync(`yarn install`);
-childProcess.execSync(`git add "${path.resolve(__dirname, '../yarn.lock')}"`);
-childProcess.execSync(`git commit -m "v${newVersion.toString()}"`);
-childProcess.execSync(`git tag -a v${newVersion.toString()} -m "v${newVersion.toString()}"`);
+childProcess.execSync(`yarn install`, {stdio: 'inherit'});
+childProcess.execSync(`git add "${path.resolve(__dirname, '../yarn.lock')}"`, {stdio: 'inherit'});
+childProcess.execSync(`git commit -m "v${newVersion.toString()}"`, {stdio: 'inherit'});
+childProcess.execSync(`git tag -a v${newVersion.toString()} -m "v${newVersion.toString()}"`, {stdio: 'inherit'});

@@ -78,7 +78,7 @@ for (const packageName of packages) {
   childProcess.execSync(`git add "${packageJsonPath}"`, {stdio: 'inherit'});
 }
 
-childProcess.execSync(`yarn install`, {stdio: 'inherit'});
+childProcess.execSync(`yarn install --no-immutable`, {stdio: 'inherit'});
 childProcess.execSync(`git add "${path.resolve(__dirname, '../yarn.lock')}"`, {stdio: 'inherit'});
 childProcess.execSync(`git commit -m "v${newVersion.toString()}"`, {stdio: 'inherit'});
 childProcess.execSync(`git tag -a v${newVersion.toString()} -m "v${newVersion.toString()}"`, {stdio: 'inherit'});

@@ -39,6 +39,21 @@ describe('closure-compiler node bindings', () => {
 
   describe('java version', () => {
     let originalTimeout;
+    const baseCompilerArgs = [
+      '--one=true',
+      '--two=two',
+      '--three=one',
+      '--three=two',
+      '--three=three',
+    ];
+    const expandedCompilerArgs = [
+      '-XX:+IgnoreUnrecognizedVMOptions',
+      '--sun-misc-unsafe-memory-access=allow',
+      '-jar',
+      JAR_PATH,
+    ].concat(baseCompilerArgs);
+    const extraCompilerArgs = ['-Xms2048m'];
+    const expandedPlusExtraArgs = extraCompilerArgs.concat(expandedCompilerArgs);
     beforeEach(() => {
       originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
       jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
@@ -65,57 +80,51 @@ describe('closure-compiler node bindings', () => {
       expect(hasRun).toBe(true);
     });
 
-    it('should normalize an options object to an arguments array', () => {
+    it('should normalize an options object to an arguments array immediately', () => {
       const compiler = new Compiler({
         one: true,
         two: 'two',
         three: ['one', 'two', 'three']
       });
 
-      const expectedArray = ['--one=true', '--two=two',
-        '--three=one', '--three=two', '--three=three'];
-      expect(compiler.commandArguments.length).toBe(expectedArray.length);
+      expect(compiler.commandArguments.length).toBe(baseCompilerArgs.length);
       compiler.commandArguments.forEach((item, index) => {
-        expect(expectedArray[index]).toBe(item);
+        expect(baseCompilerArgs[index]).toBe(item);
       });
     });
 
     it('should prepend the -jar argument and compiler path when configured by array', async () => {
-      const expectedArray = ['-jar', JAR_PATH, '--one=true', '--two=two',
-        '--three=one', '--three=two', '--three=three'];
-
-      const compiler = new Compiler(expectedArray.slice(2));
+      const compiler = new Compiler(baseCompilerArgs);
       await new Promise((resolve) => compiler.run(resolve));
 
-      expect(compiler.commandArguments.length).toBe(expectedArray.length);
+      expect(compiler.commandArguments.length).toBe(expandedCompilerArgs.length);
       compiler.commandArguments.forEach((item, index) => {
-        expect(expectedArray[index]).toBe(item);
+        expect(expandedCompilerArgs[index]).toBe(item);
       });
     });
 
     describe('extra command arguments', () => {
       it('should include initial command arguments when configured by an options object', async () => {
-        const expectedArray = ['-Xms2048m', '-jar', JAR_PATH, '--one=true', '--two=two',
-          '--three=one', '--three=two', '--three=three'];
-
-        const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
+        const args = {
+          one: true,
+          two: 'two',
+          three: ['one', 'two', 'three'],
+        };
+        const compiler = new Compiler(args, extraCompilerArgs);
         await new Promise((resolve) => compiler.run(resolve));
 
-        expect(compiler.commandArguments.length).toBe(expectedArray.length);
+        expect(compiler.commandArguments.length).toBe(expandedPlusExtraArgs.length);
         compiler.commandArguments.forEach(function (item, index) {
-          expect(expectedArray[index]).toBe(item);
+          expect(expandedPlusExtraArgs[index]).toBe(item);
         });
       });
 
       it('should include initial command arguments when configured by array', async () => {
-        const expectedArray = ['-Xms2048m', '-jar', JAR_PATH, '--one=true', '--two=two',
-          '--three=one', '--three=two', '--three=three'];
-
-        const compiler = new Compiler(expectedArray.slice(3), expectedArray.slice(0, 1));
+        const compiler = new Compiler(baseCompilerArgs, extraCompilerArgs);
         await new Promise((resolve) => compiler.run(resolve));
-        expect(compiler.commandArguments.length).toBe(expectedArray.length);
+        expect(compiler.commandArguments.length).toBe(expandedPlusExtraArgs.length);
         compiler.commandArguments.forEach(function (item, index) {
-          expect(expectedArray[index]).toBe(item);
+          expect(expandedPlusExtraArgs[index]).toBe(item);
         });
       });
     });

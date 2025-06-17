@@ -30,7 +30,7 @@ export const javaPath = 'java';
 
 export default class Compiler {
   /**
-   * @param {Object<string,string>|Array<string>} args
+   * @param {Object<string,string|boolean>|Array<string>} args
    * @param {Array<String>=} extraCommandArgs
    */
   constructor(args, extraCommandArgs) {
@@ -42,15 +42,11 @@ export default class Compiler {
     if (Array.isArray(args)) {
       this.commandArguments.push(...args);
     } else {
-      for (let key in args) {
-        if (Array.isArray(args[key])) {
-          for (let i = 0; i < args[key].length; i++) {
-            this.commandArguments.push(
-                this.formatArgument(key, args[key][i]));
-          }
+      for (const [key, val] of Object.entries(args)) {
+        if (Array.isArray(val)) {
+          this.commandArguments.push(...val.map((item) => this.formatArgument(key, item)));
         } else {
-          this.commandArguments.push(
-              this.formatArgument(key, args[key]));
+          this.commandArguments.push(this.formatArgument(key, val));
         }
       }
     }
@@ -65,7 +61,12 @@ export default class Compiler {
   /** @param {function(number, string, string)=} callback */
   run(callback) {
     if (this.JAR_PATH) {
-      this.commandArguments.unshift('-jar', this.JAR_PATH);
+      this.commandArguments.unshift(
+          '-XX:+IgnoreUnrecognizedVMOptions',
+          '--sun-misc-unsafe-memory-access=allow',
+          '-jar',
+          this.JAR_PATH,
+      );
       if (this.extraCommandArgs) {
         this.commandArguments.unshift(...this.extraCommandArgs);
       }

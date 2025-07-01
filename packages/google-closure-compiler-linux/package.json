@@ -1,6 +1,6 @@
 {
   "name": "google-closure-compiler-linux",
-  "version": "20250625.0.0",
+  "version": "20250629.0.0",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler using Java",
   "type": "module",
   "main": "index.js",

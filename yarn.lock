@@ -1390,7 +1390,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"google-closure-compiler-java@npm:^20250720.0.0, google-closure-compiler-java@workspace:packages/google-closure-compiler-java":
+"google-closure-compiler-java@npm:^20250721.0.0, google-closure-compiler-java@workspace:packages/google-closure-compiler-java":
   version: 0.0.0-use.local
   resolution: "google-closure-compiler-java@workspace:packages/google-closure-compiler-java"
   dependencies:
@@ -1398,7 +1398,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"google-closure-compiler-linux-arm64@npm:^20250720.0.0, google-closure-compiler-linux-arm64@workspace:packages/google-closure-compiler-linux-arm64":
+"google-closure-compiler-linux-arm64@npm:^20250721.0.0, google-closure-compiler-linux-arm64@workspace:packages/google-closure-compiler-linux-arm64":
   version: 0.0.0-use.local
   resolution: "google-closure-compiler-linux-arm64@workspace:packages/google-closure-compiler-linux-arm64"
   dependencies:
@@ -1406,7 +1406,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"google-closure-compiler-linux@npm:^20250720.0.0, google-closure-compiler-linux@workspace:packages/google-closure-compiler-linux":
+"google-closure-compiler-linux@npm:^20250721.0.0, google-closure-compiler-linux@workspace:packages/google-closure-compiler-linux":
   version: 0.0.0-use.local
   resolution: "google-closure-compiler-linux@workspace:packages/google-closure-compiler-linux"
   dependencies:
@@ -1414,7 +1414,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"google-closure-compiler-macos@npm:^20250720.0.0, google-closure-compiler-macos@workspace:packages/google-closure-compiler-macos":
+"google-closure-compiler-macos@npm:^20250721.0.0, google-closure-compiler-macos@workspace:packages/google-closure-compiler-macos":
   version: 0.0.0-use.local
   resolution: "google-closure-compiler-macos@workspace:packages/google-closure-compiler-macos"
   dependencies:
@@ -1422,7 +1422,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"google-closure-compiler-windows@npm:^20250720.0.0, google-closure-compiler-windows@workspace:packages/google-closure-compiler-windows":
+"google-closure-compiler-windows@npm:^20250721.0.0, google-closure-compiler-windows@workspace:packages/google-closure-compiler-windows":
   version: 0.0.0-use.local
   resolution: "google-closure-compiler-windows@workspace:packages/google-closure-compiler-windows"
   dependencies:
@@ -1435,11 +1435,11 @@ __metadata:
   resolution: "google-closure-compiler@workspace:packages/google-closure-compiler"
   dependencies:
     chalk: "npm:5.x"
-    google-closure-compiler-java: "npm:^20250720.0.0"
-    google-closure-compiler-linux: "npm:^20250720.0.0"
-    google-closure-compiler-linux-arm64: "npm:^20250720.0.0"
-    google-closure-compiler-macos: "npm:^20250720.0.0"
-    google-closure-compiler-windows: "npm:^20250720.0.0"
+    google-closure-compiler-java: "npm:^20250721.0.0"
+    google-closure-compiler-linux: "npm:^20250721.0.0"
+    google-closure-compiler-linux-arm64: "npm:^20250721.0.0"
+    google-closure-compiler-macos: "npm:^20250721.0.0"
+    google-closure-compiler-windows: "npm:^20250721.0.0"
     gulp: "npm:4.x"
     gulp-sourcemaps: "npm:2.x"
     jasmine: "npm:^5.6.0"

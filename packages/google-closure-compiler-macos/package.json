@@ -1,6 +1,6 @@
 {
   "name": "google-closure-compiler-macos",
-  "version": "20250721.0.0",
+  "version": "20250723.0.0",
   "description": "Check, compile, optimize and compress Javascript with Closure-Compiler using Java",
   "type": "module",
   "main": "index.js",
